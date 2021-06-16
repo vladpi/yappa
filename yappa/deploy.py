@@ -42,9 +42,10 @@ def upload_to_bucket(bucket_name, profile_name, zipfile_path, bucket_key):
 
 
 def copy_source_code(temp_folder_name):
-    with suppress(FileNotFoundError):
-        shutil.rmtree(temp_folder_name)
-    shutil.copytree(os.getcwd(), temp_folder_name)
+    # with suppress(FileNotFoundError):
+    #     shutil.rmtree(temp_folder_name)
+    print(temp_folder_name)
+    # shutil.copytree(os.getcwd(), temp_folder_name, dirs_exist_ok=True)
 
     for path in ('.idea', '.git'):
         with suppress(FileNotFoundError):
@@ -88,12 +89,12 @@ def do_upload(config):
     temp_folder_name = os.path.join(os.getcwd(), 'yappa_package')
 
     try:
-        copy_source_code(temp_folder_name)
-        install_requirements(config['requirements_file'], temp_folder_name)
+        # copy_source_code(temp_folder_name)
+        # install_requirements(config['requirements_file'], temp_folder_name)
 
         logger.warning('Creating a zip package...')
         shutil.make_archive(temp_folder_name, 'zip', temp_folder_name)
-        shutil.rmtree(temp_folder_name)
+        # shutil.rmtree(temp_folder_name)
 
         logger.warning('Uploading to bucket...')
         upload_to_bucket(
@@ -111,6 +112,7 @@ def do_upload(config):
             function_name=config['project_name'],
         )
     finally:
-        with suppress(FileNotFoundError):
-            os.remove(f'{temp_folder_name}.zip')
+        pass
+        # with suppress(FileNotFoundError):
+        #     os.remove(f'{temp_folder_name}.zip')
 

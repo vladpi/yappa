@@ -1,3 +1,9 @@
+аккаунт в облаке
+yc-configure
+
+создаем сервисный аккаунт (для s3)
+
+
 # Yappa: Serverless Python for Yandex Cloud Functions
 
 Деплоим Python в [Yandex Cloud Functions](https://cloud.yandex.ru/services/functions) легко и быстро.
