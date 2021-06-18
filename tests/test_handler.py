@@ -68,3 +68,24 @@ def test_json_response(app, sample_event):
     assert response["body"].replace("\n", "") == json.dumps(
             {"result": "json", "sub_result": {"sub": "json"}}).replace(" ", "")
 
+
+def test_query_params(app, sample_event):
+    sample_event["url"] = urljoin(BASE_URL, "query_params")
+    params = {
+            "a": "a_value",
+            "b": "1",
+            }
+    sample_event["queryStringParameters"] = params
+    response = patch_response(call_app(app, sample_event))
+    assert response["statusCode"] == 200, response["body"]
+    assert response["body"].replace("\n", "").replace(" ", "") == json.dumps(
+            {"params": params}).replace(" ", "")
+
+
+def test_url_param(app, sample_event):
+    param_value = "random_param"  # TODO randomize
+    sample_event["url"] = urljoin(BASE_URL, f"/url_param/{param_value}")
+    response = patch_response(call_app(app, sample_event))
+    assert response["statusCode"] == 200
+    assert response["body"].replace("\n", "") == json.dumps(
+            {"param": param_value}).replace(" ", "")

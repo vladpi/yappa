@@ -61,16 +61,19 @@ def call_app(app, event):
     }
     """
     with httpx.Client(app=app,
-                      base_url=event['headers']['HTTP_HOST']
+                      base_url=event['headers']['HTTP_HOST'],
                       ) as client:
         request = client.build_request(
                 method=event["httpMethod"],
                 url=event["url"],
                 headers=event["headers"],
                 params=event["queryStringParameters"],
-                content=event["body"]
+                content=event["body"],
+
                 )
-        response = client.send(request)
+        response = client.send(request,
+
+                               )
         return response
 
 

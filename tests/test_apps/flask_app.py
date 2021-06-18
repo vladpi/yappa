@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -14,3 +14,13 @@ def json():
             "result": "json",
             "sub_result": {"sub": "json"}
             }
+
+
+@app.route("/query_params")
+def query_params():
+    return {"params": request.args}
+
+
+@app.route("/url_param/<param>")
+def url_param(param):
+    return {"param": param}
