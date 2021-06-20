@@ -15,7 +15,6 @@ def get_s3_resource(profile_name):
     session = BotocoreSession()
     config = session.full_config
     profile = config['profiles'][profile_name]
-
     resource = boto3.resource(
         's3',
         aws_access_key_id=profile['aws_access_key_id'],
