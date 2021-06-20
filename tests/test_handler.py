@@ -1,4 +1,5 @@
 import json
+import sys
 from urllib.parse import urljoin
 
 import pytest
@@ -32,16 +33,18 @@ def sample_event():
 
 
 SAMPLE_CONTEXT = None
-SAMPLE_RESPONSE = "root url"
 BASE_URL = "http://base-url.com"
 
 
 @pytest.fixture(params=[
-        "test_apps.flask_app.app",
-        pytest.param("test_apps.django_app.app", marks=pytest.mark.skip),
+        # TODO add names of apps
+        ("test_apps.flask_app.app", None),
+        (None, "test_apps.django_app.settings"),
+        # pytest.param("test_apps.django_app.app", marks=pytest.mark.skip),
         ])
 def app(request):
-    return load_app(request.param)
+    sys.path.append("/Users/ek/python/yappa/tests/test_apps/django_app")
+    return load_app(*request.param)
 
 
 def test_app_load(app):
@@ -52,7 +55,7 @@ def test_app_load(app):
 def test_sample_call(app, sample_event):
     response = patch_response(call_app(app, sample_event))
     assert response["statusCode"] == 200
-    assert response["body"] == SAMPLE_RESPONSE
+    assert response["body"] == "root url"
 
 
 def test_not_found_call(app, sample_event):
