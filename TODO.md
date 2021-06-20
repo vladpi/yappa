@@ -1,9 +1,6 @@
 
 
 
-- добить фласк тесты
-  - post
-  - а что с multi value params
   
 - написать ручками гейтвей 
 - написать генерацию гейтвея 
@@ -12,6 +9,8 @@
 - сделать тесты с выкладыванием функции
 - сделать апи гейтвей
 
+- добить тесты
+  - а что с multi value params
 
 - красивости
   - кофиги в yaml, а не json
@@ -34,5 +33,4 @@ mock of s3 calls https://github.com/garnaat/placebo#usage-as-a-decorator
   - query args (get)
   - post 
   - patch, put
-- async
 

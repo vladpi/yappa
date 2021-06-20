@@ -40,7 +40,6 @@ BASE_URL = "http://base-url.com"
         # TODO add names of apps
         ("test_apps.flask_app.app", None),
         (None, "test_apps.django_app"),
-        # pytest.param("test_apps.django_app.app", marks=pytest.mark.skip),
         ])
 def app(request):
     sys.path.append("test_apps")
