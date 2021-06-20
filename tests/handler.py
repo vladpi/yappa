@@ -1,5 +1,6 @@
 import json
 import sys
+from pathlib import Path
 from urllib.parse import urljoin
 
 import pytest
@@ -38,11 +39,11 @@ BASE_URL = "http://base-url.com"
 
 @pytest.fixture(params=[
         # TODO add names of apps
-        ("test_apps.flask_app.app", None),
-        (None, "test_apps.django_app"),
+        ("flask_app.app", None),
+        (None, "django_app"),
         ])
 def app(request):
-    sys.path.append("test_apps")
+    sys.path.append(str(Path(Path(__file__).resolve().parent, "test_apps")))
     return load_app(*request.param)
 
 
