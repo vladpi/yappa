@@ -24,3 +24,8 @@ def query_params():
 @app.route("/url_param/<param>")
 def url_param(param):
     return {"param": param}
+
+
+@app.route("/post", methods=["POST"])
+def post():
+    return {"request": request.get_json(force=True)}

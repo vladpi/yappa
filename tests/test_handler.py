@@ -89,3 +89,14 @@ def test_url_param(app, sample_event):
     assert response["statusCode"] == 200
     assert response["body"].replace("\n", "") == json.dumps(
             {"param": param_value}).replace(" ", "")
+
+
+def test_post(app, sample_event):
+    body = {"test_str": "ok!",
+            "test_num": 5}
+    sample_event["url"] = urljoin(BASE_URL, "post")
+    sample_event["httpMethod"] = "POST"
+    sample_event["body"] = body
+    response = patch_response(call_app(app, sample_event))
+    assert response["statusCode"] == 200, response
+    assert json.loads(response["body"]) == {"request": body}

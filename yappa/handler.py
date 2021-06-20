@@ -1,3 +1,4 @@
+import json
 from importlib import import_module
 
 import httpx
@@ -68,7 +69,7 @@ def call_app(app, event):
                 url=event["url"],
                 headers=event["headers"],
                 params=event["queryStringParameters"],
-                content=event["body"],
+                content=json.dumps(event["body"]).encode(),
 
                 )
         response = client.send(request,
