@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 
 import pytest
 
-from yappa.handler import call_app, load_app, patch_response
+from yappa.handler import call_app, load_app, load_config, patch_response
 
 
 @pytest.fixture()
@@ -47,6 +47,14 @@ def app(request):
     return load_app(*request.param)
 
 
+def test_load_from_config():
+    sys.path.append(str(Path(Path(__file__).resolve().parent, "test_apps")))
+    config = load_config("yappa.yaml")
+    app = load_app(config.get("entrypoint"),
+                   config.get("django_settings_module"))
+    assert callable(app)
+
+
 def test_app_load(app):
     assert app
     assert callable(app)
@@ -56,6 +64,8 @@ def test_sample_call(app, sample_event):
     response = patch_response(call_app(app, sample_event))
     assert response["statusCode"] == 200
     assert response["body"] == "root url"
+    assert isinstance(response["headers"], dict)
+    assert not isinstance(response['body'], bytes)
 
 
 def test_not_found_call(app, sample_event):

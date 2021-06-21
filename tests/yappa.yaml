@@ -1,5 +1,5 @@
 project_name: sample_roject_name
-entrypoint: myapp.app
+entrypoint: flask_app.app
 profile_name: default
 runtime: python3.8
 bucket: sample_roject_name-tptux3st6

@@ -3,12 +3,14 @@ import os
 from importlib import import_module
 
 import httpx
+import yaml
 
 CONFIG_FILENAME = "yappa.yaml"
 
 
 def load_config(filename):
-    pass
+    with open(filename, "r") as f:
+        return yaml.load(f.read())
 
 
 def load_app(import_path=None, django_settings_module=None):
@@ -91,16 +93,8 @@ def call_app(app, event):
 
 
 def handler(event, context):
-    # config = load_config(CONFIG_FILENAME)
-    # app = load_app(config.get("entrypoint"),
-    #                config.get("django_settings_module"))
-    app = load_app("flask_app.app")
-    try:
-        response = call_app(app, event)
-        return patch_response(response)
-    except Exception as exc:
-        return {
-                "statusCode": 500,
-                "body": {"event": event,
-                         "error": exc}
-                }
+    config = load_config(CONFIG_FILENAME)
+    app = load_app(config.get("entrypoint"),
+                   config.get("django_settings_module"))
+    response = call_app(app, event)
+    return patch_response(response)

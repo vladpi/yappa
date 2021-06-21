@@ -1,20 +1,17 @@
 openapi: 3.0.0
 info:
-  title: Sample API
+  title: {{project_nane}} Yappa API
   version: 1.0.0
 paths:
   /{url+}:
     get:
       x-yc-apigateway-integration:
         type: cloud_functions
-        function_id: d4ece60ceecftbmn56rj
+        function_id: {{function_id}}
         tag: $latest
       parameters:
-        - description: Return ID
-          explode: false
+        - explode: false
           in: path
           name: url
           required: false
-          schema:
-            type: string
           style: simple
