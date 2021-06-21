@@ -45,8 +45,9 @@ def patch_response(response):
     """
     return {
             'statusCode': response.status_code,
-            'headers': response.headers,
+            'headers': dict(response.headers),
             'body': response.content.decode(),
+            'isBase64Encoded': False,
             }
 
 
@@ -77,7 +78,7 @@ def call_app(app, event):
     }
     """
     with httpx.Client(app=app,
-                      base_url=event['headers']['HTTP_HOST'], ) as client:
+                      base_url="http://host.url", ) as client:
         request = client.build_request(
                 method=event["httpMethod"],
                 url=event["url"],
@@ -90,8 +91,16 @@ def call_app(app, event):
 
 
 def handler(event, context):
-    config = load_config(CONFIG_FILENAME)
-    app = load_app(config.get("entrypoint"),
-                   config.get("django_settings_module"))
-    response = call_app(app, event)
-    return patch_response(response)
+    # config = load_config(CONFIG_FILENAME)
+    # app = load_app(config.get("entrypoint"),
+    #                config.get("django_settings_module"))
+    app = load_app("flask_app.app")
+    try:
+        response = call_app(app, event)
+        return patch_response(response)
+    except Exception as exc:
+        return {
+                "statusCode": 500,
+                "body": {"event": event,
+                         "error": exc}
+                }

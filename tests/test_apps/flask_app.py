@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def main():
-    return Response( 'root url', mimetype="application/json" )
+    return 'root url'
 
 
 @app.route('/json')
