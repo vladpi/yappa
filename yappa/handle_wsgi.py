@@ -3,14 +3,8 @@ import os
 from importlib import import_module
 
 import httpx
-import yaml
 
-CONFIG_FILENAME = "yappa.yaml"
-
-
-def load_config(filename):
-    with open(filename, "r") as f:
-        return yaml.load(f.read())
+from yappa.utils import load_config
 
 
 def load_app(import_path=None, django_settings_module=None):
@@ -56,28 +50,7 @@ def patch_response(response):
 def call_app(app, event):
     """
     call wsgi app
-
-    event
-        {
-        "httpMethod": "GET",
-        "headers": {},
-        "url": "",
-        "params": {},
-        "multiValueParams": {},
-        "pathParams": {},
-        "multiValueHeaders": {},
-        "queryStringParameters": {},
-        "multiValueQueryStringParameters": {},
-        "requestContext": {
-                "identity": {"sourceIp": "95.170.134.34",
-                             "userAgent": "Mozilla/5.0"},
-                "httpMethod": "GET",
-                "requestId": "0f61048c-2ba9",
-                "requestTime": "18/Jun/2021:03:56:37 +0000",
-                "requestTimeEpoch": 1623988597},
-        "body": "",
-        "isBase64Encoded": True
-    }
+    see https://cloud.yandex.ru/docs/functions/concepts/function-invoke#response
     """
     with httpx.Client(app=app,
                       base_url="http://host.url", ) as client:
@@ -92,8 +65,8 @@ def call_app(app, event):
         return response
 
 
-def handler(event, context):
-    config = load_config(CONFIG_FILENAME)
+def handle(event, context):
+    config = load_config()
     app = load_app(config.get("entrypoint"),
                    config.get("django_settings_module"))
     response = call_app(app, event)

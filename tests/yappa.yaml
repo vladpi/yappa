@@ -1,4 +1,5 @@
 project_name: sample_roject_name
+project_version: 0.1
 entrypoint: flask_app.app
 profile_name: default
 runtime: python3.8
