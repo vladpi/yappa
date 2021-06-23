@@ -23,7 +23,6 @@ def upload_to_bucket(folder, bucket):
     """
     makes archive, uploads to bucket, deletes tmp package
     """
-    print(folder, bucket)
 
 
 def delete_bucket(bucket_name):

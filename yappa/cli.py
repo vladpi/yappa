@@ -1,7 +1,7 @@
 import click
 
 from yappa.s3 import cleanup, delete_bucket, prepare_package, upload_to_bucket
-from yappa.settings import DEFAULT_CONFIG_FILENAME, DEFAULT_GW_FILENAME
+from yappa.settings import DEFAULT_CONFIG_FILENAME, DEFAULT_GW_CONFIG_FILENAME
 from yappa.utils import load_config
 from yappa.yc_function import create_function, delete_function, set_access, \
     show_logs, \
@@ -22,7 +22,7 @@ def cli():
 
 @cli.command()
 @click.argument('config', type=click.Path(), default=DEFAULT_CONFIG_FILENAME)
-@click.argument('gw_config', type=click.Path(), default=DEFAULT_GW_FILENAME)
+@click.argument('gw_config', type=click.Path(), default=DEFAULT_GW_CONFIG_FILENAME)
 def init(config, gw_config):
     """
     generation of configs & creation of function and api-gw
