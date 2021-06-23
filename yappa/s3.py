@@ -1,12 +1,32 @@
-def package(**kwargs):
-    pass
+def prepare_package(**kwargs):
+    """
+    prepares package folder
+    - copy project files
+    - copy handler.py
+    - install packages
+    """
+
 
 def make_archive():
-    pass
+    """
+    make archive for a given folder. reqdy for upload
+    """
 
 
-def upload(folder_path, bucket_name):
-    pass
+def cleanup():
+    """
+    deletes tmp package folder
+    """
+
+
+def upload_to_bucket(folder, bucket):
+    """
+    makes archive, uploads to bucket, deletes tmp package
+    """
+    print(folder, bucket)
+
 
 def delete_bucket(bucket_name):
-    pass
+    """
+    deletes bucket from s3
+    """

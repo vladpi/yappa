@@ -1,78 +1,123 @@
 import click
 
-from yappa.s3 import delete_bucket, package, upload
+from yappa.s3 import cleanup, delete_bucket, prepare_package, upload_to_bucket
+from yappa.settings import DEFAULT_CONFIG_FILENAME, DEFAULT_GW_FILENAME
 from yappa.utils import load_config
-from yappa.yc_function import (
-    create_function, delete_function, show_logs,
-    show_status,
-    )
-from yappa.yc_gateway import create_gw, delete_gw
+from yappa.yc_function import create_function, delete_function, set_access, \
+    show_logs, \
+    show_status, update_function
+from yappa.yc_gateway import create_gw, delete_gw, prep_gw_config, update_gw
 
 
-@click.group()
+class NaturalOrderGroup(click.Group):
+
+    def list_commands(self, ctx):
+        return self.commands.keys()
+
+
+@click.group(cls=NaturalOrderGroup)
 def cli():
     pass
 
 
-@cli.command(name='init')
-def init_cmd():
+@cli.command()
+@click.argument('function config filename', type=click.Path(exists=True),
+                default=DEFAULT_CONFIG_FILENAME)
+@click.argument('api-gateway config filename', type=click.Path(exists=True),
+                default=DEFAULT_GW_FILENAME)
+def init():
+    """\b
+    - generates yappa.yaml
+    - creates function
+    - generates yappa-gw.yaml
+    - creates api-gateway
     """
-    generates config files
-    - yappa.yaml
-    - yappa-gw.yaml
+    name, description = input
+    version = '0.1'
+    create_function(name, description)
+    set_access(name)
+    gw_config = prep_gw_config()
+    create_gw(gw_config)
+
+
+@cli.command()
+@click.option('--file', type=click.File('rb'), default=DEFAULT_CONFIG_FILENAME,
+              help="yappa settings file")
+@click.option('--skip_requirements', is_flag=True,
+              help="if to skip installing requirements to package folder")
+def update(file):
+    """\b
+    - prepares package
+    - uploads package to s3
+    - updates function and api-gw version
     """
-    pass
-
-
-@cli.command(name='package')
-@click.option('--file')
-def package_cmd(file):
     config = load_config(file)
-    package(**config)
+    prepare_package(**config)
+    upload_to_bucket(**config)
+    update_function()
+    # make sure that update of bucket automatically updates function
+    update_gw(**config)
+    cleanup()
 
 
-@cli.command(name='upload')
-@click.option('folder')
-@click.option('bucket')
-def upload_cmd(folder, bucket):
-    upload(folder, bucket)
-
-
-@cli.command(name='deploy')
-@click.option('--file')
-@click.option('--skip-requirements')
-def deploy_cmd(file):
-    config = load_config(file)
-    create_function(**config)
-    create_gw(**config)
-    package(**config)
-    upload(**config)
-
-
-@cli.command(name='status')
-@click.option('--file')
-def status_cmd(file):
+@cli.command()
+@click.option('--file', type=click.File('rb'), default=DEFAULT_CONFIG_FILENAME,
+              help="yappa settings file")
+def status(file):
+    """
+    display status of function and gateway
+    """
     config = load_config(file)
     show_status(config["function_name"])
 
 
-@cli.command(name='logs')
-@click.option('--file')
+@cli.command()
+@click.option('--file', type=click.File('rb'), default=DEFAULT_CONFIG_FILENAME,
+              help="yappa settings file")
 @click.option('--since')
 @click.option('--until')
-def logs_cmd(file, since, until):
+def logs(file, since, until):
+    """
+    display logs of function
+    """
     config = load_config(file)
     show_logs(config["function_name"], since, until)
 
 
-@cli.command(name='delete')
-@click.option('--file')
-def delete_cmd(file):
+@cli.command()
+@click.option('--file', type=click.File('rb'), default=DEFAULT_CONFIG_FILENAME,
+              help="yappa settings file")
+def undeploy(file):
+    """
+    deletes function, api-gateway and bucket
+    """
+    # TODO add 'are you sure?'
     config = load_config(file)
 
     delete_function(**config)
     delete_gw(**config)
     delete_bucket(**config)
+
+
+@cli.command()
+@click.option('--file', type=click.File('rb'), default=DEFAULT_CONFIG_FILENAME,
+              help="yappa settings file")
+def package(file):
+    """
+    prepares package ready to be uploaded as serverless function
+    """
+    config = load_config(file)
+    prepare_package(**config)
+
+
+@cli.command()
+@click.argument('folder', type=click.Path(exists=True))
+@click.argument('bucket', type=click.STRING)
+def upload(folder, bucket):
+    """
+    uploads given folder to s3 bucket
+    """
+    upload_to_bucket(folder, bucket)
 
 
 if __name__ == '__main__':

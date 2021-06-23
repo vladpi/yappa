@@ -1,12 +1,13 @@
 import yaml
 
-CONFIG_FILENAME = "yappa.yaml"
-AVAILABLE_PYTHON_VERSIONS = (
-        "python38",
-        "python37",
-        )
+from yappa.settings import DEFAULT_CONFIG_FILENAME
 
 
-def load_config(filename=CONFIG_FILENAME):
-    with open(filename, "r") as f:
-        return yaml.load(f.read())
+def load_config(file=DEFAULT_CONFIG_FILENAME):
+    """
+    TODO is type checking necessary?
+    """
+    if isinstance(file, str):
+        with open(file, "r") as f:
+            return yaml.load(f.read)
+    return yaml.load(file.read())
