@@ -8,3 +8,6 @@ def create_gw():
 
 def update_gw():
     pass
+
+def delete_gw():
+    pass
