@@ -21,18 +21,21 @@ def cli():
 
 
 @cli.command()
-@click.argument('function config filename', type=click.Path(exists=True),
-                default=DEFAULT_CONFIG_FILENAME)
-@click.argument('api-gateway config filename', type=click.Path(exists=True),
-                default=DEFAULT_GW_FILENAME)
-def init():
-    """\b
+@click.argument('config', type=click.Path(), default=DEFAULT_CONFIG_FILENAME)
+@click.argument('gw_config', type=click.Path(), default=DEFAULT_GW_FILENAME)
+def init(config, gw_config):
+    """
+    generation of configs & creation of function and api-gw
+
+    if files with configs exist, then if just updates it
+    \b
     - generates yappa.yaml
     - creates function
     - generates yappa-gw.yaml
     - creates api-gateway
     """
-    name, description = input
+    # TODO add logic if files already exist. advanced scenario: existing configs
+    name, description, memory, entrypoint = input
     version = '0.1'
     create_function(name, description)
     set_access(name)
