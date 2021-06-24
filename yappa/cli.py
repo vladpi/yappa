@@ -1,12 +1,15 @@
 import click
 
+from yappa.config_generation import generate_config_file, \
+    generate_gw_config_file
 from yappa.s3 import cleanup, delete_bucket, prepare_package, upload_to_bucket
 from yappa.settings import DEFAULT_CONFIG_FILENAME, DEFAULT_GW_CONFIG_FILENAME
 from yappa.utils import load_config
-from yappa.yc_function import create_function, delete_function, set_access, \
+from yappa.yc_function import create_function, delete_function, get_function_id, \
+    set_access, \
     show_logs, \
     show_status, update_function
-from yappa.yc_gateway import create_gw, delete_gw, prep_gw_config, update_gw
+from yappa.yc_gateway import create_gw, delete_gw, update_gw
 
 
 class NaturalOrderGroup(click.Group):
@@ -22,8 +25,9 @@ def cli():
 
 @cli.command()
 @click.argument('config', type=click.Path(), default=DEFAULT_CONFIG_FILENAME)
-@click.argument('gw_config', type=click.Path(), default=DEFAULT_GW_CONFIG_FILENAME)
-def init(config, gw_config):
+@click.argument('gw_config', type=click.Path(),
+                default=DEFAULT_GW_CONFIG_FILENAME)
+def init(config_filename, gw_config_filename):
     """
     generation of configs & creation of function and api-gw
 
@@ -34,13 +38,14 @@ def init(config, gw_config):
     - generates yappa-gw.yaml
     - creates api-gateway
     """
-    # TODO add logic if files already exist. advanced scenario: existing configs
-    name, description, memory, entrypoint = input
-    version = '0.1'
-    create_function(name, description)
-    set_access(name)
-    gw_config = prep_gw_config()
-    create_gw(gw_config)
+    generate_config_file(config_filename)
+    config = load_config(config_filename)
+    create_function()
+    set_access(config["project_name"])
+
+    function_id = get_function_id(config["project_name"])
+    generate_gw_config_file(gw_config_filename, function_id)
+    create_gw(gw_config_filename)
 
 
 @cli.command()
@@ -123,5 +128,6 @@ def upload(folder, bucket):
     upload_to_bucket(folder, bucket)
 
 
+# TODO
 if __name__ == '__main__':
     cli()

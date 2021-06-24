@@ -1,7 +1,4 @@
 def create_function(name, description):
-    """
-    returns function id
-    """
     pass
 
 

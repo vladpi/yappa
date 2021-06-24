@@ -1,15 +1,19 @@
-project_name: sample_project_name
-description: project to demostrate yc serverless deploy
+project_name: null
+description: null
 runtime: python38
-profile: default
+profile: null
 requirements_file: requirements.txt
-bucket: yappa-d2lwe1nas
-entrypoint: flask_app.app
-application_type: wsgi
+bucket: null
+entrypoint: null
+application_type: null
 django_settings_module: null
 gw_config: yappa_gw.yaml
 service_account_id: null
 memory_limit: 128MB
+excluded_paths:
+  - venv
+  - .git
+  - .idea
 enironment:
-  ENV1: 1
-  ENV2: 3
+  ENV_KEY1: ENV_VALUE2
+  ENV_KEY2: ENV_VALUE2

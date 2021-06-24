@@ -1,4 +1,6 @@
-def prepare_package(**kwargs):
+
+
+def prepare_package(requirements_file):
     """
     prepares package folder
     - copy project files
@@ -9,7 +11,7 @@ def prepare_package(**kwargs):
 
 def make_archive():
     """
-    make archive for a given folder. reqdy for upload
+    make archive for a given folder. ready for upload
     """
 
 
