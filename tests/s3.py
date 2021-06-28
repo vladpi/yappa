@@ -19,9 +19,14 @@ IGNORED_FILES = (
     Path(".git", "config"),
     Path("venv", "flask.py"),
 )
+IGNORED_PATTERNS = (
+    ".idea",
+    ".git",
+    "venv",
+)
 PACKAGES = (
     "Flask",
-    "PyYAML",
+    "yaml",
 )
 ADDITIONAL_FILES = (
     Path("handler.py"),
@@ -53,8 +58,8 @@ def test_project_setup(project_dir):
 
 
 def test_files_copy(project_dir):
-    prepare_package(REQUIREMENTS_FILE)
+    prepare_package(REQUIREMENTS_FILE, IGNORED_PATTERNS)
     for path in chain(PROJECT_FILES, PACKAGES):
-        assert os.path.exists(Path(DEFAULT_PACKAGE_DIR, path))
+        assert os.path.exists(Path(DEFAULT_PACKAGE_DIR, path)), path
     for path in IGNORED_FILES:
-        assert not os.path.exists(Path(DEFAULT_PACKAGE_DIR, path))
+        assert not os.path.exists(Path(DEFAULT_PACKAGE_DIR, path)), os.listdir()
