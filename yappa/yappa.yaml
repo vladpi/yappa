@@ -14,6 +14,7 @@ excluded_paths:
   - venv
   - .git
   - .idea
+  - requirements.txt
 enironment:
   ENV_KEY1: ENV_VALUE2
   ENV_KEY2: ENV_VALUE2
