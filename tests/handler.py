@@ -5,7 +5,8 @@ from urllib.parse import urljoin
 
 import pytest
 
-from yappa.handler import call_app, load_app, load_config, patch_response
+from yappa.handle_wsgi import call_app, load_app, patch_response
+from yappa.utils import load_config
 
 
 @pytest.fixture()

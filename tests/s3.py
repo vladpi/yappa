@@ -7,7 +7,7 @@ import pytest
 
 from yappa.s3 import delete_bucket, ensure_bucket, get_s3_resource, \
     prepare_package, upload_to_bucket
-from yappa.settings import DEFAULT_PACKAGE_DIR
+from yappa.settings import DEFAULT_PACKAGE_DIR, DEFAULT_PROFILE_NAME
 
 PROJECT_FILES = (
     Path("yappa.yaml"),
@@ -70,7 +70,7 @@ def test_files_copy(project_dir):
 
 @pytest.fixture
 def profile():
-    return "default"
+    return DEFAULT_PROFILE_NAME
 
 
 @pytest.fixture

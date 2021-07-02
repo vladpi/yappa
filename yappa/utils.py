@@ -9,5 +9,5 @@ def load_config(file=DEFAULT_CONFIG_FILENAME):
     """
     if isinstance(file, str):
         with open(file, "r") as f:
-            return yaml.load(f.read)
+            return yaml.load(f.read())
     return yaml.load(file.read())
