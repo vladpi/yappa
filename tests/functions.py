@@ -6,6 +6,8 @@ def uploaded_package():
     """
     load config
     upload package
+    yield bucket name
+    delete bucket
     """
 
 
@@ -33,3 +35,11 @@ def test_function_creation(yc, function_name):
     assert function_name in yc.get_functions()
     yc.delete_function(function.id)
     assert function_name not in yc.get_functions()
+
+
+def test_function_access(yc, function):
+    pass
+
+
+def test_function_version(yv, function, uploaded_package):
+    pass

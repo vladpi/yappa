@@ -5,11 +5,12 @@ profile: null
 requirements_file: requirements.txt
 bucket: null
 entrypoint: null
-application_type: null
+application_type: null # asgi/wsgi
 django_settings_module: null
 gw_config: yappa_gw.yaml
 service_account_id: null
 memory_limit: 128MB
+timeout: 1
 excluded_paths:
   - venv
   - .git
