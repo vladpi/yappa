@@ -151,4 +151,3 @@ class YC:
 
     def delete_gateway(self):
         pass
-
