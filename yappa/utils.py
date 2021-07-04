@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import yaml
 
 from yappa.settings import DEFAULT_CONFIG_FILENAME
@@ -7,10 +9,23 @@ def load_config(file=DEFAULT_CONFIG_FILENAME):
     """
     TODO is type checking necessary?
     """
-    if isinstance(file, str):
+    if isinstance(file, str) or isinstance(file, Path):
         with open(file, "r") as f:
             return yaml.load(f.read())
     return yaml.load(file.read())
+
+
+def save_config(config, filename):
+    with open(filename, "w+") as f:
+        f.write(yaml.dump(config))
+    return filename
+
+
+def create_default_config(filename=DEFAULT_CONFIG_FILENAME):
+    default_config = load_config(Path(Path(__file__).resolve().parent,
+                                      "yappa.yaml"))
+    save_config(default_config, filename)
+    return default_config
 
 
 MIN_MEMORY, MAX_MEMORY = 134217728, 2147483648

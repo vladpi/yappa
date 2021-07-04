@@ -8,6 +8,7 @@ from shutil import copy2, copytree, ignore_patterns, make_archive
 
 import boto3
 from botocore.session import Session as BotocoreSession
+
 from yappa.settings import DEFAULT_IGNORED_FILES, DEFAULT_PACKAGE_DIR, \
     DEFAULT_REQUIREMENTS_FILE, \
     HANDLER_FILENAME, YANDEX_S3_URL
@@ -78,7 +79,7 @@ def upload_to_bucket(folder, bucket_name, profile_name, ):
         bucket.upload_file(archive_filename, archive_filename)
     finally:
         os.remove(archive_filename)
-    return bucket
+    return archive_filename
 
 
 def delete_bucket(bucket_name, profile_name):

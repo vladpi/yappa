@@ -5,7 +5,7 @@ profile: null
 requirements_file: requirements.txt
 bucket: null
 entrypoint: null
-application_type: null # asgi/wsgi
+application_type: wsgi # asgi/wsgi
 django_settings_module: null
 gw_config: yappa_gw.yaml
 service_account_id: null

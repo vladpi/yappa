@@ -20,7 +20,6 @@ from yandex.cloud.serverless.functions.v1.function_service_pb2_grpc import \
 from yappa.utils import convert_size_to_bytes
 
 
-
 def load_credentials(**credentials):
     environ_credentials = {
         "token": os.environ.get("YC_TOKEN"),

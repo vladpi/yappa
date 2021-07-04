@@ -96,9 +96,10 @@ def test_bucket_creation(bucket_name, profile):
 
 def test_s3_upload(project_dir, bucket_name, profile):
     dir = prepare_package(to_install_requirements=False)
-    bucket = upload_to_bucket(dir, bucket_name, profile)
+    object_key = upload_to_bucket(dir, bucket_name, profile)
     assert bucket_name in get_bucket_names(profile)
+    bucket = ensure_bucket(bucket_name, profile)
     keys = [o.key for o in bucket.objects.all()]
-    assert f"{DEFAULT_PACKAGE_DIR}.zip" in keys, keys
+    assert object_key in keys, keys
     delete_bucket(bucket_name, profile)
     assert bucket_name not in get_bucket_names(profile)
