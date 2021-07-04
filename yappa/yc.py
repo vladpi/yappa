@@ -2,6 +2,10 @@ import os
 
 import yandexcloud
 from google.protobuf.duration_pb2 import Duration
+from google.protobuf.empty_pb2 import Empty
+from yandex.cloud.access.access_pb2 import AccessBinding, \
+    ListAccessBindingsRequest, \
+    SetAccessBindingsMetadata, SetAccessBindingsRequest, Subject
 from yandex.cloud.serverless.functions.v1.function_pb2 import (Function,
                                                                Package,
                                                                Resources,
@@ -13,29 +17,8 @@ from yandex.cloud.serverless.functions.v1.function_service_pb2 import (
 from yandex.cloud.serverless.functions.v1.function_service_pb2_grpc import \
     FunctionServiceStub
 
+from yappa.utils import convert_size_to_bytes
 
-def convert_size_to_bytes(size):
-    # TODO add tests
-    raise NotImplementedError()
-    multipliers = {
-        'kb': 1024,
-        'mb': 1024 * 1024,
-        'gb': 1024 * 1024 * 1024,
-        'tb': 1024 * 1024 * 1024 * 1024
-    }
-
-    for suffix in multipliers:
-        if size.lower().endswith(suffix):
-            return int(size[0:-len(suffix)]) * multipliers[suffix]
-    else:
-        if size.lower().endswith('b'):
-            return int(size[0:-1])
-
-    try:
-        return int(size)
-    except ValueError:  # for example "1024x"
-        print('Malformed input!')
-        exit()
 
 
 def load_credentials(**credentials):
@@ -62,7 +45,7 @@ class YC:
                                  filter=filter_)).functions
         return {f.name: dict(id=f.id, url=f.http_invoke_url) for f in functions}
 
-    def create_function(self, name, description=""):
+    def create_function(self, name, description="", is_public=True):
         operation = self.function_service.Create(CreateFunctionRequest(
             folder_id=self.folder_id,
             name=name,
@@ -73,7 +56,9 @@ class YC:
             response_type=Function,
             meta_type=CreateFunctionMetadata,
         )
-        return operation_result.response
+        function = operation_result.response
+        self.set_access(function.id, is_public)
+        return function
 
     def delete_function(self, function_id):
         operation = self.function_service.Delete(DeleteFunctionRequest(
@@ -85,6 +70,40 @@ class YC:
             meta_type=DeleteFunctionMetadata,
         )
         return operation_result.response
+
+    def set_access(self, function_id, is_public=True):
+        if is_public:
+            access_bindings = [AccessBinding(
+                role_id='serverless.functions.invoker',
+                subject=Subject(
+                    id="allUsers",
+                    type="system",
+                )
+            )]
+        else:
+            access_bindings = []
+        operation = self.function_service.SetAccessBindings(
+            SetAccessBindingsRequest(
+                resource_id=function_id,
+                access_bindings=access_bindings
+            ))
+        self.sdk.wait_operation_and_get_result(
+            operation,
+            response_type=Empty,
+            meta_type=SetAccessBindingsMetadata,
+        )
+        return is_public
+
+    def is_function_public(self, function_id):
+        access_bindings = self.function_service.ListAccessBindings(
+            ListAccessBindingsRequest(
+                resource_id=function_id
+            )).access_bindings
+        for binding in access_bindings:
+            if binding.role_id == 'serverless.functions.invoker':
+                subject = binding.subject
+                return subject.id == "allUsers"
+        return False
 
     def create_function_version(self, function_id, runtime, description,
                                 entrypoint, bucket_name, object_name,

@@ -38,8 +38,10 @@ def test_function_creation(yc, function_name):
 
 
 def test_function_access(yc, function):
-    pass
+    assert yc.is_function_public(function.id) == True
+    yc.set_access(function.id, is_public=False)
+    assert yc.is_function_public(function.id) == False
 
 
-def test_function_version(yv, function, uploaded_package):
+def test_function_version(yc, function, uploaded_package):
     pass
