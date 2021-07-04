@@ -5,7 +5,7 @@ profile: null
 requirements_file: requirements.txt
 bucket: null
 entrypoint: null
-application_type: wsgi # asgi/wsgi
+application_type: wsgi # wsgi or asgi in the future
 django_settings_module: null
 gw_config: yappa_gw.yaml
 service_account_id: null
@@ -16,6 +16,8 @@ excluded_paths:
   - .git
   - .idea
   - requirements.txt
-enironment:
+environment:
   ENV_KEY1: ENV_VALUE2
   ENV_KEY2: ENV_VALUE2
+named_service_accounts: {}
+debug: False

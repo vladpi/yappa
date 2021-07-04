@@ -1,10 +1,24 @@
 import json
 import os
 from importlib import import_module
+from pathlib import Path
 
 import httpx
+import yaml
 
-from yappa.utils import load_config
+DEFAULT_CONFIG_FILENAME = "yappa.yaml"
+
+
+# TODO after yappa in pip - maybe move load_config to utils and DEFAULT_CONFIG_FILENAME to settings
+
+def load_config(file=DEFAULT_CONFIG_FILENAME):
+    """
+    TODO is type checking necessary?
+    """
+    if isinstance(file, str) or isinstance(file, Path):
+        with open(file, "r") as f:
+            return yaml.load(f.read())
+    return yaml.load(file.read())
 
 
 def load_app(import_path=None, django_settings_module=None):
@@ -40,11 +54,11 @@ def patch_response(response):
     }
     """
     return {
-            'statusCode': response.status_code,
-            'headers': dict(response.headers),
-            'body': response.content.decode(),
-            'isBase64Encoded': False,
-            }
+        'statusCode': response.status_code,
+        'headers': dict(response.headers),
+        'body': response.content.decode(),
+        'isBase64Encoded': False,
+    }
 
 
 def call_app(app, event):
@@ -53,14 +67,14 @@ def call_app(app, event):
     see https://cloud.yandex.ru/docs/functions/concepts/function-invoke#response
     """
     with httpx.Client(app=app,
-                      base_url="http://host.url", ) as client:
+                      base_url="http://host.url", ) as client:  # TODO where do i find host url???
         request = client.build_request(
-                method=event["httpMethod"],
-                url=event["url"],
-                headers=event["headers"],
-                params=event["queryStringParameters"],
-                content=json.dumps(event["body"]).encode(),
-                )
+            method=event["httpMethod"],
+            url=event["url"],
+            headers=event["headers"],
+            params=event["queryStringParameters"],
+            content=json.dumps(event["body"]).encode(),
+        )
         response = client.send(request)
         return response
 
@@ -70,4 +84,12 @@ def handle(event, context):
     app = load_app(config.get("entrypoint"),
                    config.get("django_settings_module"))
     response = call_app(app, event)
-    return patch_response(response)
+    if not config["debug"]:
+        return patch_response(response)
+    return {
+        'statusCode': 200,
+        'body': {
+            "event": event,
+            "response": response,
+        },
+    }

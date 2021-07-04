@@ -13,11 +13,12 @@ from yandex.cloud.serverless.functions.v1.function_pb2 import (Function,
 from yandex.cloud.serverless.functions.v1.function_service_pb2 import (
     CreateFunctionMetadata, CreateFunctionRequest,
     CreateFunctionVersionMetadata, CreateFunctionVersionRequest,
-    DeleteFunctionMetadata, DeleteFunctionRequest, ListFunctionsRequest)
+    DeleteFunctionMetadata, DeleteFunctionRequest,
+    GetFunctionVersionByTagRequest, ListFunctionsRequest)
 from yandex.cloud.serverless.functions.v1.function_service_pb2_grpc import \
     FunctionServiceStub
 
-from yappa.utils import convert_size_to_bytes
+from yappa.utils import convert_size_to_bytes, get_yc_entrypoint
 
 
 def load_credentials(**credentials):
@@ -105,7 +106,7 @@ class YC:
         return False
 
     def create_function_version(self, function_id, runtime, description,
-                                entrypoint, bucket_name, object_name,
+                                bucket_name, object_name,application_type="wsgi",
                                 memory="128MB", service_account_id=None,
                                 timeout=None, named_service_accounts=None,
                                 environment=None, **kwargs):
@@ -114,7 +115,7 @@ class YC:
                 function_id=function_id,
                 runtime=runtime,
                 description=description,
-                entrypoint=entrypoint,
+                entrypoint=get_yc_entrypoint(application_type),
                 resources=Resources(memory=convert_size_to_bytes(memory)),
                 execution_timeout=Duration(seconds=timeout),
                 service_account_id=service_account_id,
@@ -129,3 +130,10 @@ class YC:
             meta_type=CreateFunctionVersionMetadata,
         )
         return operation_result.response
+    def get_latest_version(self, function_id):
+        version = self.function_service.GetVersionByTag(
+            GetFunctionVersionByTagRequest(
+                function_id=function_id,
+                tag="$latest",
+            ))
+        return version

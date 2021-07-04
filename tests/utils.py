@@ -1,6 +1,6 @@
 import pytest
 
-from yappa.utils import convert_size_to_bytes
+from yappa.utils import convert_size_to_bytes, get_yc_entrypoint
 
 
 @pytest.mark.parametrize("input_str, expected_bytes, is_ok", [
@@ -18,3 +18,16 @@ def test_size_conversion(input_str, expected_bytes, is_ok):
     else:
         with pytest.raises(ValueError):
             convert_size_to_bytes(input_str)
+
+
+@pytest.mark.parametrize("application_type,expected_entrypoint,is_ok", [
+    ("wsgi", "handle_wsgi.handle", True),
+    ("asgi", "handle_asgi.handle", False),
+])
+def test_getting_entrypoint(application_type, expected_entrypoint, is_ok):
+    if is_ok:
+        entrypoint = get_yc_entrypoint(application_type)
+        assert entrypoint == expected_entrypoint
+    else:
+        with pytest.raises(ValueError):
+            get_yc_entrypoint(application_type)

@@ -2,17 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from yappa.settings import DEFAULT_CONFIG_FILENAME
-
-
-def load_config(file=DEFAULT_CONFIG_FILENAME):
-    """
-    TODO is type checking necessary?
-    """
-    if isinstance(file, str) or isinstance(file, Path):
-        with open(file, "r") as f:
-            return yaml.load(f.read())
-    return yaml.load(file.read())
+from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_config
 
 
 def save_config(config, filename):
@@ -47,3 +37,17 @@ def convert_size_to_bytes(size_str):
             return size
     raise ValueError("Oops. Couldn't parse memory limit. "
                      "It should be in format 128MB, 2GB")
+
+
+HANDLERS = {
+    "wsgi": "handle_wsgi.handle",
+}
+
+
+def get_yc_entrypoint(application_type):
+    entrypoint = HANDLERS.get(application_type)
+    if not entrypoint:
+        raise ValueError(
+            f"Sorry, supported app types are: {','.join(HANDLERS.keys())}."
+        )
+    return entrypoint

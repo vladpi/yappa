@@ -1,55 +1,9 @@
 import os
-from pathlib import Path
-from shutil import copy2
 
-import pytest
+import httpx
 
-from yappa.s3 import delete_bucket, ensure_bucket, prepare_package, \
-    upload_to_bucket
-from yappa.utils import create_default_config, load_config, save_config
-
-APP_FILES = (
-    Path(Path(__file__).resolve().parent, "test_apps", "flask_app.py"),
-    Path(Path(__file__).resolve().parent, "test_apps",
-         "flask_requirements.txt"),
-)
-CONFIG_FILENAME = "yappa.yaml"
-
-
-@pytest.fixture(scope="session")
-def app_dir(tmpdir_factory):
-    package_dir = tmpdir_factory.mktemp('package')
-    os.chdir(package_dir)
-    return package_dir
-
-
-@pytest.fixture(scope="session")
-def config(app_dir):
-    config = create_default_config()
-    config.update(
-        profile="default",
-        requirements_file="flask_requirements.txt",
-        entrypoint="flask_app.app",
-        bucket="test-bucket-231",
-    )
-    save_config(config, CONFIG_FILENAME)
-    return config
-
-
-@pytest.fixture(scope="session")
-def app(tmpdir_factory, app_dir):
-    for file in APP_FILES:
-        copy2(file, ".")
-
-
-@pytest.fixture(scope="session")
-def uploaded_package(app, config, app_dir):
-    package_dir = prepare_package(config["requirements_file"],
-                                  config["excluded_paths"])
-    object_key = upload_to_bucket(package_dir, config["bucket"],
-                                  config["profile"])
-    yield object_key
-    delete_bucket(config["bucket"], config["profile"])
+from yappa.s3 import ensure_bucket
+from yappa.utils import convert_size_to_bytes, get_yc_entrypoint
 
 
 def test_uploaded_package(uploaded_package, config):
@@ -62,26 +16,6 @@ def test_uploaded_package(uploaded_package, config):
     bucket = ensure_bucket(config["bucket"], config["profile"])
     keys = [o.key for o in bucket.objects.all()]
     assert uploaded_package in keys, keys
-
-
-@pytest.fixture(scope="session")
-def function_name():
-    return "test-function-session"
-
-
-@pytest.fixture(scope="session")
-def function(function_name, yc):
-    function = yc.create_function(function_name)
-    yield function
-    yc.delete_function(function.id)
-
-
-@pytest.fixture(scope="session")
-def function_version(yc, function, uploaded_package, config):
-    pass
-    # yc.create_function_version(
-    #
-    # )
 
 
 def test_function_list(yc):
@@ -105,6 +39,22 @@ def test_function_access(yc, function):
     yc.set_access(function.id, is_public=True)
 
 
-def test_function_version_creation(yc, function_version):
-    config = load_config()
-    assert True
+def test_function_version_creation(yc, function, function_version, config):
+    version = yc.get_latest_version(function.id)
+    assert version.entrypoint == get_yc_entrypoint(config["application_type"])
+    assert version.resources.memory == convert_size_to_bytes(
+        config["memory_limit"])
+    assert version.execution_timeout.seconds == float(config["timeout"])
+    if config["service_account_id"]:
+        assert version.service_account_id == config["service_account_id"]
+    else:
+        assert not version.service_account_id
+    assert version.environment == config["environment"]
+    assert version.named_service_accounts == config["named_service_accounts"]
+
+
+def test_function_call(function, function_version):
+    url = function.http_invoke_url
+    response = httpx.get(url)
+    assert response.status_code == 200
+    assert response.text == "root url"

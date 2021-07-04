@@ -5,8 +5,7 @@ from urllib.parse import urljoin
 
 import pytest
 
-from yappa.handle_wsgi import call_app, load_app, patch_response
-from yappa.utils import load_config
+from yappa.handle_wsgi import call_app, load_app, load_config, patch_response
 
 
 @pytest.fixture()
@@ -48,9 +47,8 @@ def app(request):
     return load_app(*request.param)
 
 
-def test_load_from_config():
+def test_load_from_config(config):
     sys.path.append(str(Path(Path(__file__).resolve().parent, "test_apps")))
-    config = load_config("yappa.yaml")
     app = load_app(config.get("entrypoint"),
                    config.get("django_settings_module"))
     assert callable(app)

@@ -3,8 +3,8 @@ import click
 from yappa.config_generation import generate_config_file, \
     generate_gw_config_file
 from yappa.s3 import cleanup, delete_bucket, prepare_package, upload_to_bucket
-from yappa.settings import DEFAULT_CONFIG_FILENAME, DEFAULT_GW_CONFIG_FILENAME
-from yappa.utils import load_config
+from yappa.settings import DEFAULT_GW_CONFIG_FILENAME
+from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_config
 from yappa.yc_function import create_function, delete_function, get_function_id, \
     set_access, \
     show_logs, \
