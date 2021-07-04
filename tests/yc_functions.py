@@ -18,7 +18,7 @@ def test_uploaded_package(uploaded_package, config):
     assert uploaded_package in keys, keys
 
 
-def test_function_list(yc):
+def test_get_function(yc):
     functions = yc.get_functions()
     assert isinstance(functions, dict)
 
@@ -34,9 +34,9 @@ def test_function_creation(yc, function_name):
 
 def test_function_access(yc, function):
     assert yc.is_function_public(function.id) == True
-    yc.set_access(function.id, is_public=False)
+    yc.set_function_access(function.id, is_public=False)
     assert yc.is_function_public(function.id) == False
-    yc.set_access(function.id, is_public=True)
+    yc.set_function_access(function.id, is_public=True)
 
 
 def test_function_version_creation(yc, function, function_version, config):

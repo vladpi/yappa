@@ -57,7 +57,7 @@ class YC:
             meta_type=CreateFunctionMetadata,
         )
         function = operation_result.response
-        self.set_access(function.id, is_public)
+        self.set_function_access(function.id, is_public)
         return function
 
     def delete_function(self, function_id):
@@ -71,7 +71,7 @@ class YC:
         )
         return operation_result.response
 
-    def set_access(self, function_id, is_public=True):
+    def set_function_access(self, function_id, is_public=True):
         if is_public:
             access_bindings = [AccessBinding(
                 role_id='serverless.functions.invoker',
@@ -106,7 +106,8 @@ class YC:
         return False
 
     def create_function_version(self, function_id, runtime, description,
-                                bucket_name, object_name,application_type="wsgi",
+                                bucket_name, object_name,
+                                application_type="wsgi",
                                 memory="128MB", service_account_id=None,
                                 timeout=None, named_service_accounts=None,
                                 environment=None, **kwargs):
@@ -130,6 +131,7 @@ class YC:
             meta_type=CreateFunctionVersionMetadata,
         )
         return operation_result.response
+
     def get_latest_version(self, function_id):
         version = self.function_service.GetVersionByTag(
             GetFunctionVersionByTagRequest(
@@ -137,3 +139,16 @@ class YC:
                 tag="$latest",
             ))
         return version
+
+    def get_gateways(self):
+        pass
+
+    def create_gateway(self, name, description, openapi_spec):
+        pass
+
+    def update_gateway(self):
+        pass
+
+    def delete_gateway(self):
+        pass
+

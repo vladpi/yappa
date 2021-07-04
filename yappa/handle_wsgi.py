@@ -86,6 +86,7 @@ def handle(event, context):
     response = call_app(app, event)
     if not config["debug"]:
         return patch_response(response)
+    # TODO add test if debug is true
     return {
         'statusCode': 200,
         'body': {
