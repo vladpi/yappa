@@ -1,6 +1,10 @@
+from pathlib import Path
+
 import pytest
 
-from yappa.utils import convert_size_to_bytes, get_yc_entrypoint
+from yappa.handle_wsgi import load_config
+from yappa.utils import convert_size_to_bytes, get_yc_entrypoint, \
+    inject_function_id
 
 
 @pytest.mark.parametrize("input_str, expected_bytes, is_ok", [
@@ -31,3 +35,22 @@ def test_getting_entrypoint(application_type, expected_entrypoint, is_ok):
     else:
         with pytest.raises(ValueError):
             get_yc_entrypoint(application_type)
+
+
+BASE_GW_DIR = Path(Path(__file__).resolve().parent, "gateway_configs")
+SRC_GW_DIR = Path(BASE_GW_DIR, "src")
+OUTPUT_GW_DIR = Path(BASE_GW_DIR, "output")
+
+
+@pytest.mark.parametrize("input,expected_output", [
+    (Path(SRC_GW_DIR, "yappa-gw-base.yaml"),
+     Path(OUTPUT_GW_DIR, "yappa-gw-base.yaml")),
+    (Path(SRC_GW_DIR, "yappa-gw-pwa.yaml"),
+     Path(OUTPUT_GW_DIR, "yappa-gw-pwa.yaml")),
+])
+def test_gw_injection(input, expected_output):
+    default_config = load_config(input)
+    injected = inject_function_id(default_config, "test_function_id",
+                                  "yappa_gateway")
+    expected_config = load_config(expected_output)
+    assert injected == expected_config

@@ -1,0 +1,17 @@
+openapi: 3.0.0
+info:
+  title: yappa_gateway
+  version: 0.1
+paths:
+  /{url+}:
+    get:
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: test_function_id
+        tag: $latest
+      parameters:
+        - explode: false
+          in: path
+          name: url
+          required: false
+          style: simple

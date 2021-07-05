@@ -1,4 +1,5 @@
 import os
+from collections import Iterable
 
 import httpx
 
@@ -20,16 +21,16 @@ def test_uploaded_package(uploaded_package, config):
 
 def test_get_function(yc):
     functions = yc.get_functions()
-    assert isinstance(functions, dict)
+    assert isinstance(functions, Iterable)
 
 
 def test_function_creation(yc, function_name):
-    assert function_name not in yc.get_functions()
+    assert function_name not in [f.name for f in yc.get_functions()]
     function = yc.create_function(function_name)
     assert function.name == function_name
-    assert function_name in yc.get_functions()
+    assert function in yc.get_functions()
     yc.delete_function(function.id)
-    assert function_name not in yc.get_functions()
+    assert function not in yc.get_functions()
 
 
 def test_function_access(yc, function):

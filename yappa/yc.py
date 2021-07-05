@@ -1,4 +1,5 @@
 import os
+from typing import Iterable
 
 import yandexcloud
 from google.protobuf.duration_pb2 import Duration
@@ -6,6 +7,7 @@ from google.protobuf.empty_pb2 import Empty
 from yandex.cloud.access.access_pb2 import AccessBinding, \
     ListAccessBindingsRequest, \
     SetAccessBindingsMetadata, SetAccessBindingsRequest, Subject
+from yandex.cloud.serverless.apigateway.v1.apigateway_pb2 import ApiGateway
 from yandex.cloud.serverless.functions.v1.function_pb2 import (Function,
                                                                Package,
                                                                Resources,
@@ -38,14 +40,27 @@ class YC:
         self.folder_id = folder_id
         self.cloud_id = cloud_id
         # TODO do i need cloud id?
+        self.function = None
+        self.gateway = None
 
-    def get_functions(self, filter_=None):
+    def get_function(self, name=None) -> Function:
+        """
+        convenience method to get deployed function
+        """
+        if not self.function:
+            for f in self.get_functions():
+                if f.name == name:
+                    self.function = f
+                    return f
+        raise ValueError(f"Oops. Didn't find any function by name {name}")
+
+    def get_functions(self, filter_=None) -> Iterable[Function]:
         functions = self.function_service.List(
             ListFunctionsRequest(folder_id=self.folder_id,
                                  filter=filter_)).functions
-        return {f.name: dict(id=f.id, url=f.http_invoke_url) for f in functions}
+        return functions
 
-    def create_function(self, name, description="", is_public=True):
+    def create_function(self, name, description="", is_public=True) -> Function:
         operation = self.function_service.Create(CreateFunctionRequest(
             folder_id=self.folder_id,
             name=name,
@@ -58,6 +73,7 @@ class YC:
         )
         function = operation_result.response
         self.set_function_access(function.id, is_public)
+        self.function = function
         return function
 
     def delete_function(self, function_id):
@@ -94,7 +110,7 @@ class YC:
         )
         return is_public
 
-    def is_function_public(self, function_id):
+    def is_function_public(self, function_id) -> bool:
         access_bindings = self.function_service.ListAccessBindings(
             ListAccessBindingsRequest(
                 resource_id=function_id
@@ -110,7 +126,7 @@ class YC:
                                 application_type="wsgi",
                                 memory="128MB", service_account_id=None,
                                 timeout=None, named_service_accounts=None,
-                                environment=None, **kwargs):
+                                environment=None, **kwargs) -> Version:
         operation = self.function_service.CreateVersion(
             CreateFunctionVersionRequest(
                 function_id=function_id,
@@ -132,7 +148,7 @@ class YC:
         )
         return operation_result.response
 
-    def get_latest_version(self, function_id):
+    def get_latest_version(self, function_id) -> Version:
         version = self.function_service.GetVersionByTag(
             GetFunctionVersionByTagRequest(
                 function_id=function_id,
@@ -140,14 +156,27 @@ class YC:
             ))
         return version
 
-    def get_gateways(self):
+    def get_gateway(self, name=None) -> ApiGateway:
+        """
+         convenience method to get deployed gateway
+         """
+        if not self.gateway:
+            for gw in self.get_gateways():
+                if gw.name == name:
+                    self.gateway = gw
+                    return gw
+        raise ValueError(f"Oops. Didn't find any gateway by name {name}")
+
+    def get_gateways(self) -> Iterable[ApiGateway]:
         pass
 
-    def create_gateway(self, name, description, openapi_spec):
+    def create_gateway(self, name, openapi_spec, description="") -> ApiGateway:
+        gateway = None  # TODO implement
+        self.gateway = gateway
+
+    def update_gateway(self, gateway_id, description,
+                       openapi_spec) -> ApiGateway:
         pass
 
-    def update_gateway(self):
-        pass
-
-    def delete_gateway(self):
+    def delete_gateway(self, gateway_id):
         pass

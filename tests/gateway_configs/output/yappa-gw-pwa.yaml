@@ -1,0 +1,52 @@
+
+openapi: 3.0.0
+info:
+  title: yappa_gateway
+  version: 0.1
+paths:
+  /:
+    get:
+      summary: Serve index.html
+      parameters:
+        - name: file
+          in: path
+          required: true
+          schema:
+            type: string
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: my-example-bucket
+        object: index.html
+        error_object: error.html
+        presigned_redirect: true
+        service_account_id: ajehfe41hhliq4n93q1g
+
+  /static/{file}:
+    get:
+      summary: Serve static file from Yandex Cloud Object Storage
+      parameters:
+        - name: file
+          in: path
+          required: true
+          schema:
+            type: string
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: my-example-bucket
+        object: '{file}'
+        error_object: error.html
+        presigned_redirect: true
+        service_account_id: ajehfe41hhliq4n93q1g
+
+  /api/{url+}:
+    get:
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: test_function_id
+        tag: $latest
+      parameters:
+        - explode: false
+          in: path
+          name: url
+          required: false
+          style: simple

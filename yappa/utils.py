@@ -3,9 +3,10 @@ from pathlib import Path
 import yaml
 
 from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_config
+from yappa.settings import DEFAULT_GW_CONFIG_FILENAME
 
 
-def save_config(config, filename):
+def save_yaml(config, filename):
     with open(filename, "w+") as f:
         f.write(yaml.dump(config))
     return filename
@@ -14,8 +15,30 @@ def save_config(config, filename):
 def create_default_config(filename=DEFAULT_CONFIG_FILENAME):
     default_config = load_config(Path(Path(__file__).resolve().parent,
                                       "yappa.yaml"))
-    save_config(default_config, filename)
+    save_yaml(default_config, filename)
     return default_config
+
+
+def create_default_gw_config(filename=DEFAULT_GW_CONFIG_FILENAME):
+    default_config = load_config(Path(Path(__file__).resolve().parent,
+                                      "yappa-gw.yaml"))
+    save_yaml(default_config, filename)
+    return default_config
+
+
+def inject_function_id(gw_config, function_id, title="yappa gateway"):
+    """
+    accepts gw config as dict, finds where to put function_id, returns new dict
+    """
+    gw_config["info"].update(title=title)
+    for path, methods in gw_config["paths"].items():
+        for method, description in methods.items():
+            yc_integration = description.get("x-yc-apigateway-integration")
+            if yc_integration \
+                    and yc_integration["type"] == "cloud_functions" \
+                    and not yc_integration["function_id"]:
+                yc_integration.update(function_id=function_id)
+    return gw_config
 
 
 MIN_MEMORY, MAX_MEMORY = 134217728, 2147483648

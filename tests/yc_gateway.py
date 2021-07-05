@@ -1,12 +1,10 @@
+from collections import Iterable
+
 import httpx
 import pytest
+import yaml
 
-
-@pytest.mark.skip(reason="not yet implemented")
-def test_gw_config_update(function, config):
-    """
-    test if correct yaml is produced
-    """
+from yappa.utils import create_default_gw_config, inject_function_id
 
 
 @pytest.fixture(scope="session")
@@ -15,23 +13,26 @@ def gateway_name():
 
 
 @pytest.fixture(scope="session")
-def gateway_yaml(config):
+def gateway_yaml(config, function, gateway_name):
     """
     reads default gw config and adds function_id
     """
-    pass
+    default_gw_config = create_default_gw_config()
+    gw_config = inject_function_id(default_gw_config, function.id, gateway_name)
+    return yaml.dump(gw_config)
 
 
 @pytest.fixture(scope="session")
-def gateway(gateway_yaml, yc):
-    gw = yc.create_gateway()
+def gateway(gateway_yaml, yc, gateway_name):
+    gw = yc.create_gateway(gateway_name, gateway_yaml)
     yield gw
+    yc.delete_gateway(gw.id)
 
 
 @pytest.mark.skip(reason="not yet implemented")
 def test_get_gateways(yc):
     gws = yc.get_gateways()
-    assert isinstance(gws, dict)
+    assert isinstance(gws, Iterable)
 
 
 @pytest.mark.skip(reason="not yet implemented")
@@ -40,8 +41,12 @@ def test_gateway_creation(gateway, gateway_name, yc):
 
 
 @pytest.mark.skip(reason="not yet implemented")
-def test_gateway_update():
-    pass
+def test_gateway_update(gateway, yc):
+    """
+    1) change description and version
+    2) change to dummy
+    3) revert back
+    """
 
 
 @pytest.mark.skip(reason="not yet implemented")

@@ -7,7 +7,7 @@ import pytest
 from yappa.s3 import delete_bucket, prepare_package, \
     upload_to_bucket
 from yappa.utils import create_default_config, \
-    save_config
+    save_yaml
 from yappa.yc import YC, load_credentials
 
 
@@ -42,7 +42,7 @@ def config(app_dir):
         entrypoint="flask_app.app",
         bucket="test-bucket-231",
     )
-    save_config(config, CONFIG_FILENAME)
+    save_yaml(config, CONFIG_FILENAME)
     return config
 
 
