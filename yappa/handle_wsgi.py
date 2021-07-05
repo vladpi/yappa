@@ -11,14 +11,20 @@ DEFAULT_CONFIG_FILENAME = "yappa.yaml"
 
 # TODO after yappa in pip - maybe move load_config to utils and DEFAULT_CONFIG_FILENAME to settings
 
-def load_config(file=DEFAULT_CONFIG_FILENAME):
+def load_config(file=DEFAULT_CONFIG_FILENAME, safe = False):
     """
     TODO is type checking necessary?
     """
-    if isinstance(file, str) or isinstance(file, Path):
-        with open(file, "r") as f:
-            return yaml.load(f.read())
-    return yaml.load(file.read())
+    try:
+        if isinstance(file, str) or isinstance(file, Path):
+            with open(file, "r") as f:
+                return yaml.load(f.read(), yaml.CLoader)
+        return yaml.load(file.read(), yaml.CLoader)
+    except FileNotFoundError:
+        if safe:
+            return None
+        else:
+            raise
 
 
 def load_app(import_path=None, django_settings_module=None):

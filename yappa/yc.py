@@ -1,5 +1,6 @@
 import os
 from typing import Iterable
+from unittest.mock import Mock
 
 import yandexcloud
 from google.protobuf.duration_pb2 import Duration
@@ -180,3 +181,4 @@ class YC:
 
     def delete_gateway(self, gateway_id):
         pass
+

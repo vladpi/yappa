@@ -1,4 +1,5 @@
 from pathlib import Path
+from uuid import uuid4
 
 import yaml
 
@@ -74,3 +75,88 @@ def get_yc_entrypoint(application_type):
             f"Sorry, supported app types are: {','.join(HANDLERS.keys())}."
         )
     return entrypoint
+
+
+def is_valid_bucket_name(
+        name):  # TODO change return False to raise ValidationError
+    """
+    Checks if an S3 bucket name is valid according to
+    https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html#bucketnamingrules
+    """
+    # Bucket names must be at least 3 and no more than 63 characters long.
+    if len(name) < 3 or len(name) > 63:
+        return False
+    # Bucket names must not contain uppercase characters or underscores.
+    if any(x.isupper() for x in name):
+        return False
+    if "_" in name:
+        return False
+    # Bucket names must start with a lowercase letter or number.
+    if not (name[0].islower() or name[0].isdigit()):
+        return False
+    # Bucket names must be a series of one or more labels.
+    # Adjacent labels are separated by a single period (.).
+    for label in name.split("."):
+        # Each label must start and end with a lowercase letter or a number.
+        if len(label) < 1:
+            return False
+        if not (label[0].islower() or label[0].isdigit()):
+            return False
+        if not (label[-1].islower() or label[-1].isdigit()):
+            return False
+    # Bucket names must not be formatted as an IP address
+    # (for example, 192.168.5.4).
+    looks_like_IP = True
+    for label in name.split("."):
+        if not label.isdigit():
+            looks_like_IP = False
+            break
+    if looks_like_IP:
+        return False
+
+    return True
+
+
+def is_valid_entrypoint():
+    """
+    try to import entrypoint. if is callable, then ok
+    """
+
+
+def is_valid_django_settings_module():
+    """
+    try to setup django app
+    """
+
+
+def is_valid_requirements_file():
+    """
+    try to open requirements. if it matches to re
+    """
+
+
+CONFIG = (
+    ("project_name", "Yappa Project", [], "#TODO question"),
+    ("description", "[empty]", [], "#TODO question"),
+    ("entrypoint", "wsgi.app", [is_valid_entrypoint], "#TODO question"),
+    ("django_settings_module", None, [is_valid_django_settings_module],
+     "#TODO question"),
+    ("bucket", "yappa-" + str(uuid4())[:8], [], "#TODO question"),
+    ("requirements_file", "requirements.txt", [is_valid_requirements_file],
+     "#TODO question")
+)
+
+
+def get_s3_profile():
+    raise NotImplementedError
+
+
+def get_missing_details(config):
+    """
+    if value is missing in config
+
+    for values given in CONFIG ask for inputs, validate them
+    find s3 profile
+    """
+    config["profile"] = get_s3_profile()
+    return config

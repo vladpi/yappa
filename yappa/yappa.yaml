@@ -2,11 +2,11 @@ project_name: null
 description: null
 runtime: python38
 profile: null
-requirements_file: requirements.txt
+requirements_file: requirements.txt #TODO set null, fix tests
 bucket: null
 entrypoint: null
-application_type: wsgi # wsgi or asgi in the future
 django_settings_module: null
+application_type: wsgi # wsgi or asgi in the future
 gw_config: yappa_gw.yaml
 service_account_id: null
 memory_limit: 128MB
@@ -16,8 +16,6 @@ excluded_paths:
   - .git
   - .idea
   - requirements.txt
-environment:
-  ENV_KEY1: ENV_VALUE2
-  ENV_KEY2: ENV_VALUE2
+environment: {}
 named_service_accounts: {}
 debug: False

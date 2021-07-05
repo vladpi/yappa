@@ -1,7 +1,5 @@
 import os
-import os
 import sys
-from importlib import import_module
 from uuid import uuid4
 
 import click
@@ -61,8 +59,8 @@ def is_valid_bucket_name(name):
 def get_project_name():
     default_name = slugify.slugify(os.getcwd().split(os.sep)[-1])[:20]
     profile_name = (
-        input(f"Enter your project name (default '{default_name}'): ")
-        or default_name
+            input(f"Enter your project name (default '{default_name}'): ")
+            or default_name
     )
 
     return profile_name
@@ -83,12 +81,11 @@ def get_python_version():
 
 
 def get_requirements_filename():
-
     default_filename = 'requirements.txt'
 
     return (
-        input(f'Enter your requirements file (default {default_filename})')
-        or default_filename
+            input(f'Enter your requirements file (default {default_filename})')
+            or default_filename
     )
 
 
@@ -102,11 +99,11 @@ def get_bucket_name():
     default_bucket = "yappa-" + str(uuid4())[:8]
     while True:
         bucket = (
-            input(
-                f"What do you want to call your bucket? "
-                f"(default '{default_bucket}'): "
-            )
-            or default_bucket
+                input(
+                    f"What do you want to call your bucket? "
+                    f"(default '{default_bucket}'): "
+                )
+                or default_bucket
         )
 
         if is_valid_bucket_name(bucket):
@@ -154,15 +151,15 @@ def get_aws_profile_name():
 
         while True:
             profile_name = (
-                input(
-                    "We found the following profiles: {}, and {}. "
-                    "Which would you like us to use? (default '{}'): ".format(
-                        ', '.join(profile_names[:-1]),
-                        profile_names[-1],
-                        default_profile,
+                    input(
+                        "We found the following profiles: {}, and {}. "
+                        "Which would you like us to use? (default '{}'): ".format(
+                            ', '.join(profile_names[:-1]),
+                            profile_names[-1],
+                            default_profile,
+                        )
                     )
-                )
-                or default_profile
+                    or default_profile
             )
             if profile_name in profiles:
                 profile = profiles[profile_name]
