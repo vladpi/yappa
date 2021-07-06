@@ -5,8 +5,10 @@ import click
 import yaml
 
 from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_config
-from yappa.utils import create_default_config, create_default_gw_config, \
-    get_missing_details, inject_function_id, save_yaml
+from yappa.utils import (
+    create_default_config, create_default_gw_config,
+    get_missing_details, inject_function_id, save_yaml,
+    )
 from yappa.yc import load_credentials
 
 logger = logging.getLogger(__name__)
@@ -26,8 +28,26 @@ def cli(ctx):
     ctx.obj["yc"] = YC(**load_credentials())
 
 
+@cli.command()
+@click.argument("token", default="")
+def setup(token):
+    """
+    setup for cloud access:
+      - cloud_id
+      - folder_id
+      - service_account for s3
+    """
+    if not token:
+        pass  # TODO ask for token, prompt url for getting it
+    # https://cloud.yandex.ru/docs/iam/api-ref/grpc/
+    # ask for cloud
+    # ask for folder
+    # look for service account "yappa", if not - create it
+    # write credentials to .yappa
+
+
 @cli.command(
-    short_help='generate of config files, create function & api-gateway')
+        short_help='generate of config files, create function & api-gateway')
 @click.pass_context
 @click.argument('config_filename', type=click.Path(),
                 default=DEFAULT_CONFIG_FILENAME)
