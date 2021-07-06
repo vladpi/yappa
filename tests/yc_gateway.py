@@ -38,6 +38,7 @@ def test_get_gateways(yc):
 @pytest.mark.skip(reason="not yet implemented")
 def test_gateway_creation(gateway, gateway_name, yc):
     assert gateway_name in yc.get_gateways()
+    # TODO test gateway delete
 
 
 @pytest.mark.skip(reason="not yet implemented")

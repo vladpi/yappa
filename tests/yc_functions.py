@@ -31,6 +31,7 @@ def test_function_creation(yc, function_name):
     assert function in yc.get_functions()
     yc.delete_function(function.id)
     assert function not in yc.get_functions()
+    # TODO refactor сделать тесты как у гейтвея.
 
 
 def test_function_access(yc, function):
@@ -44,7 +45,7 @@ def test_function_version_creation(yc, function, function_version, config):
     version = yc.get_latest_version(function.id)
     assert version.entrypoint == get_yc_entrypoint(config["application_type"])
     assert version.resources.memory == convert_size_to_bytes(
-        config["memory_limit"])
+            config["memory_limit"])
     assert version.execution_timeout.seconds == float(config["timeout"])
     if config["service_account_id"]:
         assert version.service_account_id == config["service_account_id"]
