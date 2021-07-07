@@ -43,6 +43,8 @@ BASE_URL = "http://base-url.com"
         (None, "django_app"),
         ])
 def app(request):
+    # TODO сделать зависоимой от config, а config - параметризованная фикстура
+    # чтобы тесты handler, s3, yc_functions вызывались для каждого приложения
     sys.path.append(str(Path(Path(__file__).resolve().parent, "test_apps")))
     return load_app(*request.param)
 

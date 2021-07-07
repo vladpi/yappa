@@ -4,14 +4,8 @@ from shutil import copy2
 
 import pytest
 
-from yappa.s3 import (
-    delete_bucket, prepare_package,
-    upload_to_bucket,
-    )
-from yappa.utils import (
-    create_default_config,
-    save_yaml,
-    )
+from yappa.s3 import delete_bucket, prepare_package, upload_to_bucket
+from yappa.utils import create_default_config, save_yaml
 from yappa.yc import YC, load_credentials
 
 
@@ -29,8 +23,6 @@ EMPTY_FILES = (
         Path("package", "utils.py"),
         Path("package", "subpackage", "subutils.py")
         )
-
-CONFIG_FILENAME = "yappa.yaml"
 
 IGNORED_FILES = (
         Path("requirements.txt"),
@@ -55,6 +47,9 @@ def app_dir(tmpdir_factory):
     for file in COPIED_FILES:
         copy2(file, ".")
     return dir_
+
+
+CONFIG_FILENAME = "yappa.yaml"
 
 
 @pytest.fixture(scope="session")
