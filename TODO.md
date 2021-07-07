@@ -1,16 +1,37 @@
-- cli
-- тесты на cli целиком
+- cli setup
+
 - обработка ошибок если фунция уже есть
 - проверить на скорость сетапа приложения
 
-- добить тесты
-    - а что с multi value params
 
 - документация
   - пример простого деплоя
   - по шагам деплой с нуля
   - статья на хабре
   - чатик в телеге
+
+- необязательно?
+  - тесты на cli целиком
+  - добить тесты
+    - а что с multi value params?
+  
+#TODO nikita
+- yc
+  - get_gateways
+  - create_gateways
+  - update_gateway
+  - delete_gateway
+- cli
+  - undeploy
+  - status
+- config_generation
+  - is_valid_bucket_name (only tests)
+  - is empty (only tests)
+  - get slug (only tests)
+  - get_bucket_name (only tests)
+  - is_valid_entrypoint
+  - is_valid_django_settings_module
+  - is_valid_requirements_file
 
 # РЕЛИЗ
 

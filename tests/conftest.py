@@ -5,7 +5,7 @@ from shutil import copy2
 import pytest
 
 from yappa.s3 import delete_bucket, prepare_package, upload_to_bucket
-from yappa.utils import create_default_config, save_yaml
+from yappa.config_generation import create_default_config, save_yaml
 from yappa.yc import YC, load_credentials
 
 

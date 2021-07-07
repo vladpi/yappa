@@ -1,14 +1,14 @@
 project_name: null
+project_slug: null
 description: null
-runtime: python38
-profile: null
-requirements_file: requirements.txt #TODO set null, fix tests
+#profile: null
+requirements_file: null
 bucket: null
 entrypoint: null
 django_settings_module: null
-application_type: wsgi # wsgi or asgi in the future
 gw_config: yappa_gw.yaml
-service_account_id: null
+application_type: wsgi # wsgi or asgi in the future
+runtime: python38
 memory_limit: 128MB
 timeout: 1
 excluded_paths:
@@ -18,4 +18,5 @@ excluded_paths:
   - requirements.txt
 environment: {}
 named_service_accounts: {}
+service_account_id: null
 debug: False

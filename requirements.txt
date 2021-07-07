@@ -64,3 +64,6 @@ Werkzeug==2.0.1
 wsgi-request-logger==0.4.6
 yandexcloud==0.92.0
 -e git+https://github.com/e-kor/yappa.git@7aaaf4c4fb8e17fde4ec3d51663c69cbb8856e42#egg=yappa
+
+boltons~=21.0.0
+setuptools~=57.0.0

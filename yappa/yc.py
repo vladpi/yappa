@@ -25,7 +25,8 @@ from yandex.cloud.serverless.functions.v1.function_service_pb2 import (
 from yandex.cloud.serverless.functions.v1.function_service_pb2_grpc import \
     FunctionServiceStub
 
-from yappa.utils import convert_size_to_bytes, get_yc_entrypoint
+from yappa.config_generation import get_yc_entrypoint
+from yappa.utils import convert_size_to_bytes
 
 
 def load_credentials(**credentials):

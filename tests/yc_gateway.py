@@ -4,7 +4,7 @@ import httpx
 import pytest
 import yaml
 
-from yappa.utils import create_default_gw_config, inject_function_id
+from yappa.config_generation import create_default_gw_config, inject_function_id
 
 
 @pytest.fixture(scope="session")

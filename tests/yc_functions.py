@@ -4,7 +4,8 @@ from collections import Iterable
 import httpx
 
 from yappa.s3 import ensure_bucket
-from yappa.utils import convert_size_to_bytes, get_yc_entrypoint
+from yappa.config_generation import get_yc_entrypoint
+from yappa.utils import convert_size_to_bytes
 
 
 def test_uploaded_package(uploaded_package, config):
