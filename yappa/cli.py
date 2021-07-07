@@ -46,12 +46,11 @@ def setup(token):
     """
     if not token:
         pass  # TODO ask for token, prompt url for getting it
-    # https://cloud.yandex.ru/docs/iam/api-ref/grpc/
-    # ask for cloud
-    # ask for folder
-    # look for service account "yappa", if not - create it
-    # write credentials to .yappa
-    # мб можно выцепить профайл для с3?
+    # ask for token
+    # ask for folder, save it to config
+    # create service account
+    # generate .yc with credentials
+    # save service_account_name to config
 
 
 @cli.command(short_help='generate config files, create function & api-gateway')

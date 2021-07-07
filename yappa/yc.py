@@ -33,14 +33,13 @@ from yappa.config_generation import get_yc_entrypoint
 from yappa.utils import convert_size_to_bytes
 
 
-def load_credentials(**credentials):
-    environ_credentials = {
-        "token": os.environ.get("YC_TOKEN"),
-        "cloud_id": os.environ.get("YC_CLOUD"),
-        "folder_id": os.environ.get("YC_FOLDER"),
+def load_credentials(token, key_path):
+    credentials = {
+        "token": os.environ.get("YC_OAUTH"),
+        "service_account_key": None,
     }
-    environ_credentials.update(**credentials)
-    return environ_credentials
+    #TODO open file and load json
+    return credentials
 
 
 class YC:
