@@ -148,6 +148,7 @@ CONFIG = (
 
 
 def get_s3_profile():
+    return
     raise NotImplementedError
 
 

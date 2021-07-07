@@ -102,7 +102,7 @@ def function_version(yc, function, uploaded_package, config):
             function.id,
             runtime=config["runtime"],
             description=config["description"],
-            entrypoint=config["entrypoint"],
+            application_type=config["application_type"],
             bucket_name=config["bucket"],
             object_name=uploaded_package,
             memory=config["memory_limit"],

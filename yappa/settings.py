@@ -1,4 +1,4 @@
-DEFAULT_GW_CONFIG_FILENAME = "yappa-gw.yaml"
+DEFAULT_GW_CONFIG_FILENAME = "yappa_gw.yaml"
 HANDLER_FILENAME = "handle_wsgi.py"
 DEFAULT_PACKAGE_DIR = "yappa_package"
 DEFAULT_PROFILE_NAME = "default"
