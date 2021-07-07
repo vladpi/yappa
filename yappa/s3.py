@@ -7,7 +7,6 @@ from pathlib import Path
 from shutil import copy2, copytree, ignore_patterns, make_archive
 
 import boto3
-from botocore.session import Session as BotocoreSession
 
 from yappa.settings import DEFAULT_IGNORED_FILES, DEFAULT_PACKAGE_DIR, \
     DEFAULT_REQUIREMENTS_FILE, \
@@ -43,21 +42,13 @@ def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
     return tmp_dir
 
 
-def get_s3_resource(profile_name):
-    session = BotocoreSession()
-    config = session.full_config
-    profile = config['profiles'][profile_name]
+def ensure_bucket(bucket_name, aws_access_key_id, aws_secret_access_key):
     s3 = boto3.resource(
         's3',
-        aws_access_key_id=profile['aws_access_key_id'],
-        aws_secret_access_key=profile['aws_secret_access_key'],
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key,
         endpoint_url=YANDEX_S3_URL,
     )
-    return s3
-
-
-def ensure_bucket(bucket_name, profile_name):
-    s3 = get_s3_resource(profile_name)
     bucket = s3.Bucket(bucket_name)
     try:
         bucket.create()
@@ -67,7 +58,8 @@ def ensure_bucket(bucket_name, profile_name):
     return bucket
 
 
-def upload_to_bucket(folder, bucket_name, profile_name, ):
+def upload_to_bucket(folder, bucket_name, aws_access_key_id,
+                     aws_secret_access_key):
     """
     makes archive, uploads to bucket, deletes tmp archive
     """
@@ -75,17 +67,19 @@ def upload_to_bucket(folder, bucket_name, profile_name, ):
     archive_path = make_archive(folder, 'zip', folder)
     archive_filename = os.path.basename(archive_path)
     try:
-        bucket = ensure_bucket(bucket_name, profile_name)
+        bucket = ensure_bucket(bucket_name, aws_access_key_id=aws_access_key_id,
+                               aws_secret_access_key=aws_secret_access_key, )
         bucket.upload_file(archive_filename, archive_filename)
     finally:
         os.remove(archive_filename)
     return archive_filename
 
 
-def delete_bucket(bucket_name, profile_name):
+def delete_bucket(bucket_name, aws_access_key_id, aws_secret_access_key):
     """
     deletes bucket from s3
     """
-    bucket = ensure_bucket(bucket_name, profile_name)
+    bucket = ensure_bucket(bucket_name, aws_access_key_id=aws_access_key_id,
+                           aws_secret_access_key=aws_secret_access_key, )
     bucket.objects.all().delete()
     bucket.delete()

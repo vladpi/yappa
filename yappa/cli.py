@@ -7,7 +7,7 @@ import yaml
 from yappa.config_generation import (
     create_default_config, create_default_gw_config,
     get_missing_details, inject_function_id, save_yaml,
-    )
+)
 from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_config
 from yappa.s3 import prepare_package, upload_to_bucket
 from yappa.yc import YC, load_credentials
@@ -78,7 +78,7 @@ def init(ctx, config_filename):
                "\tname: " + click.style(f"{function.name}") + "\n"
                                                               "\tid: " +
                click.style(
-                       f"{function.id}") + "\n"
+                   f"{function.id}") + "\n"
                + "\tinvoke url : " + click.style(f"{function.invoke_url}",
                                                  fg="yellow"))
 
@@ -96,7 +96,7 @@ def init(ctx, config_filename):
                "\tname: " + click.style(f"{gateway.name}") + "\n"
                                                              "\tid: " +
                click.style(
-                       f"{gateway.id}", ) + "\n"
+                   f"{gateway.id}", ) + "\n"
                + "\tdefault domain : " + click.style(f"{gateway.domain}",
                                                      fg="yellow"))
 
@@ -127,18 +127,18 @@ def deploy(ctx, file):
                + click.style(f"{function.name}", bold=True)
                + f" (id: {function.id})")
     yc.create_function_version(
-            function.id,
-            runtime=config["runtime"],
-            description=config["description"],
-            bucket_name=config["bucket"],
-            object_name=object_key,
-            application_type=config["application_type"],
-            memory=config["memory_limit"],
-            service_account_id=config["service_account_id"],
-            timeout=config["timeout"],
-            named_service_accounts=config["named_service_accounts"],
-            environment=config["environment"],
-            )
+        function.id,
+        runtime=config["runtime"],
+        description=config["description"],
+        bucket_name=config["bucket"],
+        object_name=object_key,
+        application_type=config["application_type"],
+        memory=config["memory_limit"],
+        service_account_id=config["service_account_id"],
+        timeout=config["timeout"],
+        named_service_accounts=config["named_service_accounts"],
+        environment=config["environment"],
+    )
     click.echo(f"Created function version. Invoke url: "
                + click.style(f"{function.invoke_url}", fg="yellow"))
     gateway = yc.get_gateway(config["project_slug"])

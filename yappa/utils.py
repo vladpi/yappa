@@ -1,10 +1,10 @@
 MIN_MEMORY, MAX_MEMORY = 134217728, 2147483648
 
 SIZE_SUFFIXES = {
-        'kb': 1024,
-        'mb': 1024 * 1024,
-        'gb': 1024 * 1024 * 1024,
-        }
+    'kb': 1024,
+    'mb': 1024 * 1024,
+    'gb': 1024 * 1024 * 1024,
+}
 
 
 def convert_size_to_bytes(size_str):

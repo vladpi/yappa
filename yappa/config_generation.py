@@ -46,16 +46,16 @@ def inject_function_id(gw_config, function_id, title="yappa gateway"):
 
 
 HANDLERS = {
-        "wsgi": "handle_wsgi.handle",
-        }
+    "wsgi": "handle_wsgi.handle",
+}
 
 
 def get_yc_entrypoint(application_type):
     entrypoint = HANDLERS.get(application_type)
     if not entrypoint:
         raise ValueError(
-                f"Sorry, supported app types are: {','.join(HANDLERS.keys())}."
-                )
+            f"Sorry, supported app types are: {','.join(HANDLERS.keys())}."
+        )
     return entrypoint
 
 
@@ -120,23 +120,23 @@ def get_slug(config):
 
 
 PROMPTS = (
-        ("project_name", "My project", [is_not_empty],
-         "What's your project name?"),
-        ("project_slug", get_slug, [],
-         "What's your project slug?"),
-        ("description", "", [],
-         "What's your project description?"),
-        ("entrypoint", "wsgi.app", [is_valid_entrypoint],
-         "Please specify entrypoint (skip if it is Django project)"),
-        ("django_settings_module", "", [is_valid_django_settings_module],
-         "Please specify Django settings module"),
-        ("bucket", get_bucket_name, [is_not_empty,
-                                     is_valid_bucket_name],
-         "Please specify bucket name"),
-        ("requirements_file", "requirements.txt", [is_not_empty,
-                                                   is_valid_requirements_file],
-         "Please specify requirements file")
-        )
+    ("project_name", "My project", [is_not_empty],
+     "What's your project name?"),
+    ("project_slug", get_slug, [],
+     "What's your project slug?"),
+    ("description", "", [],
+     "What's your project description?"),
+    ("entrypoint", "wsgi.app", [is_valid_entrypoint],
+     "Please specify entrypoint (skip if it is Django project)"),
+    ("django_settings_module", "", [is_valid_django_settings_module],
+     "Please specify Django settings module"),
+    ("bucket", get_bucket_name, [is_not_empty,
+                                 is_valid_bucket_name],
+     "Please specify bucket name"),
+    ("requirements_file", "requirements.txt", [is_not_empty,
+                                               is_valid_requirements_file],
+     "Please specify requirements file")
+)
 
 
 def get_s3_profile():

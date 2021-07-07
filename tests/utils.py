@@ -18,5 +18,3 @@ def test_size_conversion(input_str, expected_bytes, is_ok):
     else:
         with pytest.raises(ValueError):
             convert_size_to_bytes(input_str)
-
-

@@ -1,7 +1,6 @@
 project_name: null
 project_slug: null
 description: null
-#profile: null
 requirements_file: null
 bucket: null
 entrypoint: null
@@ -16,7 +15,7 @@ excluded_paths:
   - .git
   - .idea
   - requirements.txt
-environment: {}
-named_service_accounts: {}
+environment: { }
+named_service_accounts: { }
 service_account_id: null
 debug: False

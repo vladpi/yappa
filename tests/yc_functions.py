@@ -3,19 +3,19 @@ from collections import Iterable
 
 import httpx
 
-from yappa.s3 import ensure_bucket
 from yappa.config_generation import get_yc_entrypoint
+from yappa.s3 import ensure_bucket
 from yappa.utils import convert_size_to_bytes
 
 
-def test_uploaded_package(uploaded_package, config):
+def test_uploaded_package(uploaded_package, config, s3_credentials):
     """
     almost duplicated test from tests/s3.py just to make sure that flask
     app is uploaded
     # TODO refactor, заменить эту фикстуру на те что используеются в s3
     """
     assert "yappa.yaml" in os.listdir("yappa_package")
-    bucket = ensure_bucket(config["bucket"], config["profile"])
+    bucket = ensure_bucket(config["bucket"], **s3_credentials)
     keys = [o.key for o in bucket.objects.all()]
     assert uploaded_package in keys, keys
 
@@ -46,7 +46,7 @@ def test_function_version_creation(yc, function, function_version, config):
     version = yc.get_latest_version(function.id)
     assert version.entrypoint == get_yc_entrypoint(config["application_type"])
     assert version.resources.memory == convert_size_to_bytes(
-            config["memory_limit"])
+        config["memory_limit"])
     assert version.execution_timeout.seconds == float(config["timeout"])
     if config["service_account_id"]:
         assert version.service_account_id == config["service_account_id"]
