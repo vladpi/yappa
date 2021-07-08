@@ -2,30 +2,16 @@ from pathlib import Path
 from uuid import uuid4
 
 import click
-import yaml
 from boltons.strutils import slugify
 from click import ClickException
 
-from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_config
+from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
 from yappa.settings import DEFAULT_GW_CONFIG_FILENAME
 
 
-def save_yaml(config, filename):
-    with open(filename, "w+") as f:
-        f.write(yaml.dump(config, sort_keys=False))
-    return filename
-
-
-def create_default_config(filename=DEFAULT_CONFIG_FILENAME):
-    default_config = load_config(Path(Path(__file__).resolve().parent,
-                                      "yappa.yaml"))
-    save_yaml(default_config, filename)
-    return default_config
-
-
 def create_default_gw_config(filename=DEFAULT_GW_CONFIG_FILENAME):
-    default_config = load_config(Path(Path(__file__).resolve().parent,
-                                      DEFAULT_GW_CONFIG_FILENAME))
+    default_config = load_yaml(Path(Path(__file__).resolve().parent,
+                                    DEFAULT_GW_CONFIG_FILENAME))
     save_yaml(default_config, filename)
     return default_config
 
@@ -157,3 +143,10 @@ def get_missing_details(config):
         config[key] = value
     config["profile"] = get_s3_profile()
     return config
+
+
+def create_default_config(filename=DEFAULT_CONFIG_FILENAME):
+    default_config = load_yaml(Path(Path(__file__).resolve().parent,
+                                    "yappa.yaml"))
+    save_yaml(default_config, filename)
+    return default_config

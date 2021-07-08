@@ -6,11 +6,9 @@ import yaml
 
 from yappa.config_generation import (
     create_default_config, create_default_gw_config,
-    get_missing_details, inject_function_id, save_yaml,
-)
-from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_config
+    get_missing_details, inject_function_id, )
+from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
 from yappa.s3 import prepare_package, upload_to_bucket
-from yappa.yc import YC, load_credentials
 
 logger = logging.getLogger(__name__)
 
@@ -24,53 +22,48 @@ class NaturalOrderGroup(click.Group):
 
 
 @click.group(cls=NaturalOrderGroup)
-@click.pass_context
-def cli(ctx):
-    ctx.ensure_object(dict)
-    ctx.obj["yc"] = YC(**load_credentials())
+def cli():
+    pass
 
 
 @cli.command(short_help="setup YC access")
-@click.pass_context
-@click.argument("token", default="")
-def setup(token):
+@click.argument('config_filename', type=click.Path(),
+                default=DEFAULT_CONFIG_FILENAME)
+def setup():
     """
     setup of cloud access:
 
     \b
-      - cloud_id
-      - folder_id
-      - service_account for s3
+      - ask for OAuth token
+      - ask for cloud to work with
+      - ask for folder to work with
+      - create service account (editor)
+      - generate access key and save to .yc
+      - save folder_id and s3_account_name to yappa.yaml
 
-    *you can skip this step if provide credentials in env vars (see README)
+
+    *you can skip this step if YC_OAUTH and YC_FOLDER in env vars
+    (see README for authentication details)
     """
-    if not token:
-        pass  # TODO ask for token, prompt url for getting it
-    # ask for token
-    # ask for folder, save it to config
-    # create service account
-    # generate .yc with credentials
-    # save service_account_name to config
 
 
 @cli.command(short_help='generate config files, create function & api-gateway')
-@click.pass_context
 @click.argument('config_filename', type=click.Path(),
                 default=DEFAULT_CONFIG_FILENAME)
-def init(ctx, config_filename):
+def init(config_filename):
     """\b
     - generates yappa.yaml (skipped if file exists)
     - creates function
     - generates yappa-gw.yaml (skipped if file exists)
     - creates api-gateway
     """
-    config = (load_config(config_filename, safe=True)
+    config = (load_yaml(config_filename, safe=True)
               or create_default_config(config_filename))
     config = get_missing_details(config)
     save_yaml(config, config_filename)
     click.echo("saved Yappa config file at "
                + click.style(config_filename, bold=True))
-    yc = ctx.obj["yc"]
+    yc = YC.setup(config)
     click.echo("Creating function...")
     function = yc.create_function(config["project_slug"])
     click.echo("Created serverless function:\n"
@@ -82,7 +75,7 @@ def init(ctx, config_filename):
                                                  fg="yellow"))
 
     gw_config_filename = config["gw_config"]
-    gw_config = (load_config(gw_config_filename, safe=True)
+    gw_config = (load_yaml(gw_config_filename, safe=True)
                  or create_default_gw_config(gw_config_filename))
     gw_config = inject_function_id(gw_config, f"test_id", config[
         "project_slug"])  # TODO remove test id
@@ -101,18 +94,17 @@ def init(ctx, config_filename):
 
 
 @cli.command(short_help="creates new function version and updates api-gateway")
-@click.pass_context
 @click.option('--file', type=click.File('rb'), default=DEFAULT_CONFIG_FILENAME,
               help="yappa settings file")
-def deploy(ctx, file):
+def deploy(file):
     """\b
     - prepares package
     - uploads package to s3
     - creates new function version
     - updates api-gw
     """
-    config = load_config(file)
-    yc = ctx.obj["yc"]
+    config = load_yaml(file)
+    yc = YC.setup(config)
     click.echo("Preparing package...")
     package_dir = prepare_package(config["requirements_file"],
                                   config["excluded_paths"],
@@ -120,7 +112,7 @@ def deploy(ctx, file):
                                   )
     click.echo(f"Uploading to bucket {config['bucket']}...")
     object_key = upload_to_bucket(package_dir, config["bucket"],
-                                  config["profile"])
+                                  **yc.get_s3_key(config["s3_account_name"]))
     function = yc.get_function(config["project_slug"])
     click.echo(f"Creating new function version for "
                + click.style(f"{function.name}", bold=True)
@@ -145,7 +137,7 @@ def deploy(ctx, file):
                + click.style(f"{gateway.name}", bold=True)
                + f" (id: {gateway.id})")
     yc.update_gateway(gateway.id, config["description"],
-                      load_config(config["gw_config"]))
+                      load_yaml(config["gw_config"]))
     click.echo(f"Updated api-gateway. Default domain: "
                + click.style(f"{function.invoke_url}", fg="yellow"))
 
@@ -157,7 +149,7 @@ def status(file):
     """
     display status of function and api-gateway
     """
-    config = load_config(file)
+    config = load_yaml(file)
 
 
 @cli.command()
@@ -167,7 +159,7 @@ def undeploy(file):
     """
     deletes function, api-gateway and bucket
     """
-    config = load_config(file)
+    config = load_yaml(file)
 
 
 if __name__ == '__main__':

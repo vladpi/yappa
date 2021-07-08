@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from yappa.config_generation import get_yc_entrypoint, inject_function_id
-from yappa.handle_wsgi import load_config
+from yappa.handle_wsgi import load_yaml
 
 
 @pytest.mark.parametrize("application_type,expected_entrypoint,is_ok", [
@@ -31,8 +31,8 @@ OUTPUT_GW_DIR = Path(BASE_GW_DIR, "output")
      Path(OUTPUT_GW_DIR, "yappa-gw-pwa.yaml")),
 ])
 def test_gw_injection(input, expected_output):
-    default_config = load_config(input)
+    default_config = load_yaml(input)
     injected = inject_function_id(default_config, "test_function_id",
                                   "yappa_gateway")
-    expected_config = load_config(expected_output)
+    expected_config = load_yaml(expected_output)
     assert injected == expected_config

@@ -4,14 +4,15 @@ from shutil import copy2
 
 import pytest
 
-from yappa.config_generation import create_default_config, save_yaml
+from yappa.config_generation import create_default_config
+from yappa.handle_wsgi import save_yaml
 from yappa.s3 import delete_bucket, prepare_package, upload_to_bucket
-from yappa.yc import YC, load_credentials
+from yappa.yc import YC
 
 
 @pytest.fixture(scope="session")
 def yc():
-    return YC(**load_credentials())
+    return YC.setup()
 
 
 COPIED_FILES = (
@@ -114,10 +115,5 @@ def function_version(yc, function, uploaded_package, config):
 
 
 @pytest.fixture(scope="session")
-def account_id():
-    return "ajeibih4hnqeacs7qu3l"
-
-
-@pytest.fixture(scope="session")
-def s3_credentials(yc, account_id):
-    return yc.create_s3_key(account_id)
+def s3_credentials(yc):
+    return yc.get_s3_key()

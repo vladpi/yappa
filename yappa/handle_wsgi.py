@@ -13,13 +13,9 @@ except ImportError:
 DEFAULT_CONFIG_FILENAME = "yappa.yaml"
 
 
-# TODO after yappa in pip - maybe move load_config to utils and
+# TODO after yappa in pip - maybe move load_yaml to config_generation and
 #  DEFAULT_CONFIG_FILENAME to settings
-
-def load_config(file=DEFAULT_CONFIG_FILENAME, safe=False):
-    """
-    TODO is type checking necessary?
-    """
+def load_yaml(file, safe=False):
     try:
         if isinstance(file, str) or isinstance(file, Path):
             with open(file, "r") as f:
@@ -27,7 +23,7 @@ def load_config(file=DEFAULT_CONFIG_FILENAME, safe=False):
         return yaml.load(file.read(), Loader)
     except FileNotFoundError:
         if safe:
-            return None
+            return dict()
         else:
             raise
 
@@ -93,7 +89,7 @@ def call_app(app, event):
 
 
 def handle(event, context):
-    config = load_config()
+    config = load_yaml()
     app = load_app(config.get("entrypoint"),
                    config.get("django_settings_module"))
     response = call_app(app, event)
@@ -107,3 +103,9 @@ def handle(event, context):
             "response": response,
         },
     }
+
+
+def save_yaml(config, filename):
+    with open(filename, "w+") as f:
+        f.write(yaml.dump(config, sort_keys=False))
+    return filename

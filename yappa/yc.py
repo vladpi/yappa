@@ -1,7 +1,10 @@
+import json
 import os
+from contextlib import suppress
 from typing import Iterable
 
 import yandexcloud
+from click import ClickException
 from google.protobuf.duration_pb2 import Duration
 from google.protobuf.empty_pb2 import Empty
 from yandex.cloud.access.access_pb2 import (
@@ -30,30 +33,49 @@ from yandex.cloud.serverless.functions.v1.function_service_pb2_grpc import \
     FunctionServiceStub
 
 from yappa.config_generation import get_yc_entrypoint
+from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_yaml
+from yappa.settings import DEFAULT_ACCESS_KEY_FILE, DEFAULT_SERVICE_ACCOUNT
 from yappa.utils import convert_size_to_bytes
 
 
-def load_credentials(token, key_path):
-    credentials = {
-        "token": os.environ.get("YC_OAUTH"),
-        "service_account_key": None,
-    }
-    #TODO open file and load json
-    return credentials
-
-
 class YC:
-    def __init__(self, folder_id, cloud_id, token=None,
-                 service_account_key=None, ):
+    def __init__(self, folder_id, token=None,
+                 service_account_key=None):
         self.sdk = yandexcloud.SDK(token=token,
                                    service_account_key=service_account_key)
+        self.service_account_id = (service_account_key.get("service_account_id")
+                                   if service_account_key else None)
         self.function_service = self.sdk.client(FunctionServiceStub)
         self.key_service = self.sdk.client(AccessKeyServiceStub)
         self.folder_id = folder_id
-        self.cloud_id = cloud_id
-        # TODO do i need cloud id?
         self.function = None
         self.gateway = None
+
+    @classmethod
+    def setup(cls, token=None, config={}):
+        """
+        - token can be passed directly or read from YC_OAUTH env variable
+        - if couldn't get token, trying to read access key from .yc file
+        - folder_id is read from yappa_config.yaml or read from
+          YC_FOLDER env variable
+        """
+        credentials = {
+            "token": token or os.environ.get("YC_OAUTH"),
+            "folder_id": os.environ.get("YC_FOLDER"),
+        }
+        if not credentials["token"]:
+            with suppress(FileNotFoundError):
+                with open(DEFAULT_ACCESS_KEY_FILE, "r+") as f:
+                    credentials["service_account_key"] = json.loads(f.read())
+        if not (credentials["token"] or credentials["service_account_key"]):
+            raise ClickException("Sorry. Looks like you didn't provide OAuth "
+                                 "token or path to access key")
+
+        folder_id = config.get("folder_id") or os.environ.get("YC_FOLDER")
+        if not folder_id:
+            raise ClickException("Sorry. Couldn't load folder_id from config "
+                                 "file or YC_FOLDER environment variable")
+        return cls(folder_id=folder_id, **credentials)
 
     def get_function(self, name=None) -> Function:
         """
@@ -195,9 +217,24 @@ class YC:
     def delete_gateway(self, gateway_id):
         pass
 
-    def create_s3_key(self, service_account_id, description=None):
+    def ensure_service_account(self,
+                               service_account_name=DEFAULT_SERVICE_ACCOUNT):
+        """
+        if there is not account with such name, creates such account
+        """
+
+    def get_s3_key(self, service_account_name=DEFAULT_SERVICE_ACCOUNT,
+                   description="yappa upload"):
+        """
+        if YC was instantiated with OAuth token: service account id is used
+        else: it means we are already using service account, hence generate
+        access key for using service account
+        """
+        if not self.service_account_id:
+            self.service_account_id = self.ensure_service_account(
+                service_account_name).id
         response = self.key_service.Create(
-            CreateAccessKeyRequest(service_account_id=service_account_id,
+            CreateAccessKeyRequest(service_account_id=self.service_account_id,
                                    description=description))
         return {
             "aws_access_key_id": response.access_key.key_id,
