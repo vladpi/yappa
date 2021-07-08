@@ -23,8 +23,7 @@
   - delete_gateway
 - cli
   - undeploy
-  - status
-- config_generation
+- cli_helpers
   - is_valid_bucket_name (only tests)
   - is empty (only tests)
   - get slug (only tests)
