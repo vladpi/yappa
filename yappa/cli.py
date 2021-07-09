@@ -2,13 +2,12 @@ import logging
 from unittest.mock import Mock
 
 import click
-import yaml
 
-from yappa.cli_helpers import NaturalOrderGroup, create_function_version, \
-    get_missing_details
+from yappa.cli_helpers import NaturalOrderGroup, create_function, \
+    create_function_version, \
+    create_gateway, get_missing_details, update_gateway
 from yappa.config_generation import (
-    create_default_config, create_default_gw_config,
-    inject_function_id, )
+    create_default_config, )
 from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
 
 logger = logging.getLogger(__name__)
@@ -41,8 +40,6 @@ def setup(config_file):
     """
 
 
-
-
 @cli.command(short_help='generate config files, create function & api-gateway')
 @click.argument('config-file', type=click.File('rb'),
                 default=DEFAULT_CONFIG_FILENAME, help="yappa settings file")
@@ -61,34 +58,9 @@ def deploy(config_file):
     click.echo("saved Yappa config file at "
                + click.style(config_file, bold=True))
     yc = YC.setup(config)
-    click.echo("Creating function...")
-    function = yc.create_function(config["project_slug"])
-    click.echo("Created serverless function:\n"
-               "\tname: " + click.style(f"{function.name}") + "\n"
-                                                              "\tid: " +
-               click.style(
-                   f"{function.id}") + "\n"
-               + "\tinvoke url : " + click.style(f"{function.invoke_url}",
-                                                 fg="yellow"))
+    function = create_function(yc, config)
     create_function_version(yc, config)
-
-    gw_config_filename = config["gw_config"]
-    gw_config = (load_yaml(gw_config_filename, safe=True)
-                 or create_default_gw_config(gw_config_filename))
-    gw_config = inject_function_id(gw_config, f"test_id", config[
-        "project_slug"])  # TODO remove test id
-    save_yaml(gw_config, gw_config_filename)
-    click.echo("saved Yappa Gateway config file at "
-               + click.style(gw_config_filename, bold=True))
-    click.echo("Creating api-gateway...")
-    gateway = yc.create_gateway(config["project_name"], yaml.dump(gw_config))
-    click.echo("Created api-gateway:\n"
-               "\tname: " + click.style(f"{gateway.name}") + "\n"
-                                                             "\tid: " +
-               click.style(
-                   f"{gateway.id}", ) + "\n"
-               + "\tdefault domain : " + click.style(f"{gateway.domain}",
-                                                     fg="yellow"))
+    create_gateway(yc, config, function.id)
 
 
 @cli.command(short_help="creates new function version and updates api-gateway")
@@ -104,14 +76,7 @@ def update(config_file):
     config = load_yaml(config_file)
     yc = YC.setup(config)
     create_function_version(yc, config)
-    gateway = yc.get_gateway(config["project_slug"])
-    click.echo(f"Updating api-gateway "
-               + click.style(f"{gateway.name}", bold=True)
-               + f" (id: {gateway.id})")
-    yc.update_gateway(gateway.id, config["description"],
-                      load_yaml(config["gw_config"]))
-    click.echo(f"Updated api-gateway. Default domain: "
-               + click.style(f"{gateway.invoke_url}", fg="yellow"))
+    update_gateway(yc, config)
 
 
 @cli.command()

@@ -1,16 +1,32 @@
 from uuid import uuid4
 
 import click
+import yaml
 from boltons.strutils import slugify
 from click import ClickException
 
 from yappa.cli import prepare_package, upload_to_bucket
+from yappa.config_generation import create_default_gw_config, inject_function_id
+from yappa.handle_wsgi import load_yaml, save_yaml
 
 
 class NaturalOrderGroup(click.Group):
 
     def list_commands(self, ctx):
         return self.commands.keys()
+
+
+def create_function(yc, config):
+    click.echo("Creating function...")
+    function = yc.create_function(config["project_slug"])
+    click.echo("Created serverless function:\n"
+               "\tname: " + click.style(f"{function.name}") + "\n"
+                                                              "\tid: " +
+               click.style(
+                   f"{function.id}") + "\n"
+               + "\tinvoke url : " + click.style(f"{function.invoke_url}",
+                                                 fg="yellow"))
+    return function
 
 
 def create_function_version(config, yc):
@@ -41,6 +57,37 @@ def create_function_version(config, yc):
     )
     click.echo(f"Created function version. Invoke url: "
                + click.style(f"{function.invoke_url}", fg="yellow"))
+
+
+def create_gateway(yc, config, function_id):
+    gw_config_filename = config["gw_config"]
+    gw_config = (load_yaml(gw_config_filename, safe=True)
+                 or create_default_gw_config(gw_config_filename))
+    gw_config = inject_function_id(gw_config, f"{function_id}", config[
+        "project_slug"])
+    save_yaml(gw_config, gw_config_filename)
+    click.echo("saved Yappa Gateway config file at "
+               + click.style(gw_config_filename, bold=True))
+    click.echo("Creating api-gateway...")
+    gateway = yc.create_gateway(config["project_name"], yaml.dump(gw_config))
+    click.echo("Created api-gateway:\n"
+               "\tname: " + click.style(f"{gateway.name}") + "\n"
+                                                             "\tid: " +
+               click.style(
+                   f"{gateway.id}", ) + "\n"
+               + "\tdefault domain : " + click.style(f"{gateway.domain}",
+                                                     fg="yellow"))
+
+
+def update_gateway(yc, config):
+    gateway = yc.get_gateway(config["project_slug"])
+    click.echo(f"Updating api-gateway "
+               + click.style(f"{gateway.name}", bold=True)
+               + f" (id: {gateway.id})")
+    yc.update_gateway(gateway.id, config["description"],
+                      load_yaml(config["gw_config"]))
+    click.echo(f"Updated api-gateway. Default domain: "
+               + click.style(f"{gateway.invoke_url}", fg="yellow"))
 
 
 class ValidationError(ClickException):
