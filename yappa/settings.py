@@ -1,3 +1,5 @@
+from furl import furl
+
 DEFAULT_GW_CONFIG_FILENAME = "yappa_gw.yaml"
 HANDLER_FILENAME = "handle_wsgi.py"
 DEFAULT_PACKAGE_DIR = "yappa_package"
@@ -16,3 +18,8 @@ AVAILABLE_PYTHON_VERSIONS = (
     "python37",
 )
 YANDEX_S3_URL = 'https://storage.yandexcloud.net'
+YANDEX_CLIENT_ID = "9878e3bd8f1e4bc292ee9c74bbc736a2"
+YANDEX_OAUTH_URL = furl("https://oauth.yandex.ru/authorize").add({
+    "response_type": "token",
+    "client_id": YANDEX_CLIENT_ID,
+}).url

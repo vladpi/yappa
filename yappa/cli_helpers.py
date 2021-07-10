@@ -5,9 +5,9 @@ import yaml
 from boltons.strutils import slugify
 from click import ClickException
 
-from yappa.cli import prepare_package, upload_to_bucket
 from yappa.config_generation import create_default_gw_config, inject_function_id
 from yappa.handle_wsgi import load_yaml, save_yaml
+from yappa.s3 import prepare_package, upload_to_bucket
 
 
 class NaturalOrderGroup(click.Group):

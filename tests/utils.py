@@ -1,5 +1,8 @@
+from datetime import date, datetime
+
 import pytest
 
+from yappa.settings import YANDEX_OAUTH_URL
 from yappa.utils import convert_size_to_bytes
 
 
@@ -18,3 +21,9 @@ def test_size_conversion(input_str, expected_bytes, is_ok):
     else:
         with pytest.raises(ValueError):
             convert_size_to_bytes(input_str)
+
+
+def test_oauth_url():
+    assert YANDEX_OAUTH_URL == ("https://oauth.yandex.ru/authorize?"
+                                "response_type=token"
+                                "&client_id=9878e3bd8f1e4bc292ee9c74bbc736a2")
