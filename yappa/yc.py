@@ -33,9 +33,14 @@ from yandex.cloud.serverless.functions.v1.function_service_pb2_grpc import \
     FunctionServiceStub
 
 from yappa.config_generation import get_yc_entrypoint
-from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_yaml
 from yappa.settings import DEFAULT_ACCESS_KEY_FILE, DEFAULT_SERVICE_ACCOUNT
 from yappa.utils import convert_size_to_bytes
+
+
+def save_key(access_key, output_filename=DEFAULT_ACCESS_KEY_FILE):
+    """
+    saves access key to .yc json file
+    """
 
 
 class YC:
@@ -218,10 +223,12 @@ class YC:
         pass
 
     def ensure_service_account(self,
-                               service_account_name=DEFAULT_SERVICE_ACCOUNT):
+                               service_account_name=DEFAULT_SERVICE_ACCOUNT,
+                               folder_id=None):
         """
         if there is not account with such name, creates such account
         """
+        folder_id = folder_id or self.folder_id
 
     def get_s3_key(self, service_account_name=DEFAULT_SERVICE_ACCOUNT,
                    description="yappa upload"):
@@ -240,3 +247,12 @@ class YC:
             "aws_access_key_id": response.access_key.key_id,
             "aws_secret_access_key": response.secret
         }
+
+    def get_clouds(self):
+        pass
+
+    def get_folders(self, cloud_id):
+        pass
+
+    def create_service_account_key(self, service_account_id):
+        pass

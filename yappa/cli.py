@@ -9,10 +9,12 @@ from yappa.cli_helpers import NaturalOrderGroup, create_function, \
 from yappa.config_generation import (
     create_default_config, )
 from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
+from yappa.settings import DEFAULT_ACCESS_KEY_FILE, YANDEX_OAUTH_URL
+from yappa.yc import YC, save_key
 
 logger = logging.getLogger(__name__)
 
-YC = prepare_package = upload_to_bucket = Mock  # TODO remove mock
+YC.setup = prepare_package = upload_to_bucket = Mock  # TODO remove mock
 
 
 @click.group(cls=NaturalOrderGroup)
@@ -21,9 +23,12 @@ def cli():
 
 
 @cli.command(short_help="setup YC access")
-@click.argument('config-file', type=click.File('rb'),
-                default=DEFAULT_CONFIG_FILENAME, help="yappa settings file")
-def setup(config_file):
+@click.argument("config-file", type=click.Path(exists=False),
+                default=DEFAULT_CONFIG_FILENAME, )
+@click.option("-t", '--token', default="",
+              help="yandex OAuth token", envvar="YC_OAUTH"
+              )
+def setup(config_file, token):
     """
     setup of cloud access:
 
@@ -38,11 +43,37 @@ def setup(config_file):
     *you can skip this step if YC_OAUTH and YC_FOLDER in env vars
     (see README for authentication details)
     """
+    if not token:
+        click.echo(f"Please obtain OAuth token at "
+                   + click.style(YANDEX_OAUTH_URL, fg="yellow"))
+        token = click.prompt("Please enter OAuth token")
+    yc = YC.setup(token=token)
+    # clouds = {c.name: c.id for c in yc.get_clouds()}
+    clouds = {"cloud1": 1, "cloud2": 2}
+    cloud_name = click.prompt("Please select cloud", type=click.Choice(clouds),
+                              default=next(iter(clouds)))
+    # folders = {f.name: f.id for f in yc.get_folders(clouds[cloud_name])}
+    folders = {"folder1": 1, "folder2": 2}
+    folder_name = click.prompt("Please select folder",
+                               type=click.Choice(folders),
+                               default=next(iter(folders)))
+    click.echo("Creating service account...")
+    account = yc.ensure_service_account()
+    save_key(yc.create_service_account_key(account.id))
+    click.echo("Saved service account credentials at " + click.style(
+        DEFAULT_ACCESS_KEY_FILE, bold=True))
+
+    config = (load_yaml(config_file, safe=True)
+              or create_default_config(config_file))
+    config["folder_id"] = folders[folder_name]
+    save_yaml(config, config_file)
+    click.echo("saved Yappa config file at "
+               + click.style(config_file, bold=True))
 
 
 @cli.command(short_help='generate config files, create function & api-gateway')
-@click.argument('config-file', type=click.File('rb'),
-                default=DEFAULT_CONFIG_FILENAME, help="yappa settings file")
+@click.argument("config-file", type=click.Path(exists=False),
+                default=DEFAULT_CONFIG_FILENAME, )
 def deploy(config_file):
     """\b
     - generates yappa.yaml (skipped if file exists)
@@ -64,8 +95,8 @@ def deploy(config_file):
 
 
 @cli.command(short_help="creates new function version and updates api-gateway")
-@click.argument('config-file', type=click.File('rb'),
-                default=DEFAULT_CONFIG_FILENAME, help="yappa settings file")
+@click.argument("config-file", type=click.Path(exists=True),
+                default=DEFAULT_CONFIG_FILENAME, )
 def update(config_file):
     """\b
     - prepares package
@@ -80,8 +111,8 @@ def update(config_file):
 
 
 @cli.command()
-@click.argument('config-file', type=click.File('rb'),
-                default=DEFAULT_CONFIG_FILENAME, help="yappa settings file")
+@click.argument("config-file", type=click.Path(exists=True),
+                default=DEFAULT_CONFIG_FILENAME, )
 def undeploy(config_file):
     """
     deletes function, api-gateway and bucket
