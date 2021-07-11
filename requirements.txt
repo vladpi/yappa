@@ -2,6 +2,7 @@ anyio==3.2.1
 argcomplete==1.12.3
 asgiref==3.3.4
 attrs==21.2.0
+boltons==21.0.0
 boto3==1.17.95
 botocore==1.20.95
 certifi==2021.5.30
@@ -17,6 +18,7 @@ durationpy==0.5
 Faker==8.9.1
 fastapi==0.65.2
 Flask==2.0.1
+furl==2.1.2
 future==0.18.2
 googleapis-common-protos==1.53.0
 grpcio==1.38.1
@@ -31,6 +33,7 @@ Jinja2==3.0.1
 jmespath==0.10.0
 kappa==0.6.0
 MarkupSafe==2.0.1
+orderedmultidict==1.0.1
 packaging==20.9
 pep517==0.10.0
 pip-tools==6.2.0
@@ -63,7 +66,4 @@ urllib3==1.26.5
 Werkzeug==2.0.1
 wsgi-request-logger==0.4.6
 yandexcloud==0.92.0
--e git+https://github.com/e-kor/yappa.git@7aaaf4c4fb8e17fde4ec3d51663c69cbb8856e42#egg=yappa
-
-boltons~=21.0.0
-setuptools~=57.0.0
+-e git+https://github.com/e-kor/yappa.git@9ffa3dd45ce7a83508c3c5c63a4169a71e622d20#egg=yappa

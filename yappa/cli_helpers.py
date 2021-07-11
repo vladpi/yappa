@@ -76,7 +76,7 @@ def create_gateway(yc, config, function_id):
     gw_config = inject_function_id(gw_config, f"{function_id}", config[
         "project_slug"])
     save_yaml(gw_config, gw_config_filename)
-    click.echo("saved Yappa Gateway config file at "
+    click.echo("Saved Yappa Gateway config file at "
                + click.style(gw_config_filename, bold=True))
     click.echo("Ensuring api-gateway...")
     gateway, is_new = yc.create_gateway(config["project_slug"],
@@ -87,7 +87,7 @@ def create_gateway(yc, config, function_id):
                                                                  "\tid: " +
                    click.style(
                        f"{gateway.id}", ) + "\n"
-                   + "\tdefault domain : " + click.style(f"{gateway.domain}",
+                   + "\tdomain : " + click.style(f"{gateway.domain}",
                                                          fg="yellow"))
     return is_new
 
@@ -95,13 +95,16 @@ def create_gateway(yc, config, function_id):
 def update_gateway(yc, config):
     gateway = yc.get_gateway(config["project_slug"])
     click.echo(f"Updating api-gateway "
-               + click.style(f"{gateway.name}", bold=True)
-               + f" (id: {gateway.id})")
+               + click.style(f"{gateway.name}", bold=True))
     yc.update_gateway(gateway.name, config["description"],
                       load_yaml(config["gw_config"]))
-    click.echo(f"Updated api-gateway. Default domain: "
-               + click.style(f"{gateway.domain}", fg="yellow"))
-
+    click.echo("Updated api-gateway:\n"
+               "\tname: " + click.style(f"{gateway.name}") + "\n"
+                                                             "\tid: " +
+               click.style(
+                   f"{gateway.id}", ) + "\n"
+               + "\tdomain : " + click.style(f"{gateway.domain}",
+                                             fg="yellow"))
 
 class ValidationError(ClickException):
     pass

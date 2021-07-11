@@ -41,6 +41,7 @@ def setup(config_file, token):
     *you can skip this step if YC_OAUTH and YC_FOLDER in env vars
     (see README for authentication details)
     """
+    click.echo("Welcome to " + click.style("Yappa", fg="yellow") + "!")
     if not token:
         click.echo(f"Please obtain OAuth token at "
                    + click.style(YANDEX_OAUTH_URL, fg="yellow"))

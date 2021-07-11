@@ -35,7 +35,6 @@ class YcGatewayMixin:
 
     def create_gateway(self, name, openapi_spec,
                        description="") -> ApiGateway:
-        print(f"NAME IS {name}")
         with suppress(ValueError):
             gateway = self.get_gateway(name)
             return gateway, False

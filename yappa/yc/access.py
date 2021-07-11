@@ -59,7 +59,8 @@ class YcAccessMixin:
         """
         for account in self._get_service_accounts():
             if account.name == service_account_name:
-                logger.warning("Account %s already exists, skipping creation")
+                logger.warning("Account %s already exists, skipping creation",
+                               service_account_name)
                 return account
         account = self.sdk.wait_operation_and_get_result(
             self.sdk.client(ServiceAccountServiceStub).Create(
