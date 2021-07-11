@@ -13,8 +13,15 @@ setup(
     author='Egor Korovin',
     author_email='kbkor@yandex.ru',
     packages=find_packages(), install_requires=[
-        'boto3>=1.9',
-        'click>=7.0', 'python-slugify>=3.0'
+        'boto3>=1.10',
+        'click>=8.0',
+        'httpx>=0.18',
+        'yandexcloud>=0.92',
+        'boltons>=21.0',
+        'idna<3,>=2.5',
+        "PyYAML>=5.0",
+        "furl>=2.0",
+        "pytz>=2021"
     ],
     entry_points={'console_scripts': ['yappa = yappa.cli:cli']},
 )
