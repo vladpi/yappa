@@ -66,4 +66,3 @@ urllib3==1.26.5
 Werkzeug==2.0.1
 wsgi-request-logger==0.4.6
 yandexcloud==0.92.0
--e git+https://github.com/e-kor/yappa.git@9ffa3dd45ce7a83508c3c5c63a4169a71e622d20#egg=yappa
