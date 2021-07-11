@@ -51,9 +51,7 @@ class YcFunctionsMixin:
     def create_function(self, name, description="", is_public=True) -> Function:
         try:
             function = self.get_function(name)
-            logger.warning("Function %s already exists. Skipping creation",
-                           name)
-            return function
+            return function, False
         except ValueError:
             pass
         operation = self.sdk.client(FunctionServiceStub).Create(
@@ -69,7 +67,7 @@ class YcFunctionsMixin:
         )
         function = operation_result.response
         self._set_function_access(function.id, is_public)
-        return function
+        return function, True
 
     def delete_function(self, function_id):
         operation = self.sdk.client(FunctionServiceStub).Delete(

@@ -1,5 +1,4 @@
 import logging
-from unittest.mock import Mock
 
 import click
 
@@ -14,8 +13,6 @@ from yappa.yc import YC
 from yappa.yc.access import save_key
 
 logger = logging.getLogger(__name__)
-
-YC.setup = prepare_package = upload_to_bucket = Mock  # TODO remove mock
 
 
 @click.group(cls=NaturalOrderGroup)
@@ -48,7 +45,7 @@ def setup(config_file, token):
         click.echo(f"Please obtain OAuth token at "
                    + click.style(YANDEX_OAUTH_URL, fg="yellow"))
         token = click.prompt("Please enter OAuth token")
-    yc = YC.setup(token=token)
+    yc = YC.setup(token=token, skip_folder=True)
     clouds = {c.name: c.id for c in yc.get_clouds()}
     cloud_name = click.prompt("Please select cloud", type=click.Choice(clouds),
                               default=next(iter(clouds)))
@@ -57,6 +54,7 @@ def setup(config_file, token):
                                type=click.Choice(folders),
                                default=next(iter(folders)))
     click.echo("Creating service account...")
+    yc.folder_id = folders[folder_name]
     account = yc.create_service_account()
     save_key(yc.create_service_account_key(account.id))
     click.echo("Saved service account credentials at " + click.style(
@@ -66,7 +64,7 @@ def setup(config_file, token):
               or create_default_config(config_file))
     config["folder_id"] = folders[folder_name]
     save_yaml(config, config_file)
-    click.echo("saved Yappa config file at "
+    click.echo("Saved Yappa config file at "
                + click.style(config_file, bold=True))
 
 
@@ -83,11 +81,12 @@ def deploy(config_file):
     """
     config = (load_yaml(config_file, safe=True)
               or create_default_config(config_file))
-    config = get_missing_details(config)
-    save_yaml(config, config_file)
-    click.echo("saved Yappa config file at "
-               + click.style(config_file, bold=True))
-    yc = YC.setup(config)
+    config, is_updated = get_missing_details(config)
+    if is_updated:
+        save_yaml(config, config_file)
+        click.echo("saved Yappa config file at "
+                   + click.style(config_file, bold=True))
+    yc = YC.setup(config=config)
     function = create_function(yc, config)
     create_function_version(yc, config)
     create_gateway(yc, config, function.id)

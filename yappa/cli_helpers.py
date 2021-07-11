@@ -8,6 +8,7 @@ from click import ClickException
 from yappa.config_generation import create_default_gw_config, inject_function_id
 from yappa.handlers.wsgi import load_yaml, save_yaml
 from yappa.s3 import prepare_package, upload_to_bucket
+from yappa.utils import get_yc_entrypoint
 
 
 class NaturalOrderGroup(click.Group):
@@ -17,15 +18,24 @@ class NaturalOrderGroup(click.Group):
 
 
 def create_function(yc, config):
-    click.echo("Creating function...")
-    function = yc.create_function(config["project_slug"])
-    click.echo("Created serverless function:\n"
+    click.echo("Ensuring function...")
+    function, is_new = yc.create_function(config["project_slug"], config["description"])
+    if is_new:
+        click.echo("Created serverless function:\n"
                "\tname: " + click.style(f"{function.name}") + "\n"
                                                               "\tid: " +
                click.style(
                    f"{function.id}") + "\n"
-               + "\tinvoke url : " + click.style(f"{function.invoke_url}",
+               + "\tinvoke url : " + click.style(f"{function.http_invoke_url}",
                                                  fg="yellow"))
+    else:
+        click.echo("Using existing function:\n"
+                   "\tname: " + click.style(f"{function.name}") + "\n"
+                                                                  "\tid: " +
+                   click.style(
+                       f"{function.id}") + "\n"
+                   + "\tinvoke url : " + click.style(f"{function.http_invoke_url}",
+                                                     fg="yellow"))
     return function
 
 
@@ -46,7 +56,7 @@ def create_function_version(yc, config):
         description=config["description"],
         bucket_name=config["bucket"],
         object_name=object_key,
-        application_type=config["application_type"],
+        entrypoint=get_yc_entrypoint(config["application_type"]),
         memory=config["memory_limit"],
         service_account_id=config["service_account_id"],
         timeout=config["timeout"],
@@ -143,14 +153,20 @@ def is_not_empty(string):
         raise ValidationError("should not be empty")
 
 
+def is_valid_slug(string):
+    """
+    is has "_" or spaces - raise ViolationError
+    """
+
+
 def get_slug(config):
-    return slugify(config["project_name"])
+    return slugify(config["project_name"]).replace("_", "-")
 
 
 PROMPTS = (
     ("project_name", "My project", [is_not_empty],
      "What's your project name?"),
-    ("project_slug", get_slug, [],
+    ("project_slug", get_slug, [is_valid_slug],
      "What's your project slug?"),
     ("description", "", [],
      "What's your project description?"),
@@ -167,21 +183,18 @@ PROMPTS = (
 )
 
 
-def get_s3_profile():
-    return "default"
-
-
 def get_missing_details(config):
     """
     if value is missing in config prompt user
     """
+    is_updated = False
     for key, default, validators, question in PROMPTS:
         if config.get(key) is not None:
             continue
+        is_updated = True
         default = default(config) if callable(default) else default
         value = click.prompt(question, default=default)
         for validator in validators:
             validator(value)
         config[key] = value
-    config["profile"] = get_s3_profile()
-    return config
+    return config, is_updated

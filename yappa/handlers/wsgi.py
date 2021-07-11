@@ -100,7 +100,8 @@ try:
     app = load_app(config.get("entrypoint"),
                    config.get("django_settings_module"))
 except ValueError:
-    logger.warning("Looks like broken Yappa config is used")
+    # logger.warning("Looks like broken Yappa config is used")
+    pass # TODO uncomment warning when yappa in pip and it load_config is moved from this file
 
 
 def handle(event, context):

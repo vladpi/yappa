@@ -12,7 +12,7 @@ from yappa.yc.gateway import YcGatewayMixin
 
 
 class YC(YcAccessMixin, YcFunctionsMixin, YcGatewayMixin):
-    def __init__(self, folder_id, token=None,
+    def __init__(self, folder_id=None, token=None,
                  service_account_key=None):
         self.sdk = yandexcloud.SDK(token=token,
                                    service_account_key=service_account_key)
@@ -23,7 +23,7 @@ class YC(YcAccessMixin, YcFunctionsMixin, YcGatewayMixin):
         self.gateway = None
 
     @classmethod
-    def setup(cls, token=None, config={}):
+    def setup(cls, token=None, config={}, skip_folder=False):
         """
         - token can be passed directly or read from YC_OAUTH env variable
         - if couldn't get token, trying to read access key from .yc file
@@ -32,16 +32,17 @@ class YC(YcAccessMixin, YcFunctionsMixin, YcGatewayMixin):
         """
         credentials = {
             "token": token or os.environ.get("YC_OAUTH"),
-            "service_account_key": None,
         }
         if not credentials["token"]:
+            del credentials["token"]
             with suppress(FileNotFoundError):
                 with open(DEFAULT_ACCESS_KEY_FILE, "r+") as f:
                     credentials["service_account_key"] = json.loads(f.read())
-        if not (credentials["token"] or credentials["service_account_key"]):
+        if not (credentials.get("token") or credentials.get("service_account_key")):
             raise ClickException("Sorry. Looks like you didn't provide OAuth "
                                  "token or path to access key")
-
+        if skip_folder:
+            return cls(**credentials)
         folder_id = config.get("folder_id") or os.environ.get("YC_FOLDER")
         if not folder_id:
             raise ClickException("Sorry. Couldn't load folder_id from config "
