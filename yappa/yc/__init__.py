@@ -38,7 +38,8 @@ class YC(YcAccessMixin, YcFunctionsMixin, YcGatewayMixin):
             with suppress(FileNotFoundError):
                 with open(DEFAULT_ACCESS_KEY_FILE, "r+") as f:
                     credentials["service_account_key"] = json.loads(f.read())
-        if not (credentials.get("token") or credentials.get("service_account_key")):
+        if not (credentials.get("token") or credentials.get(
+                "service_account_key")):
             raise ClickException("Sorry. Looks like you didn't provide OAuth "
                                  "token or path to access key")
         if skip_folder:
