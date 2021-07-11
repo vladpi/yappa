@@ -1,5 +1,3 @@
-from datetime import date, datetime
-
 import pytest
 
 from yappa.settings import YANDEX_OAUTH_URL

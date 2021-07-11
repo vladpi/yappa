@@ -4,10 +4,10 @@ from shutil import copy2
 
 import pytest
 
-import yappa.cli_helpers
 from yappa.config_generation import create_default_config
-from yappa.handle_wsgi import save_yaml
+from yappa.handlers.wsgi import save_yaml
 from yappa.s3 import delete_bucket, prepare_package, upload_to_bucket
+from yappa.utils import get_yc_entrypoint
 from yappa.yc import YC
 
 
@@ -51,12 +51,14 @@ def app_dir(tmpdir_factory):
     return dir_
 
 
-CONFIG_FILENAME = "yappa.yaml"
+@pytest.fixture(scope="session")
+def config_filename():
+    return "yappa-config.yaml"
 
 
 @pytest.fixture(scope="session")
-def config(app_dir):
-    config = create_default_config()
+def config(app_dir, config_filename):
+    config = create_default_config(config_filename)
     config.update(
         profile="default",
         requirements_file="flask_requirements.txt",
@@ -69,15 +71,16 @@ def config(app_dir):
             "requirements.txt",
         )
     )
-    save_yaml(config, CONFIG_FILENAME)
+    save_yaml(config, config_filename)
     return config
 
 
 @pytest.fixture(scope="session")
-def uploaded_package(config, app_dir, s3_credentials):
+def uploaded_package(config, app_dir, s3_credentials, config_filename):
     package_dir = prepare_package(config["requirements_file"],
                                   config["excluded_paths"],
                                   to_install_requirements=True,
+                                  config_filename=config_filename,
                                   )
     object_key = upload_to_bucket(package_dir, config["bucket"],
                                   **s3_credentials)
@@ -92,7 +95,6 @@ def function_name():
 
 @pytest.fixture(scope="session")
 def function(function_name, yc):
-    # TODO починить тесты если функция уже есть
     function = yc.create_function(function_name)
     yield function
     yc.delete_function(function.id)
@@ -100,11 +102,11 @@ def function(function_name, yc):
 
 @pytest.fixture(scope="session")
 def function_version(yc, function, uploaded_package, config):
-    return yappa.cli_helpers.create_function_version(
-        function.id,
+    return yc.create_function_version(
+        function.name,
         runtime=config["runtime"],
         description=config["description"],
-        application_type=config["application_type"],
+        entrypoint=get_yc_entrypoint(config["application_type"]),
         bucket_name=config["bucket"],
         object_name=uploaded_package,
         memory=config["memory_limit"],

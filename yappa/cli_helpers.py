@@ -6,7 +6,7 @@ from boltons.strutils import slugify
 from click import ClickException
 
 from yappa.config_generation import create_default_gw_config, inject_function_id
-from yappa.handle_wsgi import load_yaml, save_yaml
+from yappa.handlers.wsgi import load_yaml, save_yaml
 from yappa.s3 import prepare_package, upload_to_bucket
 
 
@@ -29,7 +29,7 @@ def create_function(yc, config):
     return function
 
 
-def create_function_version(config, yc):
+def create_function_version(yc, config):
     click.echo("Preparing package...")
     package_dir = prepare_package(config["requirements_file"],
                                   config["excluded_paths"],
@@ -38,12 +38,10 @@ def create_function_version(config, yc):
     click.echo(f"Uploading to bucket {config['bucket']}...")
     object_key = upload_to_bucket(package_dir, config["bucket"],
                                   **yc.get_s3_key(config["s3_account_name"]))
-    function = yc.get_function(config["project_slug"])
     click.echo(f"Creating new function version for "
-               + click.style(f"{function.name}", bold=True)
-               + f" (id: {function.id})")
+               + click.style(config["project_slug"], bold=True))
     yc.create_function_version(
-        function.id,
+        config["project_slug"],
         runtime=config["runtime"],
         description=config["description"],
         bucket_name=config["bucket"],
@@ -55,8 +53,7 @@ def create_function_version(config, yc):
         named_service_accounts=config["named_service_accounts"],
         environment=config["environment"],
     )
-    click.echo(f"Created function version. Invoke url: "
-               + click.style(f"{function.invoke_url}", fg="yellow"))
+    click.echo(f"Created function version")
 
 
 def create_gateway(yc, config, function_id):

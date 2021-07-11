@@ -2,13 +2,14 @@ from pathlib import Path
 
 import pytest
 
-from yappa.config_generation import get_yc_entrypoint, inject_function_id
-from yappa.handle_wsgi import load_yaml
+from yappa.config_generation import inject_function_id
+from yappa.handlers.wsgi import load_yaml
+from yappa.utils import get_yc_entrypoint
 
 
 @pytest.mark.parametrize("application_type,expected_entrypoint,is_ok", [
-    ("wsgi", "handle_wsgi.handle", True),
-    ("asgi", "handle_asgi.handle", False),
+    ("wsgi", "handlers.wsgi.handle", True),
+    ("asgi", None, False),
 ])
 def test_getting_entrypoint(application_type, expected_entrypoint, is_ok):
     if is_ok:

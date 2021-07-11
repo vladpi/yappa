@@ -4,20 +4,22 @@ import subprocess
 import sys
 from contextlib import suppress
 from pathlib import Path
-from shutil import copy2, copytree, ignore_patterns, make_archive
+from shutil import copytree, ignore_patterns, make_archive
 
 import boto3
 
+from yappa.handlers.wsgi import DEFAULT_CONFIG_FILENAME
 from yappa.settings import DEFAULT_IGNORED_FILES, DEFAULT_PACKAGE_DIR, \
     DEFAULT_REQUIREMENTS_FILE, \
-    HANDLER_FILENAME, YANDEX_S3_URL
+    HANDLERS_DIR, YANDEX_S3_URL
 
 logger = logging.getLogger(__name__)
 
 
 def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
                     ignored_files=DEFAULT_IGNORED_FILES,
-                    tmp_dir=DEFAULT_PACKAGE_DIR, to_install_requirements=True):
+                    tmp_dir=DEFAULT_PACKAGE_DIR, to_install_requirements=True,
+                    config_filename=DEFAULT_CONFIG_FILENAME):
     """
     prepares package folder
     - copy project files
@@ -30,8 +32,10 @@ def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
     copytree(os.getcwd(), tmp_dir,
              ignore=ignore_patterns(*ignored_files, tmp_dir),
              dirs_exist_ok=True)
-    copy2(Path(Path(__file__).resolve().parent, HANDLER_FILENAME),
-          tmp_dir)
+    copytree(Path(Path(__file__).resolve().parent, HANDLERS_DIR),
+             Path(tmp_dir, "handlers"), dirs_exist_ok=True)
+    os.rename(Path(tmp_dir, config_filename),
+              Path(tmp_dir, DEFAULT_CONFIG_FILENAME))
     if to_install_requirements:
         logger.info('Installing requirements...')
         cmd = (

@@ -8,9 +8,10 @@ from yappa.cli_helpers import NaturalOrderGroup, create_function, \
     create_gateway, get_missing_details, update_gateway
 from yappa.config_generation import (
     create_default_config, )
-from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
+from yappa.handlers.wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
 from yappa.settings import DEFAULT_ACCESS_KEY_FILE, YANDEX_OAUTH_URL
-from yappa.yc import YC, save_key
+from yappa.yc import YC
+from yappa.yc.access import save_key
 
 logger = logging.getLogger(__name__)
 
@@ -48,17 +49,15 @@ def setup(config_file, token):
                    + click.style(YANDEX_OAUTH_URL, fg="yellow"))
         token = click.prompt("Please enter OAuth token")
     yc = YC.setup(token=token)
-    # clouds = {c.name: c.id for c in yc.get_clouds()}
-    clouds = {"cloud1": 1, "cloud2": 2}
+    clouds = {c.name: c.id for c in yc.get_clouds()}
     cloud_name = click.prompt("Please select cloud", type=click.Choice(clouds),
                               default=next(iter(clouds)))
-    # folders = {f.name: f.id for f in yc.get_folders(clouds[cloud_name])}
-    folders = {"folder1": 1, "folder2": 2}
+    folders = {f.name: f.id for f in yc.get_folders(clouds[cloud_name])}
     folder_name = click.prompt("Please select folder",
                                type=click.Choice(folders),
                                default=next(iter(folders)))
     click.echo("Creating service account...")
-    account = yc.ensure_service_account()
+    account = yc.create_service_account()
     save_key(yc.create_service_account_key(account.id))
     click.echo("Saved service account credentials at " + click.style(
         DEFAULT_ACCESS_KEY_FILE, bold=True))
@@ -92,21 +91,6 @@ def deploy(config_file):
     function = create_function(yc, config)
     create_function_version(yc, config)
     create_gateway(yc, config, function.id)
-
-
-@cli.command(short_help="creates new function version and updates api-gateway")
-@click.argument("config-file", type=click.Path(exists=True),
-                default=DEFAULT_CONFIG_FILENAME, )
-def update(config_file):
-    """\b
-    - prepares package
-    - uploads package to s3
-    - creates new function version
-    - updates api-gw
-    """
-    config = load_yaml(config_file)
-    yc = YC.setup(config)
-    create_function_version(yc, config)
     update_gateway(yc, config)
 
 

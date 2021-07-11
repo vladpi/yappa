@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from yappa.handle_wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
+from yappa.handlers.wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
 from yappa.settings import DEFAULT_GW_CONFIG_FILENAME
 
 
@@ -24,20 +24,6 @@ def inject_function_id(gw_config, function_id, title="yappa gateway"):
                     and not yc_integration["function_id"]:
                 yc_integration.update(function_id=function_id)
     return gw_config
-
-
-HANDLERS = {
-    "wsgi": "handle_wsgi.handle",
-}
-
-
-def get_yc_entrypoint(application_type):
-    entrypoint = HANDLERS.get(application_type)
-    if not entrypoint:
-        raise ValueError(
-            f"Sorry, supported app types are: {','.join(HANDLERS.keys())}."
-        )
-    return entrypoint
 
 
 def create_default_config(filename=DEFAULT_CONFIG_FILENAME):

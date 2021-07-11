@@ -8,6 +8,7 @@ import pytest
 from tests.conftest import (
     EMPTY_FILES, IGNORED_FILES,
 )
+from yappa.handlers.wsgi import DEFAULT_CONFIG_FILENAME
 from yappa.s3 import (
     delete_bucket, ensure_bucket,
     prepare_package, upload_to_bucket,
@@ -19,15 +20,17 @@ from yappa.settings import DEFAULT_PACKAGE_DIR, YANDEX_S3_URL
 def expected_paths(config):
     *entrypoint_dirs, entrypoint_file = config["entrypoint"].split(".")[:-1]
     return [
-        "handle_wsgi.py",
+        DEFAULT_CONFIG_FILENAME,
+        Path("handlers", "wsgi.py"),
         *EMPTY_FILES,
         Path(*entrypoint_dirs, f"{entrypoint_file}.py"),
     ]
 
 
-def test_files_copy(app_dir, config, expected_paths):
+def test_files_copy(app_dir, config, expected_paths, config_filename):
     prepare_package(config["requirements_file"], config["excluded_paths"],
-                    to_install_requirements=False)
+                    to_install_requirements=False,
+                    config_filename=config_filename)
     for path in expected_paths:
         assert os.path.exists(Path(DEFAULT_PACKAGE_DIR, path)), path
     for path in IGNORED_FILES:

@@ -17,3 +17,17 @@ def convert_size_to_bytes(size_str):
             return size
     raise ValueError("Oops. Couldn't parse memory limit. "
                      "It should be in format 128MB, 2GB")
+
+
+HANDLERS = {
+    "wsgi": "handlers.wsgi.handle",
+}
+
+
+def get_yc_entrypoint(application_type):
+    entrypoint = HANDLERS.get(application_type)
+    if not entrypoint:
+        raise ValueError(
+            f"Sorry, supported app types are: {','.join(HANDLERS.keys())}."
+        )
+    return entrypoint

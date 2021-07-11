@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from importlib import import_module
 from pathlib import Path
@@ -11,21 +12,26 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 DEFAULT_CONFIG_FILENAME = "yappa.yaml"
+logger = logging.getLogger(__name__)
 
 
 # TODO after yappa in pip - maybe move load_yaml to config_generation and
 #  DEFAULT_CONFIG_FILENAME to settings
 def load_yaml(file, safe=False):
     try:
-        if isinstance(file, str) or isinstance(file, Path):
-            with open(file, "r") as f:
-                return yaml.load(f.read(), Loader)
-        return yaml.load(file.read(), Loader)
+        with open(file, "r") as f:
+            return yaml.load(f.read(), Loader)
     except FileNotFoundError:
         if safe:
             return dict()
         else:
             raise
+
+
+def save_yaml(config, filename):
+    with open(filename, "w+") as f:
+        f.write(yaml.dump(config, sort_keys=False))
+    return filename
 
 
 def load_app(import_path=None, django_settings_module=None):
@@ -88,14 +94,19 @@ def call_app(app, event):
         return response
 
 
-def handle(event, context):
-    config = load_yaml()
+try:
+    config = load_yaml(Path(Path(__file__).resolve().parent.parent,
+                            DEFAULT_CONFIG_FILENAME))
     app = load_app(config.get("entrypoint"),
                    config.get("django_settings_module"))
+except ValueError:
+    logger.warning("Looks like broken Yappa config is used")
+
+
+def handle(event, context):
     response = call_app(app, event)
     if not config["debug"]:
         return patch_response(response)
-    # TODO add test if debug is true
     return {
         'statusCode': 200,
         'body': {
@@ -103,9 +114,3 @@ def handle(event, context):
             "response": response,
         },
     }
-
-
-def save_yaml(config, filename):
-    with open(filename, "w+") as f:
-        f.write(yaml.dump(config, sort_keys=False))
-    return filename
