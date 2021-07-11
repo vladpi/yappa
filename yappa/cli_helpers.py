@@ -19,23 +19,26 @@ class NaturalOrderGroup(click.Group):
 
 def create_function(yc, config):
     click.echo("Ensuring function...")
-    function, is_new = yc.create_function(config["project_slug"], config["description"])
+    function, is_new = yc.create_function(config["project_slug"],
+                                          config["description"])
     if is_new:
         click.echo("Created serverless function:\n"
-               "\tname: " + click.style(f"{function.name}") + "\n"
-                                                              "\tid: " +
-               click.style(
-                   f"{function.id}") + "\n"
-               + "\tinvoke url : " + click.style(f"{function.http_invoke_url}",
-                                                 fg="yellow"))
+                   "\tname: " + click.style(f"{function.name}") + "\n"
+                                                                  "\tid: " +
+                   click.style(
+                       f"{function.id}") + "\n"
+                   + "\tinvoke url : " + click.style(
+            f"{function.http_invoke_url}",
+            fg="yellow"))
     else:
         click.echo("Using existing function:\n"
                    "\tname: " + click.style(f"{function.name}") + "\n"
                                                                   "\tid: " +
                    click.style(
                        f"{function.id}") + "\n"
-                   + "\tinvoke url : " + click.style(f"{function.http_invoke_url}",
-                                                     fg="yellow"))
+                   + "\tinvoke url : " + click.style(
+            f"{function.http_invoke_url}",
+            fg="yellow"))
     return function
 
 
@@ -75,15 +78,18 @@ def create_gateway(yc, config, function_id):
     save_yaml(gw_config, gw_config_filename)
     click.echo("saved Yappa Gateway config file at "
                + click.style(gw_config_filename, bold=True))
-    click.echo("Creating api-gateway...")
-    gateway = yc.create_gateway(config["project_name"], yaml.dump(gw_config))
-    click.echo("Created api-gateway:\n"
-               "\tname: " + click.style(f"{gateway.name}") + "\n"
-                                                             "\tid: " +
-               click.style(
-                   f"{gateway.id}", ) + "\n"
-               + "\tdefault domain : " + click.style(f"{gateway.domain}",
-                                                     fg="yellow"))
+    click.echo("Ensuring api-gateway...")
+    gateway, is_new = yc.create_gateway(config["project_slug"],
+                                        yaml.dump(gw_config))
+    if is_new:
+        click.echo("Created api-gateway:\n"
+                   "\tname: " + click.style(f"{gateway.name}") + "\n"
+                                                                 "\tid: " +
+                   click.style(
+                       f"{gateway.id}", ) + "\n"
+                   + "\tdefault domain : " + click.style(f"{gateway.domain}",
+                                                         fg="yellow"))
+    return is_new
 
 
 def update_gateway(yc, config):
@@ -91,10 +97,10 @@ def update_gateway(yc, config):
     click.echo(f"Updating api-gateway "
                + click.style(f"{gateway.name}", bold=True)
                + f" (id: {gateway.id})")
-    yc.update_gateway(gateway.id, config["description"],
+    yc.update_gateway(gateway.name, config["description"],
                       load_yaml(config["gw_config"]))
     click.echo(f"Updated api-gateway. Default domain: "
-               + click.style(f"{gateway.invoke_url}", fg="yellow"))
+               + click.style(f"{gateway.domain}", fg="yellow"))
 
 
 class ValidationError(ClickException):

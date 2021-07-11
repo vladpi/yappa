@@ -1,4 +1,5 @@
 import logging
+from contextlib import suppress
 from typing import Iterable
 
 from google.protobuf.duration_pb2 import Duration
@@ -49,11 +50,9 @@ class YcFunctionsMixin:
         return functions
 
     def create_function(self, name, description="", is_public=True) -> Function:
-        try:
+        with suppress(ValueError):
             function = self.get_function(name)
             return function, False
-        except ValueError:
-            pass
         operation = self.sdk.client(FunctionServiceStub).Create(
             CreateFunctionRequest(
                 folder_id=self.folder_id,

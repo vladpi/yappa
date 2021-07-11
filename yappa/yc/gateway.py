@@ -1,7 +1,15 @@
 import logging
+from contextlib import suppress
 from typing import Iterable
 
+from google.protobuf.empty_pb2 import Empty
 from yandex.cloud.serverless.apigateway.v1.apigateway_pb2 import ApiGateway
+from yandex.cloud.serverless.apigateway.v1.apigateway_service_pb2 import \
+    CreateApiGatewayMetadata, CreateApiGatewayRequest, DeleteApiGatewayMetadata, \
+    DeleteApiGatewayRequest, \
+    ListApiGatewayRequest
+from yandex.cloud.serverless.apigateway.v1.apigateway_service_pb2_grpc import \
+    ApiGatewayServiceStub
 
 logger = logging.getLogger(__name__)
 
@@ -10,26 +18,55 @@ class YcGatewayMixin:
     sdk = None
     folder_id = None
 
-    def get_gateway(self, name=None) -> ApiGateway:
+    def get_gateway(self, name) -> ApiGateway:
         """
          convenience method to get deployed gateway
          """
-        if not self.gateway:
-            for gw in self._get_gateways():
-                if gw.name == name:
-                    self.gateway = gw
-        if self.getaway:
-            return self.gateway
+        for gw in self._get_gateways():
+            if gw.name == name:
+                return gw
         raise ValueError(f"Oops. Didn't find any gateway by name {name}")
 
-    def _get_gateways(self) -> Iterable[ApiGateway]:
-        pass
+    def _get_gateways(self, filter_=None) -> Iterable[ApiGateway]:
+        gateways = self.sdk.client(ApiGatewayServiceStub).List(
+            ListApiGatewayRequest(folder_id=self.folder_id,
+                                  filter=filter_)).api_gateways
+        return gateways
 
-    def create_gateway(self, gateway_name, openapi_spec,
+    def create_gateway(self, name, openapi_spec,
                        description="") -> ApiGateway:
-        gateway = None  # TODO implement
-        self.gateway = gateway
+        print(f"NAME IS {name}")
+        with suppress(ValueError):
+            gateway = self.get_gateway(name)
+            return gateway, False
+        operation = self.sdk.client(ApiGatewayServiceStub).Create(
+            CreateApiGatewayRequest(
+                folder_id=self.folder_id,
+                name=name,
+                description=description,
+                openapi_spec=openapi_spec
+            ))
+        operation_result = self.sdk.wait_operation_and_get_result(
+            operation,
+            response_type=ApiGateway,
+            meta_type=CreateApiGatewayMetadata,
+        )
+        return operation_result.response, True
+
+    def delete_gateway(self, gateway_id):
+        operation = self.sdk.client(ApiGatewayServiceStub).Delete(
+            DeleteApiGatewayRequest(
+                api_gateway_id=gateway_id,
+            ))
+        self.sdk.wait_operation_and_get_result(
+            operation,
+            response_type=Empty,
+            meta_type=DeleteApiGatewayMetadata,
+        )
 
     def update_gateway(self, gateway_name, description,
                        openapi_spec) -> ApiGateway:
-        pass
+        logger.warning("Update gateway is not yet implemented")
+        gateway = self.get_gateway(gateway_name)
+        # TODO imlement update
+        return gateway

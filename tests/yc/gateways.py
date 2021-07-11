@@ -24,21 +24,22 @@ def gateway_yaml(config, function, gateway_name):
 
 @pytest.fixture(scope="session")
 def gateway(gateway_yaml, yc, gateway_name):
-    gw = yc.create_gateway(gateway_name, gateway_yaml)
+    gw, _ = yc.create_gateway(gateway_name, gateway_yaml)
     yield gw
     yc.delete_gateway(gw.id)
 
 
-@pytest.mark.skip(reason="not yet implemented")
 def test_get_gateways(yc):
-    gws = yc.get_gateways()
+    gws = yc._get_gateways()
     assert isinstance(gws, Iterable)
 
 
-@pytest.mark.skip(reason="not yet implemented")
-def test_gateway_creation(gateway, gateway_name, yc):
-    assert gateway_name in yc.get_gateways()
-    # TODO test gateway delete
+def test_gateway_creation(gateway_yaml, yc):
+    gateway_name = "test-create-delete-gateway"
+    gateway, _ = yc.create_gateway(gateway_name, gateway_yaml)
+    assert gateway in yc._get_gateways()
+    yc.delete_gateway(gateway.id)
+    assert gateway not in yc._get_gateways()
 
 
 @pytest.mark.skip(reason="not yet implemented")
@@ -50,14 +51,13 @@ def test_gateway_update(gateway, yc):
     """
 
 
-@pytest.mark.skip(reason="not yet implemented")
 def test_gateway_call(gateway, function_version):
     url = gateway.domain
     response = httpx.get(url)
     assert response.status_code == 200
     assert response.text == "root url"
 
-    response = httpx.get(f"{url}/json")  # TODO compose url properly
+    response = httpx.get(f"{url}/json")  # TODO compose url properly with furl
     assert response.status_code == 200
     assert response.json() == {"result": "json",
                                "sub_result": {"sub": "json"}

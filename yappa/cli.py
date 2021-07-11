@@ -89,8 +89,9 @@ def deploy(config_file):
     yc = YC.setup(config=config)
     function = create_function(yc, config)
     create_function_version(yc, config)
-    create_gateway(yc, config, function.id)
-    update_gateway(yc, config)
+    is_new = create_gateway(yc, config, function.id)
+    if not is_new:
+        update_gateway(yc, config)
 
 
 @cli.command()
