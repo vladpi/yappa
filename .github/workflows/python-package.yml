@@ -13,7 +13,7 @@ jobs:
   build:
     environment: yandex_ek
     env:
-      YANDEX_OAUTH: ${{ secrets.YANDEX_OAUTH }}
+      YC_OAUTH: ${{ secrets.YANDEX_OAUTH }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -24,6 +24,7 @@ jobs:
     - name: Display the environ
       run: |
         import os
+        print(os.environ)
         print(os.environ['YC_OAUTH'])
       shell: python
     - uses: actions/checkout@v2
