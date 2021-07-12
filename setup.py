@@ -1,22 +1,18 @@
 from setuptools import find_packages, setup
 
+with open("README.md", "r") as f:
+    README = f.read()
+
 setup(
     name='yappa',
     version='0.4.1',
     description='Easy serverless deploy of python web applications',
-    long_description="""
-# Simple and Easy serverless deploy of python web-apps Yandex Cloud
-1. create account at Yandex Cloud
-2. use Yappa:
-```shell
-$ yappa setup
-$ yappa deploy
- ``` 
-## that's it!
-    """,
+    long_description_content_type="text/markdown",
+    long_description=README,
     author='Egor Korovin',
     author_email='kbkor@yandex.ru',
     packages=find_packages(),
+    include_package_data=True,
     install_requires=[
         'boto3>=1.10',
         'click>=8.0',
@@ -30,4 +26,5 @@ $ yappa deploy
     ],
     python_requires='>3.8.0',
     entry_points={'console_scripts': ['yappa = yappa.cli:cli']},
+    license="MIT",
 )
