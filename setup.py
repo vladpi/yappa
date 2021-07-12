@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='yappa',
-    version='0.5.00',
+    version='0.4.1',
     description='Easy serverless deploy of python web applications',
     long_description="""
     - create account at Yandex Cloud
