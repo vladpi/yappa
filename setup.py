@@ -23,5 +23,6 @@ setup(
         "furl>=2.0",
         "pytz>=2021"
     ],
+    python_requires='>3.8.0',
     entry_points={'console_scripts': ['yappa = yappa.cli:cli']},
 )
