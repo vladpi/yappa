@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-    environment: yandex_ek
     env:
       YC_OAUTH: ${{ secrets.YC_OAUTH }}
       YC_FOLDER: ${{ secrets.YC_FOLDER }}
