@@ -12,7 +12,8 @@ setup(
     """,
     author='Egor Korovin',
     author_email='kbkor@yandex.ru',
-    packages=find_packages(), install_requires=[
+    packages=find_packages(),
+    install_requires=[
         'boto3>=1.10',
         'click>=8.0',
         'httpx>=0.18',
