@@ -12,6 +12,8 @@ on:
 jobs:
   build:
     environment: yandex_ek
+    env:
+      YANDEX_OAUTH: ${{ secrets.YANDEX_OAUTH }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
