@@ -1,3 +1,4 @@
+import os
 from collections import Iterable
 
 import httpx
@@ -29,11 +30,16 @@ def gateway(gateway_yaml, yc, gateway_name):
     yc.delete_gateway(gw.id)
 
 
+SKIP_GATEWAY_TESTS = os.environ.get('SKIP_GATEWAY_TESTS')
+
+
+@pytest.mark.skipif(SKIP_GATEWAY_TESTS, reason="not yet updated yandexcloud")
 def test_get_gateways(yc):
     gws = yc._get_gateways()
     assert isinstance(gws, Iterable)
 
 
+@pytest.mark.skipif(SKIP_GATEWAY_TESTS, reason="not yet updated yandexcloud")
 def test_gateway_creation(gateway_yaml, yc):
     gateway_name = "test-create-delete-gateway"
     gateway, _ = yc.create_gateway(gateway_name, gateway_yaml)
@@ -42,6 +48,7 @@ def test_gateway_creation(gateway_yaml, yc):
     assert gateway not in yc._get_gateways()
 
 
+@pytest.mark.skipif(SKIP_GATEWAY_TESTS, reason="not yet updated yandexcloud")
 @pytest.mark.skip(reason="not yet implemented")
 def test_gateway_update(gateway, yc):
     """
@@ -51,6 +58,7 @@ def test_gateway_update(gateway, yc):
     """
 
 
+@pytest.mark.skipif(SKIP_GATEWAY_TESTS, reason="not yet updated yandexcloud")
 def test_gateway_call(gateway, function_version):
     url = gateway.domain
     response = httpx.get(url)

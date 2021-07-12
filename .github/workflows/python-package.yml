@@ -1,7 +1,4 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
-name: Python package
+name: Lint & Test
 
 on:
   push:
@@ -15,25 +12,14 @@ jobs:
     env:
       YC_OAUTH: ${{ secrets.YC_OAUTH }}
       YC_FOLDER: ${{ secrets.YC_FOLDER }}
+      SKIP_GATEWAY_TESTS: TRUE
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.8, 3.9]
 
     steps:
-    - name: Display the environ
-      run: |
-        import os
-        print(os.environ)
-        print(os.environ['YC_OAUTH'])
-      shell: python
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
