@@ -5,10 +5,14 @@ setup(
     version='0.4.1',
     description='Easy serverless deploy of python web applications',
     long_description="""
-    - create account at Yandex Cloud
-    - $yappa setup
-    - $yappa deploy
-    that's it!
+# Simple and Easy serverless deploy of python web-apps Yandex Cloud
+1. create account at Yandex Cloud
+2. use Yappa:
+```shell
+$ yappa setup
+$ yappa deploy
+ ``` 
+## that's it!
     """,
     author='Egor Korovin',
     author_email='kbkor@yandex.ru',

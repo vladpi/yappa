@@ -8,3 +8,6 @@ $ yappa setup
 она сохранит айди облачного каталога в файл конфигурации
 
 разъянить откуда берутся и зачем нужны token, folder_id, .yc
+
+### limitations
+- installing grpcio on Apple M1
