@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name='yappa',
-    version='0.4.1',
+    version='0.4.2',
     description='Easy serverless deploy of python web applications',
     long_description_content_type="text/markdown",
     long_description=README,
