@@ -2,7 +2,6 @@
 
 1. create account at Yandex Cloud
 2. use Yappa:
-
 ```shell
 $ yappa setup
 $ yappa deploy
@@ -25,4 +24,4 @@ $ yappa setup
 
 ### limitations
 
-- installing grpcio on Apple M1
+installing grpcio on Apple M1
