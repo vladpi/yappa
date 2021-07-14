@@ -57,7 +57,7 @@ def test_gateway_update(gateway, yc):
 
 def test_gateway_call(gateway, function_version):
     url = gateway.domain
-    response = httpx.get(url)
+    response = httpx.get(f"https://{url}") #TODO add proper url construction
     assert response.status_code == 200
     assert response.text == "root url"
 
