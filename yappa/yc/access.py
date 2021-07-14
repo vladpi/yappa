@@ -63,7 +63,7 @@ class YcAccessMixin:
                 logger.warning("Account %s already exists, skipping creation",
                                service_account_name)
                 return account
-        click.echo("Creating service account"
+        click.echo("Creating service account "
                    + click.style(service_account_name, bold=True))
         account = self.sdk.wait_operation_and_get_result(
             self.sdk.client(ServiceAccountServiceStub).Create(
