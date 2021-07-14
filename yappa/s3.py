@@ -4,7 +4,7 @@ import subprocess
 import sys
 from contextlib import suppress
 from pathlib import Path
-from shutil import copytree, ignore_patterns, make_archive
+from shutil import copytree, ignore_patterns, make_archive, rmtree
 
 import boto3
 
@@ -76,6 +76,7 @@ def upload_to_bucket(folder, bucket_name, aws_access_key_id,
         bucket.upload_file(archive_filename, archive_filename)
     finally:
         os.remove(archive_filename)
+        rmtree(folder)
     return archive_filename
 
 

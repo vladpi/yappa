@@ -1,0 +1,22 @@
+project_name: flask yappa example
+project_slug: flask-yappa-example
+description: null
+requirements_file: requirements.txt
+bucket: flask-yappa-example-bb550b75
+application_type: wsgi
+entrypoint: app.app
+django_settings_module: null
+folder_id: b1ghi1v6nbmr34stdhii
+gw_config: yappa_gw.yaml
+runtime: python38
+memory_limit: 128MB
+timeout: 1
+excluded_paths:
+- venv
+- .git
+- .idea
+- requirements.txt
+environment: {}
+named_service_accounts: {}
+service_account_id: null
+debug: false
