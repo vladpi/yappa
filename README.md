@@ -5,9 +5,14 @@ Forget about setting up your own infrastructure, vps, network,
 orchestrators, etc...
 
 # Quickstart
-1. Setup virtual env, create your app
+1. setup virtual env, create your app
 2. create account at Yandex Cloud
-3. use Yappa:
+3. install Yappa
+```shell
+$ pip install yappa -U
+$ pip freeze > requirements.txt
+ ```
+4. use Yappa:
 ```shell
 $ yappa setup
 $ yappa deploy
@@ -25,14 +30,16 @@ see examples folder
 # Roadmap
 !TODO
 # Support and contribution
-Feel free to make pull request or ask anything at https://t.me/yappa_chat
+Feel free to make pull request or ask anything at https://t.me/yappa_chat    
 Also looking for contributors %)
 # Limitations
-## frameworks support
+## Frameworks support
 At this point WSGI applications and raw functions are supported, 
 tested on Flask and Django. ASGI applications (FastAPI, Starlette) will be added in the future
 ## Database connectivity
-Only YandexDB is supported inside Yandex Cloud. Postgress will be added soon, see updates
+Only YandexDB is supported inside Yandex Cloud. So and database you use 
+has to have public IP address    
+Postgress will be added soon, see updates
 ## Headers and authorization
 Please note that some request headers (like Authorization) are deleted before function is invoked 
 # Troubleshooting
