@@ -2,11 +2,14 @@ import logging
 
 import click
 
-from yappa.cli_helpers import NaturalOrderGroup, create_function, \
-    create_function_version, \
-    create_gateway, get_missing_details, update_gateway
+from yappa.cli_helpers import (
+    NaturalOrderGroup, create_function,
+    create_function_version,
+    create_gateway, get_missing_details, update_gateway,
+    )
 from yappa.config_generation import (
-    create_default_config, )
+    create_default_config,
+    )
 from yappa.handlers.wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
 from yappa.settings import DEFAULT_ACCESS_KEY_FILE, YANDEX_OAUTH_URL
 from yappa.yc import YC
@@ -59,7 +62,7 @@ def setup(config_file, token):
     account = yc.create_service_account()
     save_key(yc.create_service_account_key(account.id))
     click.echo("Saved service account credentials at " + click.style(
-        DEFAULT_ACCESS_KEY_FILE, bold=True))
+            DEFAULT_ACCESS_KEY_FILE, bold=True))
 
     config = (load_yaml(config_file, safe=True)
               or create_default_config(config_file))
@@ -90,9 +93,10 @@ def deploy(config_file):
     yc = YC.setup(config=config)
     function = create_function(yc, config)
     create_function_version(yc, config)
-    is_new = create_gateway(yc, config, function.id)
-    if not is_new:
-        update_gateway(yc, config)
+    if config["gw_config"]:
+        is_new = create_gateway(yc, config, function.id)
+        if not is_new:
+            update_gateway(yc, config)
 
 
 @cli.command()
