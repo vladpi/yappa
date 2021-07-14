@@ -58,7 +58,7 @@ def test_gateway_update(gateway, yc):
 def test_gateway_call(gateway, function_version):
     url = f"https://{gateway.domain}"
     response = httpx.get(url)  # TODO add proper url construction
-    assert response.status_code == 200
+    assert response.status_code == 200, url
     assert response.text == "root url"
 
     response = httpx.get(f"{url}/json")  # TODO compose url properly with furl

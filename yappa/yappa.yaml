@@ -5,7 +5,6 @@ requirements_file: null
 bucket: null
 entrypoint: null
 folder_id: null
-s3_account_name: null
 django_settings_module: null
 gw_config: yappa_gw.yaml
 application_type: wsgi # wsgi or asgi in the future

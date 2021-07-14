@@ -5,8 +5,8 @@ from datetime import datetime
 from google.protobuf.empty_pb2 import Empty
 from pytz import utc
 from yandex.cloud.access.access_pb2 import AccessBinding, \
-    SetAccessBindingsMetadata, \
-    SetAccessBindingsRequest, Subject
+    AccessBindingDelta, Subject, UpdateAccessBindingsMetadata, \
+    UpdateAccessBindingsRequest
 from yandex.cloud.iam.v1.awscompatibility.access_key_service_pb2 import \
     CreateAccessKeyRequest
 from yandex.cloud.iam.v1.awscompatibility.access_key_service_pb2_grpc import \
@@ -74,22 +74,29 @@ class YcAccessMixin:
             meta_type=CreateServiceAccountMetadata,
         ).response
         self.sdk.wait_operation_and_get_result(
-            self.sdk.client(ServiceAccountServiceStub).SetAccessBindings(
-                SetAccessBindingsRequest(
+            self.sdk.client(FolderServiceStub).UpdateAccessBindings(
+                UpdateAccessBindingsRequest(
                     resource_id=self.folder_id,
-                    access_bindings=[
-                        AccessBinding(
-                            role_id="editor",
-                            subject=Subject(
-                                id=account.id,
-                                type="serviceAccount"
-                            )
-                        )
+                    access_binding_deltas=[
+                        AccessBindingDelta(
+                            action="ADD",
+                            access_binding=AccessBinding(role_id="editor",
+                                                         subject=Subject(
+                                                             id=account.id,
+                                                             type="serviceAccount")),
+                        ),
+                        AccessBindingDelta(
+                            action="ADD",
+                            access_binding=AccessBinding(
+                                role_id="serverless.functions.admin",
+                                subject=Subject(id=account.id,
+                                                type="serviceAccount")),
+                        ),
+
                     ]
-                    # TODO разобраться с созданием аккаунта
                 )),
             response_type=Empty,
-            meta_type=SetAccessBindingsMetadata,
+            meta_type=UpdateAccessBindingsMetadata,
         )
         return account
 

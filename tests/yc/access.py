@@ -24,7 +24,7 @@ def test_folders(yc, cloud):
 
 @pytest.fixture
 def key(yc):
-    account = yc.create_service_account("yappa-test-create-delete-account")
+    account = yc.create_service_account("yappa-test-create-delete-account-2")
     key = yc.create_service_account_key(account.id)
     yield key
     yc.delete_key(key["id"])
