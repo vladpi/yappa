@@ -1,15 +1,16 @@
 import logging
 
 import click
+from click import ClickException
 
 from yappa.cli_helpers import (
     NaturalOrderGroup, create_function,
     create_function_version,
     create_gateway, get_missing_details, update_gateway,
-    )
+)
 from yappa.config_generation import (
     create_default_config,
-    )
+)
 from yappa.handlers.wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
 from yappa.settings import DEFAULT_ACCESS_KEY_FILE, YANDEX_OAUTH_URL
 from yappa.yc import YC
@@ -62,7 +63,7 @@ def setup(config_file, token):
     account = yc.create_service_account()
     save_key(yc.create_service_account_key(account.id))
     click.echo("Saved service account credentials at " + click.style(
-            DEFAULT_ACCESS_KEY_FILE, bold=True))
+        DEFAULT_ACCESS_KEY_FILE, bold=True))
 
     config = (load_yaml(config_file, safe=True)
               or create_default_config(config_file))
@@ -107,6 +108,7 @@ def undeploy(config_file):
     deletes function, api-gateway and bucket
     """
     config = load_yaml(config_file)
+    raise ClickException("Oops! Looks like it's not yet implemented")
 
 
 if __name__ == '__main__':
