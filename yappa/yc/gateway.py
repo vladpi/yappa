@@ -2,15 +2,22 @@ import logging
 from contextlib import suppress
 from typing import Iterable
 
+import yandexcloud
 from google.protobuf.empty_pb2 import Empty
 from yandex.cloud.serverless.apigateway.v1.apigateway_pb2 import ApiGateway
 from yandex.cloud.serverless.apigateway.v1.apigateway_service_pb2 import \
-    CreateApiGatewayMetadata, CreateApiGatewayRequest, DeleteApiGatewayMetadata, \
-    DeleteApiGatewayRequest, \
-    ListApiGatewayRequest
+    (
+    CreateApiGatewayMetadata, CreateApiGatewayRequest,
+    DeleteApiGatewayMetadata,
+    DeleteApiGatewayRequest,
+    ListApiGatewayRequest,
+    )
 from yandex.cloud.serverless.apigateway.v1.apigateway_service_pb2_grpc import \
     ApiGatewayServiceStub
 
+yandexcloud._sdk._supported_modules[
+    'yandex.cloud.serverless.apigateway'] = 'serverless-apigateway'
+# TODO remove monkey patch when update is in PIP
 logger = logging.getLogger(__name__)
 
 
@@ -29,8 +36,8 @@ class YcGatewayMixin:
 
     def _get_gateways(self, filter_=None) -> Iterable[ApiGateway]:
         gateways = self.sdk.client(ApiGatewayServiceStub).List(
-            ListApiGatewayRequest(folder_id=self.folder_id,
-                                  filter=filter_)).api_gateways
+                ListApiGatewayRequest(folder_id=self.folder_id,
+                                      filter=filter_)).api_gateways
         return gateways
 
     def create_gateway(self, name, openapi_spec,
@@ -39,29 +46,29 @@ class YcGatewayMixin:
             gateway = self.get_gateway(name)
             return gateway, False
         operation = self.sdk.client(ApiGatewayServiceStub).Create(
-            CreateApiGatewayRequest(
-                folder_id=self.folder_id,
-                name=name,
-                description=description,
-                openapi_spec=openapi_spec
-            ))
+                CreateApiGatewayRequest(
+                        folder_id=self.folder_id,
+                        name=name,
+                        description=description,
+                        openapi_spec=openapi_spec
+                        ))
         operation_result = self.sdk.wait_operation_and_get_result(
-            operation,
-            response_type=ApiGateway,
-            meta_type=CreateApiGatewayMetadata,
-        )
+                operation,
+                response_type=ApiGateway,
+                meta_type=CreateApiGatewayMetadata,
+                )
         return operation_result.response, True
 
     def delete_gateway(self, gateway_id):
         operation = self.sdk.client(ApiGatewayServiceStub).Delete(
-            DeleteApiGatewayRequest(
-                api_gateway_id=gateway_id,
-            ))
+                DeleteApiGatewayRequest(
+                        api_gateway_id=gateway_id,
+                        ))
         self.sdk.wait_operation_and_get_result(
-            operation,
-            response_type=Empty,
-            meta_type=DeleteApiGatewayMetadata,
-        )
+                operation,
+                response_type=Empty,
+                meta_type=DeleteApiGatewayMetadata,
+                )
 
     def update_gateway(self, gateway_name, description,
                        openapi_spec) -> ApiGateway:

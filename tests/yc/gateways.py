@@ -1,14 +1,13 @@
-import os
 from collections import Iterable
 
 import httpx
 import pytest
 import yaml
 
-from yappa.config_generation import create_default_gw_config, inject_function_id
-
-if os.environ.get("SKIP_GATEWAY_TESTS"):
-    pytest.skip("skipping gateway tests", allow_module_level=True)
+from yappa.config_generation import (
+    create_default_gw_config,
+    inject_function_id,
+    )
 
 
 @pytest.fixture(scope="session")
@@ -22,7 +21,8 @@ def gateway_yaml(config, function, gateway_name):
     reads default gw config and adds function_id
     """
     default_gw_config = create_default_gw_config()
-    gw_config = inject_function_id(default_gw_config, function.id, gateway_name)
+    gw_config = inject_function_id(default_gw_config, function.id,
+                                   gateway_name)
     return yaml.dump(gw_config)
 
 
