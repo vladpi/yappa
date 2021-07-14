@@ -1,13 +1,13 @@
 project_name: null
 project_slug: null
 description: null
-requirements_file: null
+requirements_file: requirements.txt
 bucket: null
+application_type: wsgi # wsgi, django, raw  (or asgi in the future)
 entrypoint: null
-folder_id: null
 django_settings_module: null
+folder_id: null
 gw_config: yappa_gw.yaml
-application_type: wsgi # wsgi or asgi in the future
 runtime: python38
 memory_limit: 128MB
 timeout: 1
@@ -19,4 +19,4 @@ excluded_paths:
 environment: { }
 named_service_accounts: { }
 service_account_id: null
-debug: False
+debug: false

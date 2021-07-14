@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 from pathlib import Path
 from urllib.parse import urljoin
@@ -39,20 +40,21 @@ BASE_URL = "http://base-url.com"
 
 @pytest.fixture(params=[
     # TODO add names of apps
-    ("flask_app.app", None),
-    (None, "django_app"),
-])
+    ("flask_app.app", ""),
+    ("django_wsgi.app", "django_settings"),
+], ids=["flask", "django"], scope="session")
 def app(request):
-    # TODO сделать зависоимой от config, а config - параметризованная фикстура
+    # TODO сделать зависимой от config, а config - параметризованная фикстура
     # чтобы тесты handler, s3, yc_functions вызывались для каждого приложения
     sys.path.append(str(Path(Path(__file__).resolve().parent, "test_apps")))
-    return load_app(*request.param)
+    entrypoint, django_settings_module = request.param
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", django_settings_module)
+    return load_app(entrypoint)
 
 
 def test_load_from_config(config):
     sys.path.append(str(Path(Path(__file__).resolve().parent, "test_apps")))
-    app = load_app(config.get("entrypoint"),
-                   config.get("django_settings_module"))
+    app = load_app(config.get("entrypoint"), )
     assert callable(app)
 
 

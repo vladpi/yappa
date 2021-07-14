@@ -1,11 +1,47 @@
-# Simple and Easy serverless deploy of python web-apps Yandex Cloud
+# Simple serverless deploy of python web-apps 
+[powered by Yandex Cloud]
 
-1. create account at Yandex Cloud
-2. use Yappa:
+Forget about setting up your own infrastructure, vps, network,
+orchestrators, etc...
+
+# Quickstart
+1. Setup virtual env, create your app
+2. create account at Yandex Cloud
+3. use Yappa:
 ```shell
 $ yappa setup
 $ yappa deploy
- ``` 
+ ```
+...that's it!
+# Deployment examples
+Not just regular json API app could be deployed this way. Several types of
+applications could be deployed with Yappa:
+- json API (Flask, Django rest framework)
+- regular Django app
+- raw serverless function
+- single page application 
+- SPA + multiple API versions
+see examples folder
+# Roadmap
+!TODO
+# Support and contribution
+Feel free to make pull request or ask anything at https://t.me/yappa_chat
+Also looking for contributors %)
+# Limitations
+## frameworks support
+At this point WSGI applications and raw functions are supported, 
+tested on Flask and Django. ASGI applications (FastAPI, Starlette) will be added in the future
+## Database connectivity
+Only YandexDB is supported inside Yandex Cloud. Postgress will be added soon, see updates
+## Headers and authorization
+Please note that some request headers (like Authorization) are deleted before function is invoked 
+# Troubleshooting
+- grpcio on Apple M1   
+There is a known issue with installing grpcio on M1 Macs, 
+  installing with anaconda may help. Also look at 
+  https://stackoverflow.com/questions/66640705/how-can-i-install-grpcio-on-an-apple-m1-silicon-laptop
+  
 
-## that's it!
-
+  
+# Acknowledgements
+! TODO

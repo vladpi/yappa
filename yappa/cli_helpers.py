@@ -8,7 +8,7 @@ from click import ClickException
 from yappa.config_generation import create_default_gw_config, inject_function_id
 from yappa.handlers.wsgi import load_yaml, save_yaml
 from yappa.s3 import prepare_package, upload_to_bucket
-from yappa.utils import get_yc_entrypoint
+from yappa.utils import HANDLERS, get_yc_entrypoint
 
 
 class NaturalOrderGroup(click.Group):
@@ -59,7 +59,8 @@ def create_function_version(yc, config):
         description=config["description"],
         bucket_name=config["bucket"],
         object_name=object_key,
-        entrypoint=get_yc_entrypoint(config["application_type"]),
+        entrypoint=get_yc_entrypoint(config["application_type"],
+                                     config["entrypoint"]),
         memory=config["memory_limit"],
         service_account_id=config["service_account_id"],
         timeout=config["timeout"],
@@ -88,7 +89,7 @@ def create_gateway(yc, config, function_id):
                    click.style(
                        f"{gateway.id}", ) + "\n"
                    + "\tdomain : " + click.style(f"{gateway.domain}",
-                                                         fg="yellow"))
+                                                 fg="yellow"))
     return is_new
 
 
@@ -105,6 +106,7 @@ def update_gateway(yc, config):
                    f"{gateway.id}", ) + "\n"
                + "\tdomain : " + click.style(f"{gateway.domain}",
                                              fg="yellow"))
+
 
 class ValidationError(ClickException):
     pass
@@ -177,12 +179,6 @@ PROMPTS = (
      "What's your project name?"),
     ("project_slug", get_slug, [is_valid_slug],
      "What's your project slug?"),
-    ("description", "", [],
-     "What's your project description?"),
-    ("entrypoint", "wsgi.app", [is_valid_entrypoint],
-     "Please specify entrypoint (skip if it is Django project)"),
-    ("django_settings_module", "", [is_valid_django_settings_module],
-     "Please specify Django settings module"),
     ("bucket", get_bucket_name, [is_not_empty,
                                  is_valid_bucket_name],
      "Please specify bucket name"),
@@ -206,4 +202,17 @@ def get_missing_details(config):
         for validator in validators:
             validator(value)
         config[key] = value
+    if not config.get("application_type"):
+        config["application_type"] = click.prompt(
+            "Please specify application type",
+            default=next(iter(HANDLERS)), type=click.Choice(HANDLERS), )
+    if not config.get("entrypoint"):
+        config["entrypoint"] = click.prompt(
+            "Please specify import path for application",
+            default="flask.app")
+    if not config.get("django_settings_module") \
+            and config["application_type"] == "Django":
+        config["django_settings_module"] = click.prompt(
+            "Please specify your DJANGO_SETTINGS_MODULE",
+            default="project.project.settings")
     return config, is_updated

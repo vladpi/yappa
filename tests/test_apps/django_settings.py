@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from django.core.wsgi import get_wsgi_application
 from django.http import HttpResponse
 from django.urls import path
 from rest_framework.decorators import api_view
@@ -43,7 +44,7 @@ urlpatterns = [
 ]
 
 BASE_DIR = Path(__file__).resolve().parent
-ROOT_URLCONF = 'django_app'
+ROOT_URLCONF = 'django_settings'
 SECRET_KEY = '^)qfu_0%x)ngcm!*7hs_d*myvfo0chk2kwk8yh'
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
@@ -52,3 +53,4 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
 ]
+

@@ -21,12 +21,6 @@ $ yappa setup
 
 ### limitations
 
-installing grpcio on Apple M1
-
-
-- разобраться с host url
-- разобраться с созданием аккаунта
-- какие версии питона поддерживаются
 
 
 - документация

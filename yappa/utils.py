@@ -21,11 +21,15 @@ def convert_size_to_bytes(size_str):
 
 HANDLERS = {
     "wsgi": "handlers.wsgi.handle",
+    "django": "handlers.wsgi.handle",
+    "raw": None,
 }
 
 
-def get_yc_entrypoint(application_type):
+def get_yc_entrypoint(application_type, raw_entrypoint):
     entrypoint = HANDLERS.get(application_type)
+    if application_type == "raw":
+        entrypoint = raw_entrypoint
     if not entrypoint:
         raise ValueError(
             f"Sorry, supported app types are: {','.join(HANDLERS.keys())}."
