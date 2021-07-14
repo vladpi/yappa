@@ -41,7 +41,9 @@ class YC(YcAccessMixin, YcFunctionsMixin, YcGatewayMixin):
         if not (credentials.get("token") or credentials.get(
                 "service_account_key")):
             raise ClickException("Sorry. Looks like you didn't provide OAuth "
-                                 "token or path to access key")
+                                 "token. Also couldn't find service account "
+                                 "key at the .yc file. "
+                                 "Please run $ yappa setup")
         if skip_folder:
             return cls(**credentials)
         folder_id = config.get("folder_id") or os.environ.get("YC_FOLDER")
