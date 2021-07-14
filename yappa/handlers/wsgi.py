@@ -83,7 +83,7 @@ try:
                             DEFAULT_CONFIG_FILENAME))
     app = load_app(config.get("entrypoint") or "")
     os.environ.setdefault("DJANGO_SETTINGS_MODULE",
-                          config.get("django_settings_module" or ""))
+                          config.get("django_settings_module") or "")
 except ValueError:
     # logger.warning("Looks like broken Yappa config is used")
     pass  # TODO uncomment warning when yappa in pip and it load_config is moved from this file
