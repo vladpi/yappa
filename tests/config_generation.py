@@ -13,11 +13,11 @@ from yappa.utils import get_yc_entrypoint
 ])
 def test_getting_entrypoint(application_type, expected_entrypoint, is_ok):
     if is_ok:
-        entrypoint = get_yc_entrypoint(application_type)
+        entrypoint = get_yc_entrypoint(application_type, expected_entrypoint)
         assert entrypoint == expected_entrypoint
     else:
         with pytest.raises(ValueError):
-            get_yc_entrypoint(application_type)
+            get_yc_entrypoint(application_type, expected_entrypoint)
 
 
 BASE_GW_DIR = Path(Path(__file__).resolve().parent, "gateway_configs")
