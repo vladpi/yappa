@@ -3,6 +3,7 @@
 - [ ] разобраться с access binding - https://cloud.yandex.ru/docs/resource-manager/api-ref/Folder/setAccessBindings
 - [ ] если нет кредентилов - попросит запустить setup
 - [ ] если нет ссылки на гейтвей - не апдейтить
+- [ ] сделать пример для фласка, добавить его в примеры
 
 - документация
 
