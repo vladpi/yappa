@@ -2,6 +2,7 @@ import json
 import logging
 from datetime import datetime
 
+import click
 from google.protobuf.empty_pb2 import Empty
 from pytz import utc
 from yandex.cloud.access.access_pb2 import AccessBinding, \
@@ -62,6 +63,8 @@ class YcAccessMixin:
                 logger.warning("Account %s already exists, skipping creation",
                                service_account_name)
                 return account
+        click.echo("Creating service account"
+                   + click.style(service_account_name, bold=True))
         account = self.sdk.wait_operation_and_get_result(
             self.sdk.client(ServiceAccountServiceStub).Create(
                 CreateServiceAccountRequest(

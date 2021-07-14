@@ -50,7 +50,7 @@ def create_function_version(yc, config):
                                   )
     click.echo(f"Uploading to bucket {config['bucket']}...")
     object_key = upload_to_bucket(package_dir, config["bucket"],
-                                  **yc.get_s3_key(config["s3_account_name"]))
+                                  **yc.get_s3_key())
     click.echo(f"Creating new function version for "
                + click.style(config["project_slug"], bold=True))
     yc.create_function_version(
