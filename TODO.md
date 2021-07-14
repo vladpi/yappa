@@ -1,6 +1,5 @@
 - [ ] ентри поинт - универсальный, тип приложения - wsgi, django, raw ( посмотреть на джанго. как у него wsgi)
 - [ ] разобраться с access binding - https://cloud.yandex.ru/docs/resource-manager/api-ref/Folder/setAccessBindings
-- [ ] если нет ссылки на гейтвей - не апдейтить
 - [ ] сделать пример для фласка, добавить его в примеры
 
 - документация
