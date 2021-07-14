@@ -209,7 +209,7 @@ def get_missing_details(config):
     if not config.get("entrypoint"):
         config["entrypoint"] = click.prompt(
             "Please specify import path for application",
-            default="flask.app")
+            default="wsgi.app")
     if not config.get("django_settings_module") \
             and config["application_type"] == "Django":
         config["django_settings_module"] = click.prompt(
