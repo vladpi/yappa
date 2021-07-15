@@ -29,7 +29,8 @@ def test_function_access(yc, function):
 
 def test_function_version_creation(yc, function, function_version, config):
     version = yc.get_latest_version(function.id)
-    assert version.entrypoint == get_yc_entrypoint(config["application_type"])
+    assert version.entrypoint == get_yc_entrypoint(config["application_type"],
+                                                   config["entrypoint"])
     assert version.resources.memory == convert_size_to_bytes(
         config["memory_limit"])
     assert version.execution_timeout.seconds == float(config["timeout"])
