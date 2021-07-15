@@ -2,12 +2,12 @@ project_name: raw function example
 project_slug: raw-function-example
 description: null
 requirements_file: requirements.txt
-bucket: raw-function-example-bd939798
+bucket: raw-function-example-140d41fd
 application_type: raw
 entrypoint: app.handler
 django_settings_module: null
-folder_id: null
-gw_config: null
+folder_id: b1ghi1v6nbmr34stdhii
+gw_config: yappa_gw.yaml
 runtime: python38
 memory_limit: 128MB
 timeout: 1
