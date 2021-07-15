@@ -34,7 +34,10 @@ def save_yaml(config, filename):
     return filename
 
 
-def load_app(import_path):
+def load_app(import_path, django_settings_module=None):
+    if not import_path:
+        raise ValueError("import_path should not be empty")
+    os.environ["DJANGO_SETTINGS_MODULE"] = django_settings_module or ""
     *submodules, app_name = import_path.split(".")
     module = import_module(".".join(submodules))
     app = getattr(module, app_name)
@@ -81,9 +84,9 @@ def call_app(app, event):
 try:
     config = load_yaml(Path(Path(__file__).resolve().parent.parent,
                             DEFAULT_CONFIG_FILENAME))
-    app = load_app(config.get("entrypoint") or "")
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE",
-                          config.get("django_settings_module") or "")
+
+    app = load_app(config.get("entrypoint"),
+                   config.get("DJANGO_SETTINGS_MODULE"))
 except ValueError:
     # logger.warning("Looks like broken Yappa config is used")
     pass  # TODO uncomment warning when yappa in pip and it load_config is moved from this file
