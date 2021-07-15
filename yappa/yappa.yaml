@@ -3,7 +3,7 @@ project_slug: null
 description: null
 requirements_file: requirements.txt
 bucket: null
-application_type: wsgi # wsgi, django, raw  (or asgi in the future)
+application_type: null # wsgi, django, raw  (or asgi in the future)
 entrypoint: null
 django_settings_module: null
 folder_id: null

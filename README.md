@@ -26,9 +26,9 @@ $ yappa deploy
 # Deployment examples
 Not just regular json API could be deployed this way. Several types of
 applications could be deployed with Yappa:
+- raw serverless function
 - json API (Flask, Django rest framework)
 - regular Django app
-- raw serverless function
 - single page application 
 - SPA + multiple API versions  
 ...   

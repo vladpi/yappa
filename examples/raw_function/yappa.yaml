@@ -1,13 +1,13 @@
-project_name: flask yappa example
-project_slug: flask-yappa-example
+project_name: raw function example
+project_slug: raw-function-example
 description: null
 requirements_file: requirements.txt
-bucket: flask-yappa-example-bb550b75
-application_type: wsgi
-entrypoint: app.app
+bucket: raw-function-example-bd939798
+application_type: raw
+entrypoint: app.handler
 django_settings_module: null
 folder_id: null
-gw_config: yappa_gw.yaml
+gw_config: null
 runtime: python38
 memory_limit: 128MB
 timeout: 1
