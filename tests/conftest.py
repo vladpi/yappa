@@ -63,6 +63,7 @@ def config(app_dir, config_filename):
         profile="default",
         requirements_file="flask_requirements.txt",
         entrypoint="flask_app.app",
+        application_type="wsgi",
         bucket="test-bucket-231",
         excluded_paths=(
             ".idea",

@@ -32,6 +32,7 @@ def get_yc_entrypoint(application_type, raw_entrypoint):
         entrypoint = raw_entrypoint
     if not entrypoint:
         raise ValueError(
-            f"Sorry, supported app types are: {','.join(HANDLERS.keys())}."
+            f"Sorry, supported app types are: {','.join(HANDLERS.keys())}. "
+            f"Got {application_type}"
         )
     return entrypoint
