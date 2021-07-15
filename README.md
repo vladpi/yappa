@@ -58,7 +58,6 @@ There is a known issue with installing grpcio on M1 Macs,
   installing with anaconda may help. Also look at 
   https://stackoverflow.com/questions/66640705/how-can-i-install-grpcio-on-an-apple-m1-silicon-laptop
   
-
   
 # Acknowledgements
 ! TODO
