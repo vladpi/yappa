@@ -6,7 +6,7 @@ bucket: flask-yappa-example-bb550b75
 application_type: wsgi
 entrypoint: app.app
 django_settings_module: null
-folder_id: null
+folder_id: b1ghi1v6nbmr34stdhii
 gw_config: yappa_gw.yaml
 runtime: python38
 memory_limit: 128MB

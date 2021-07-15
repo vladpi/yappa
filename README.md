@@ -83,6 +83,13 @@ Lots of features are on the way :)
 Listed order may not be the chronological order of implementation.
 However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat)
 
+### pre-release 
+- logo
+- pretty flask example app
+- demo gif 
+- deal with host url
+- habr article
+----
 - Support of asgi app
 - Django support
     - management commands call
