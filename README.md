@@ -44,11 +44,15 @@ Not just regular json API could be deployed this way. Several types of applicati
   see examples folder
 
 # Yandex Cloud authorization
+Command '$ yappa setup' prompts you for OAuth token. Then,
+Yappa creates service account "yappa-uploader-service" with 
+roles editor and serverless.functions.admin for the specified folder.
+Key for this account is created and saved locally at .yc file.
 
-Command '$ yappa deploy' supports two types of authorization at YandecCloud
+Command '$ yappa deploy' supports two types of authorization
 
 - service account key saved at .yc file (generated during '$ yappa setup')
-- environment variables (YC_OAUTH and YC_FOLDER variables should be set)
+- environment variables YC_OAUTH and YC_FOLDER
 
 # Troubleshooting
 
@@ -57,7 +61,8 @@ Command '$ yappa deploy' supports two types of authorization at YandecCloud
   at [stackoverflow](https://stackoverflow.com/questions/66640705/how-can-i-install-grpcio-on-an-apple-m1-silicon-laptop)
 
 # Limitations
-
+There are some limitations, however YandexCloud team is constantly releasing the
+features and services. Also, this project will try to keep up. So stay tuned :)
 ## Frameworks support
 
 At this point WSGI applications and raw functions are supported, tested on Flask and Django. ASGI applications (FastAPI,
