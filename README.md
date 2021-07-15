@@ -60,4 +60,6 @@ There is a known issue with installing grpcio on M1 Macs,
   
   
 # Acknowledgements
-! TODO
+[Mikhail Novikov](https://github.com/kurtgn) for starting this project two years ago
+[httpx](https://github.com/encode/httpx) as a great tool for calling WSGI/ASGI apps
+[Zappa](https://github.com/Miserlou/Zappa) for inspiration
