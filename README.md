@@ -1,7 +1,7 @@
-# Simple serverless deploy of python web-apps @YandexCloud
+# Simple deploy of python web-apps @YandexCloud
 
 Forget about setting up your own infrastructure, vps, network, 
-orchestrators, etc...
+orchestrators, etc... go **serverless**
 
 # Quickstart
 
@@ -110,7 +110,7 @@ However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat
         - django + postgres
         - classic django with s3
         - SPA
-        - SPA + DRF + authorisation
+        - SPA + DRF + authorization
         - SPA + two api versions
     - habr articles with deployment examples
     - habr article with full cycle of web-site (from code to domain)
@@ -135,5 +135,5 @@ Also looking for contributors %)
 # Acknowledgements
 
 - [Mikhail Novikov](https://github.com/kurtgn) for starting this project two years ago
-- [httpx](https://github.com/encode/httpx) as a great tool for calling WSGI/ASGI apps
+- [httpx](https://github.com/encode/httpx) as a great tool for calling WSGI/ASGI apps offline 
 - [Zappa](https://github.com/Miserlou/Zappa) for inspiration  
