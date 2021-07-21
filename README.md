@@ -33,15 +33,21 @@ $ yappa deploy
 
 # Deployment examples
 
-Not just regular json API could be deployed this way. Several types of applications could be deployed with Yappa:
+Both WSGI and ASGI applications are supported (as well as raw functions). 
+So Django, Flask, FastAPI... etc could be easily deployed.
 
-- raw serverless function
-- json API (Flask, Django rest framework)
+Furthermore, not just regular json API could be deployed this way. 
+Several types of applications could be launched with Yappa:
+
+- [raw serverless function](https://github.com/turokg/yappa/tree/master/examples/raw_function)
+- json API ([Flask](https://github.com/turokg/yappa/tree/master/examples/flask), 
+  [FastAPI](https://github.com/turokg/yappa/tree/master/examples/fastapi), 
+  Django rest framework)
 - regular Django app
 - single page application
 - SPA + multiple API versions  
   ...   
-  see examples folder
+  more examples will be added soon
 
 # Yandex Cloud authorization
 Command '$ yappa setup' prompts you for OAuth token. Then,
@@ -63,14 +69,11 @@ Command '$ yappa deploy' supports two types of authorization
 # Limitations
 There are some limitations, however YandexCloud team is constantly releasing the
 features and services. Also, this project will try to keep up. So stay tuned :)
-## Frameworks support
-
-At this point WSGI applications and raw functions are supported, tested on Flask and Django. ASGI applications (FastAPI,
-Starlette) will be added in the future
 
 ## Database connectivity
 
 Only YandexDB is supported inside Yandex Cloud. So any database you use has to have public IP address    
+
 Managed Postgress will be added soon, see updates
 
 ## Headers and authorization
@@ -90,7 +93,6 @@ However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat
 - deal with host url
 - habr article
 ----
-- Support of asgi app
 - Django support
     - management commands call
     - postgres support
