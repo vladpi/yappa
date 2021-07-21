@@ -33,4 +33,4 @@ starlette==0.14.2
 typing-extensions==3.10.0.0
 urllib3==1.26.6
 yandexcloud==0.98.0
-yappa==0.4.9
+yappa>=0.4.9

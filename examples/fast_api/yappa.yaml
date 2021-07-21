@@ -6,7 +6,7 @@ bucket: fastapi-example-dec4b228
 application_type: asgi
 entrypoint: app.app
 django_settings_module: null
-folder_id:
+folder_id: null
 gw_config: yappa_gw.yaml
 runtime: python38
 memory_limit: 128MB
