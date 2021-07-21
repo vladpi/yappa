@@ -1,4 +1,6 @@
-# Setting up project
+# Deployment of base Django DRF project 
+
+## setup project 
 setup new virtual env 
 ```shell
 $ python3 -m venv venv 
@@ -43,3 +45,8 @@ drf_base/urls.py:
 from django.urls import include, path
 urlpatterns = [path('', include('example_app.urls'))]
 ```
+check that app is properly setup 
+```shell
+./manage.py runserver
+```
+go to http://localhost:8000/
