@@ -1,3 +1,5 @@
+from yappa.settings import HANDLERS
+
 MIN_MEMORY, MAX_MEMORY = 134217728, 2147483648
 
 SIZE_SUFFIXES = {
@@ -17,13 +19,6 @@ def convert_size_to_bytes(size_str):
             return size
     raise ValueError("Oops. Couldn't parse memory limit. "
                      "It should be in format 128MB, 2GB")
-
-
-HANDLERS = {
-    "wsgi": "handlers.wsgi.handle",
-    "django": "handlers.wsgi.handle",
-    "raw": None,
-}
 
 
 def get_yc_entrypoint(application_type, raw_entrypoint):

@@ -8,7 +8,8 @@ from click import ClickException
 from yappa.config_generation import create_default_gw_config, inject_function_id
 from yappa.handlers.wsgi import load_yaml, save_yaml
 from yappa.s3 import prepare_package, upload_to_bucket
-from yappa.utils import HANDLERS, get_yc_entrypoint
+from yappa.utils import get_yc_entrypoint
+from yappa.settings import HANDLERS
 
 
 class NaturalOrderGroup(click.Group):

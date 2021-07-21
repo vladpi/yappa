@@ -5,54 +5,27 @@ from urllib.parse import urljoin
 
 import pytest
 
+from tests.handlers.conftest import BASE_URL
 from yappa.handlers.wsgi import call_app, load_app, patch_response
 
 
-@pytest.fixture()
-def sample_event():
-    return {
-        "httpMethod": "GET",
-        "headers": {
-            "HTTP_HOST": ""
-        },
-        "url": "http://sampleurl.ru/",
-        "params": {},
-        "multiValueParams": {},
-        "pathParams": {},
-        "multiValueHeaders": {},
-        "queryStringParameters": {},
-        "multiValueQueryStringParameters": {},
-        "requestContext": {
-            "identity": {"sourceIp": "95.170.134.34",
-                         "userAgent": "Mozilla/5.0"},
-            "httpMethod": "GET",
-            "requestId": "0f61048c-2ba9",
-            "requestTime": "18/Jun/2021:03:56:37 +0000",
-            "requestTimeEpoch": 1623988597},
-        "body": "",
-        "isBase64Encoded": True}
-
-
-SAMPLE_CONTEXT = None
-BASE_URL = "http://base-url.com"
-
-
 @pytest.fixture(params=[
-    ("flask_app.app", None),
-    ("django_wsgi.app", "django_settings"),
-], ids=[
-    "flask",
-    "django"
-], )
+        ("flask_app.app", None),
+        ("django_wsgi.app", "django_settings"),
+        ], ids=[
+        "flask",
+        "django"
+        ], )
 def app(request):
     # TODO сделать зависимой от config, а config - параметризованная фикстура
     # чтобы тесты handler, s3, yc_functions вызывались для каждого приложения
-    sys.path.append(str(Path(Path(__file__).resolve().parent, "test_apps")))
+    sys.path.append(str(Path(Path(__file__).resolve().parent.parent, "test_apps")))
     return load_app(*request.param)
 
 
 def test_load_from_config(config):
-    sys.path.append(str(Path(Path(__file__).resolve().parent, "test_apps")))
+    sys.path.append(
+        str(Path(Path(__file__).resolve().parent.parent, "test_apps")))
     app = load_app(config.get("entrypoint"), )
     assert callable(app)
 
@@ -81,20 +54,20 @@ def test_json_response(app, sample_event):
     response = patch_response(call_app(app, sample_event))
     assert response["statusCode"] == 200
     assert response["body"].replace("\n", "") == json.dumps(
-        {"result": "json", "sub_result": {"sub": "json"}}).replace(" ", "")
+            {"result": "json", "sub_result": {"sub": "json"}}).replace(" ", "")
 
 
 def test_query_params(app, sample_event):
     sample_event["url"] = urljoin(BASE_URL, "query_params")
     params = {
-        "a": "a_value",
-        "b": "1",
-    }
+            "a": "a_value",
+            "b": "1",
+            }
     sample_event["queryStringParameters"] = params
     response = patch_response(call_app(app, sample_event))
     assert response["statusCode"] == 200, response["body"]
     assert response["body"].replace("\n", "").replace(" ", "") == json.dumps(
-        {"params": params}).replace(" ", "")
+            {"params": params}).replace(" ", "")
 
 
 def test_url_param(app, sample_event):
@@ -103,7 +76,7 @@ def test_url_param(app, sample_event):
     response = patch_response(call_app(app, sample_event))
     assert response["statusCode"] == 200
     assert response["body"].replace("\n", "") == json.dumps(
-        {"param": param_value}).replace(" ", "")
+            {"param": param_value}).replace(" ", "")
 
 
 @pytest.mark.skip()
