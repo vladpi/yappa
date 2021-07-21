@@ -10,9 +10,11 @@ from yappa.utils import load_yaml
 
 logger = logging.getLogger(__name__)
 
+
 async def call_app(app, event):
     async with httpx.AsyncClient(app=app,
-                                 base_url="http://testserver") as client:
+                                 base_url=event["headers"].get("Host",
+                                                               "https://raw_function.net")) as client:
         request = client.build_request(
                 method=event["httpMethod"],
                 url=event["url"],

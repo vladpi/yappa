@@ -89,7 +89,7 @@ def create_gateway(yc, config, function_id):
                                                                  "\tid: " +
                    click.style(
                        f"{gateway.id}", ) + "\n"
-                   + "\tdomain : " + click.style(f"{gateway.domain}",
+                   + "\tdomain : " + click.style(f"https://{gateway.domain}",
                                                  fg="yellow"))
     return is_new
 
@@ -105,7 +105,7 @@ def update_gateway(yc, config):
                                                              "\tid: " +
                click.style(
                    f"{gateway.id}", ) + "\n"
-               + "\tdomain : " + click.style(f"{gateway.domain}",
+               + "\tdomain : " + click.style(f"https://{gateway.domain}",
                                              fg="yellow"))
 
 

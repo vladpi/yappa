@@ -9,7 +9,6 @@ import httpx
 from yappa.settings import DEFAULT_CONFIG_FILENAME
 from yappa.utils import load_yaml
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -33,11 +32,11 @@ def patch_response(response):
     }
     """
     return {
-        'statusCode': response.status_code,
-        'headers': dict(response.headers),
-        'body': response.content.decode(),
-        'isBase64Encoded': False,
-    }
+            'statusCode': response.status_code,
+            'headers': dict(response.headers),
+            'body': response.content.decode(),
+            'isBase64Encoded': False,
+            }
 
 
 def call_app(app, event):
@@ -47,15 +46,15 @@ def call_app(app, event):
     #response
     """
     with httpx.Client(app=app,
-                      base_url="http://host.url", ) as client:  # TODO where
-        # do i find host url???
+                      base_url=event["headers"].get("Host",
+                                                    "https://raw_function.net")) as client:
         request = client.build_request(
-            method=event["httpMethod"],
-            url=event["url"],
-            headers=event["headers"],
-            params=event["queryStringParameters"],
-            content=json.dumps(event["body"]).encode(),
-        )
+                method=event["httpMethod"],
+                url=event["url"],
+                headers=event["headers"],
+                params=event["queryStringParameters"],
+                content=json.dumps(event["body"]).encode(),
+                )
         response = client.send(request)
         return response
 
@@ -76,9 +75,9 @@ def handle(event, context):
     if not config["debug"]:
         return patch_response(response)
     return {
-        'statusCode': 200,
-        'body': {
-            "event": event,
-            "response": response,
-        },
-    }
+            'statusCode': 200,
+            'body': {
+                    "event": event,
+                    "response": response,
+                    },
+            }

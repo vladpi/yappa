@@ -90,7 +90,6 @@ However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat
 - logo
 - pretty flask example app
 - demo gif 
-- deal with host url
 - habr article
 ----
 - Django support
