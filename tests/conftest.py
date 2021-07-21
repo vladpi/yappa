@@ -5,9 +5,8 @@ from shutil import copy2
 import pytest
 
 from yappa.config_generation import create_default_config
-from yappa.handlers.wsgi import save_yaml
 from yappa.s3 import delete_bucket, prepare_package, upload_to_bucket
-from yappa.utils import get_yc_entrypoint
+from yappa.utils import get_yc_entrypoint, save_yaml
 from yappa.yc import YC
 
 
@@ -17,21 +16,21 @@ def yc():
 
 
 COPIED_FILES = (
-    Path(Path(__file__).resolve().parent, "test_apps", "flask_app.py"),
-    Path(Path(__file__).resolve().parent, "test_apps",
-         "flask_requirements.txt"),
-)
+        Path(Path(__file__).resolve().parent, "test_apps", "flask_app.py"),
+        Path(Path(__file__).resolve().parent, "test_apps",
+             "flask_requirements.txt"),
+        )
 EMPTY_FILES = (
-    Path("package", "utils.py"),
-    Path("package", "subpackage", "subutils.py")
-)
+        Path("package", "utils.py"),
+        Path("package", "subpackage", "subutils.py")
+        )
 
 IGNORED_FILES = (
-    Path("requirements.txt"),
-    Path(".idea"),
-    Path(".git", "config"),
-    Path("venv", "flask.py"),
-)
+        Path("requirements.txt"),
+        Path(".idea"),
+        Path(".git", "config"),
+        Path("venv", "flask.py"),
+        )
 
 
 def create_empty_files(*paths):
@@ -60,18 +59,18 @@ def config_filename():
 def config(app_dir, config_filename):
     config = create_default_config(config_filename)
     config.update(
-        profile="default",
-        requirements_file="flask_requirements.txt",
-        entrypoint="flask_app.app",
-        application_type="wsgi",
-        bucket="test-bucket-231",
-        excluded_paths=(
-            ".idea",
-            ".git",
-            "venv",
-            "requirements.txt",
-        )
-    )
+            profile="default",
+            requirements_file="flask_requirements.txt",
+            entrypoint="flask_app.app",
+            application_type="wsgi",
+            bucket="test-bucket-231",
+            excluded_paths=(
+                    ".idea",
+                    ".git",
+                    "venv",
+                    "requirements.txt",
+                    )
+            )
     save_yaml(config, config_filename)
     return config
 
@@ -104,21 +103,46 @@ def function(function_name, yc):
 @pytest.fixture(scope="session")
 def function_version(yc, function, uploaded_package, config):
     return yc.create_function_version(
-        function.name,
-        runtime=config["runtime"],
-        description=config["description"],
-        entrypoint=get_yc_entrypoint(config["application_type"],
-                                     config["entrypoint"]),
-        bucket_name=config["bucket"],
-        object_name=uploaded_package,
-        memory=config["memory_limit"],
-        timeout=config["timeout"],
-        environment=config["environment"],
-        service_account_id=config["service_account_id"],
-        named_service_accounts=config["named_service_accounts"],
-    )
+            function.name,
+            runtime=config["runtime"],
+            description=config["description"],
+            entrypoint=get_yc_entrypoint(config["application_type"],
+                                         config["entrypoint"]),
+            bucket_name=config["bucket"],
+            object_name=uploaded_package,
+            memory=config["memory_limit"],
+            timeout=config["timeout"],
+            environment=config["environment"],
+            service_account_id=config["service_account_id"],
+            named_service_accounts=config["named_service_accounts"],
+            )
 
 
 @pytest.fixture(scope="session")
 def s3_credentials(yc):
     return yc.get_s3_key()
+
+
+@pytest.fixture()
+def sample_event():
+    return {
+            "httpMethod": "GET",
+            "headers": {
+                    "HTTP_HOST": ""
+                    },
+            "url": "http://sampleurl.ru/",
+            "params": {},
+            "multiValueParams": {},
+            "pathParams": {},
+            "multiValueHeaders": {},
+            "queryStringParameters": {},
+            "multiValueQueryStringParameters": {},
+            "requestContext": {
+                    "identity": {"sourceIp": "95.170.134.34",
+                                 "userAgent": "Mozilla/5.0"},
+                    "httpMethod": "GET",
+                    "requestId": "0f61048c-2ba9",
+                    "requestTime": "18/Jun/2021:03:56:37 +0000",
+                    "requestTimeEpoch": 1623988597},
+            "body": "",
+            "isBase64Encoded": True}

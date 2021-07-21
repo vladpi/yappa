@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from yappa.handlers.wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
-from yappa.settings import DEFAULT_GW_CONFIG_FILENAME
+from yappa.utils import load_yaml, save_yaml
+from yappa.settings import DEFAULT_CONFIG_FILENAME, DEFAULT_GW_CONFIG_FILENAME
 
 
 def create_default_gw_config(filename=DEFAULT_GW_CONFIG_FILENAME):

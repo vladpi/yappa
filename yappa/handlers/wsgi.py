@@ -5,33 +5,12 @@ from importlib import import_module
 from pathlib import Path
 
 import httpx
-import yaml
 
-try:
-    from yaml import CLoader as Loader, CDumper as Dumper
-except ImportError:
-    from yaml import Loader, Dumper
-DEFAULT_CONFIG_FILENAME = "yappa.yaml"
+from yappa.settings import DEFAULT_CONFIG_FILENAME
+from yappa.utils import load_yaml
+
+
 logger = logging.getLogger(__name__)
-
-
-# TODO after yappa in pip - maybe move load_yaml to config_generation and
-#  DEFAULT_CONFIG_FILENAME to settings
-def load_yaml(file, safe=False):
-    try:
-        with open(file, "r") as f:
-            return yaml.load(f.read(), Loader)
-    except FileNotFoundError:
-        if safe:
-            return dict()
-        else:
-            raise
-
-
-def save_yaml(config, filename):
-    with open(filename, "w+") as f:
-        f.write(yaml.dump(config, sort_keys=False))
-    return filename
 
 
 def load_app(import_path, django_settings_module=None):
@@ -88,8 +67,8 @@ try:
     app = load_app(config.get("entrypoint"),
                    config.get("DJANGO_SETTINGS_MODULE"))
 except ValueError:
-    # logger.warning("Looks like broken Yappa config is used")
-    pass  # TODO uncomment warning when yappa in pip and it load_config is moved from this file
+    logger.warning("Couldn't load app. Looks like broken Yappa config is used")
+    pass
 
 
 def handle(event, context):

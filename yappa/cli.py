@@ -11,8 +11,11 @@ from yappa.cli_helpers import (
 from yappa.config_generation import (
     create_default_config,
 )
-from yappa.handlers.wsgi import DEFAULT_CONFIG_FILENAME, load_yaml, save_yaml
-from yappa.settings import DEFAULT_ACCESS_KEY_FILE, YANDEX_OAUTH_URL
+from yappa.utils import load_yaml, save_yaml
+from yappa.settings import (
+    DEFAULT_ACCESS_KEY_FILE, DEFAULT_CONFIG_FILENAME,
+    YANDEX_OAUTH_URL,
+    )
 from yappa.yc import YC
 from yappa.yc.access import save_key
 

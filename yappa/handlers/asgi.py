@@ -1,10 +1,14 @@
 import json
+import logging
 from pathlib import Path
 
 import httpx
 
-from .wsgi import DEFAULT_CONFIG_FILENAME, load_app, load_yaml, patch_response
+from yappa.handlers.wsgi import load_app, patch_response
+from yappa.settings import DEFAULT_CONFIG_FILENAME
+from yappa.utils import load_yaml
 
+logger = logging.getLogger(__name__)
 
 async def call_app(app, event):
     async with httpx.AsyncClient(app=app,
@@ -27,7 +31,7 @@ try:
     app = load_app(config.get("entrypoint"),
                    config.get("DJANGO_SETTINGS_MODULE"))
 except ValueError:
-    # logger.warning("Looks like broken Yappa config is used")
+    logger.warning("Looks like broken Yappa config is used")
     pass  # TODO uncomment warning when yappa in pip and it load_config is
     # moved from this file
 

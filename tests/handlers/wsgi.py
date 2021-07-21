@@ -5,9 +5,8 @@ from urllib.parse import urljoin
 
 import pytest
 
-from tests.handlers.conftest import BASE_URL
 from yappa.handlers.wsgi import call_app, load_app, patch_response
-
+BASE_URL = "http://base-url.com"
 
 @pytest.fixture(params=[
         ("flask_app.app", None),

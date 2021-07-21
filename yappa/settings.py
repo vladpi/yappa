@@ -29,3 +29,4 @@ HANDLERS = {
         "asgi": "handlers.asgi.handle",
         "raw": None,
         }
+DEFAULT_CONFIG_FILENAME = "yappa.yaml"

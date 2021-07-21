@@ -8,12 +8,14 @@ import pytest
 from tests.conftest import (
     EMPTY_FILES, IGNORED_FILES,
 )
-from yappa.handlers.wsgi import DEFAULT_CONFIG_FILENAME
 from yappa.s3 import (
     delete_bucket, ensure_bucket,
     prepare_package, upload_to_bucket,
 )
-from yappa.settings import DEFAULT_PACKAGE_DIR, YANDEX_S3_URL
+from yappa.settings import (
+    DEFAULT_CONFIG_FILENAME, DEFAULT_PACKAGE_DIR,
+    YANDEX_S3_URL,
+    )
 
 
 @pytest.fixture

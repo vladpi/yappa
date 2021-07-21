@@ -8,10 +8,12 @@ from shutil import copytree, ignore_patterns, make_archive, rmtree
 
 import boto3
 
-from yappa.handlers.wsgi import DEFAULT_CONFIG_FILENAME
-from yappa.settings import DEFAULT_IGNORED_FILES, DEFAULT_PACKAGE_DIR, \
-    DEFAULT_REQUIREMENTS_FILE, \
-    HANDLERS_DIR, YANDEX_S3_URL
+from yappa.settings import (
+    DEFAULT_CONFIG_FILENAME, DEFAULT_IGNORED_FILES,
+    DEFAULT_PACKAGE_DIR,
+    DEFAULT_REQUIREMENTS_FILE,
+    HANDLERS_DIR, YANDEX_S3_URL,
+    )
 
 logger = logging.getLogger(__name__)
 
