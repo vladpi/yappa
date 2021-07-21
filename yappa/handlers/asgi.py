@@ -34,8 +34,6 @@ try:
                    config.get("DJANGO_SETTINGS_MODULE"))
 except ValueError:
     logger.warning("Looks like broken Yappa config is used")
-    pass  # TODO uncomment warning when yappa in pip and it load_config is
-    # moved from this file
 
 
 async def handle(event, context):

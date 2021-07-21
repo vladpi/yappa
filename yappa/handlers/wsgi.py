@@ -67,7 +67,6 @@ try:
                    config.get("DJANGO_SETTINGS_MODULE"))
 except ValueError:
     logger.warning("Couldn't load app. Looks like broken Yappa config is used")
-    pass
 
 
 def handle(event, context):
