@@ -5,11 +5,13 @@ import yaml
 from boltons.strutils import slugify
 from click import ClickException
 
-from yappa.config_generation import create_default_gw_config, inject_function_id
-
+from yappa.config_generation import (
+    create_default_gw_config,
+    inject_function_id,
+    )
 from yappa.s3 import prepare_package, upload_to_bucket
-from yappa.utils import get_yc_entrypoint, load_yaml, save_yaml
 from yappa.settings import HANDLERS
+from yappa.utils import get_yc_entrypoint, load_yaml, save_yaml
 
 
 class NaturalOrderGroup(click.Group):
@@ -18,28 +20,24 @@ class NaturalOrderGroup(click.Group):
         return self.commands.keys()
 
 
-def create_function(yc, config):
+def create_function(yc, name, description, is_public):
     click.echo("Ensuring function...")
-    function, is_new = yc.create_function(config["project_slug"],
-                                          config["description"])
+    function, is_new = yc.create_function(name,
+                                          description, is_public=is_public)
     if is_new:
-        click.echo("Created serverless function:\n"
-                   "\tname: " + click.style(f"{function.name}") + "\n"
-                                                                  "\tid: " +
-                   click.style(
-                       f"{function.id}") + "\n"
-                   + "\tinvoke url : " + click.style(
-            f"{function.http_invoke_url}",
-            fg="yellow"))
+        click.echo("Created serverless function:\n\tname: "
+                   + click.style(f"{function.name}")
+                   + "\n\tid: "
+                   + click.style(f"{function.id}")
+                   + "\n\tinvoke url : "
+                   + click.style(f"{function.http_invoke_url}", fg="yellow"))
     else:
-        click.echo("Using existing function:\n"
-                   "\tname: " + click.style(f"{function.name}") + "\n"
-                                                                  "\tid: " +
-                   click.style(
-                       f"{function.id}") + "\n"
-                   + "\tinvoke url : " + click.style(
-            f"{function.http_invoke_url}",
-            fg="yellow"))
+        click.echo("Using existing function:\n\tname: "
+                   + click.style(f"{function.name}")
+                   + "\n\tid: "
+                   + click.style(f"{function.id}")
+                   + "\n\tinvoke url : "
+                   + click.style(f"{function.http_invoke_url}", fg="yellow"))
     return function
 
 
@@ -55,20 +53,35 @@ def create_function_version(yc, config):
     click.echo(f"Creating new function version for "
                + click.style(config["project_slug"], bold=True))
     yc.create_function_version(
-        config["project_slug"],
-        runtime=config["runtime"],
-        description=config["description"],
-        bucket_name=config["bucket"],
-        object_name=object_key,
-        entrypoint=get_yc_entrypoint(config["application_type"],
-                                     config["entrypoint"]),
-        memory=config["memory_limit"],
-        service_account_id=config["service_account_id"],
-        timeout=config["timeout"],
-        named_service_accounts=config["named_service_accounts"],
-        environment=config["environment"],
-    )
+            config["project_slug"],
+            runtime=config["runtime"],
+            description=config["description"],
+            bucket_name=config["bucket"],
+            object_name=object_key,
+            entrypoint=get_yc_entrypoint(config["application_type"],
+                                         config["entrypoint"]),
+            memory=config["memory_limit"],
+            service_account_id=config["service_account_id"],
+            timeout=config["timeout"],
+            named_service_accounts=config["named_service_accounts"],
+            environment=config["environment"],
+            )
     click.echo(f"Created function version")
+    if config["django_settings_module"]:
+        yc.create_function_version(
+                f'{config["project_slug"]}-manage',
+                runtime=config["runtime"],
+                description=config["description"],
+                bucket_name=config["bucket"],
+                object_name=object_key,
+                entrypoint=get_yc_entrypoint("manage",
+                                             config["entrypoint"]),
+                memory=config["memory_limit"],
+                service_account_id=config["service_account_id"],
+                timeout="60s",
+                named_service_accounts=config["named_service_accounts"],
+                environment=config["environment"],
+                )
 
 
 def create_gateway(yc, config, function_id):
@@ -84,13 +97,12 @@ def create_gateway(yc, config, function_id):
     gateway, is_new = yc.create_gateway(config["project_slug"],
                                         yaml.dump(gw_config))
     if is_new:
-        click.echo("Created api-gateway:\n"
-                   "\tname: " + click.style(f"{gateway.name}") + "\n"
-                                                                 "\tid: " +
-                   click.style(
-                       f"{gateway.id}", ) + "\n"
-                   + "\tdomain : " + click.style(f"https://{gateway.domain}",
-                                                 fg="yellow"))
+        click.echo("Created api-gateway:\n\tname: "
+                   + click.style(f"{gateway.name}")
+                   + "\n\tid: "
+                   + click.style(f"{gateway.id}", )
+                   + "\n\tdomain : "
+                   + click.style(f"https://{gateway.domain}", fg="yellow"))
     return is_new
 
 
@@ -100,13 +112,12 @@ def update_gateway(yc, config):
                + click.style(f"{gateway.name}", bold=True))
     yc.update_gateway(gateway.name, config["description"],
                       load_yaml(config["gw_config"]))
-    click.echo("Updated api-gateway:\n"
-               "\tname: " + click.style(f"{gateway.name}") + "\n"
-                                                             "\tid: " +
-               click.style(
-                   f"{gateway.id}", ) + "\n"
-               + "\tdomain : " + click.style(f"https://{gateway.domain}",
-                                             fg="yellow"))
+    click.echo("Updated api-gateway:\n\tname: "
+               + click.style(f"{gateway.name}")
+               + "\n\tid: "
+               + click.style(f"{gateway.id}", )
+               + "\n\tdomain : "
+               + click.style(f"https://{gateway.domain}", fg="yellow"))
 
 
 class ValidationError(ClickException):
@@ -176,17 +187,17 @@ def get_slug(config):
 
 
 PROMPTS = (
-    ("project_name", "My project", [is_not_empty],
-     "What's your project name?"),
-    ("project_slug", get_slug, [is_valid_slug],
-     "What's your project slug?"),
-    ("bucket", get_bucket_name, [is_not_empty,
-                                 is_valid_bucket_name],
-     "Please specify bucket name"),
-    ("requirements_file", "requirements.txt", [is_not_empty,
-                                               is_valid_requirements_file],
-     "Please specify requirements file")
-)
+        ("project_name", "My project", [is_not_empty],
+         "What's your project name?"),
+        ("project_slug", get_slug, [is_valid_slug],
+         "What's your project slug?"),
+        ("bucket", get_bucket_name, [is_not_empty,
+                                     is_valid_bucket_name],
+         "Please specify bucket name"),
+        ("requirements_file", "requirements.txt", [is_not_empty,
+                                                   is_valid_requirements_file],
+         "Please specify requirements file")
+        )
 
 
 def get_missing_details(config):
@@ -205,15 +216,15 @@ def get_missing_details(config):
         config[key] = value
     if not config.get("application_type"):
         config["application_type"] = click.prompt(
-            "Please specify application type",
-            default=next(iter(HANDLERS)), type=click.Choice(HANDLERS), )
+                "Please specify application type",
+                default=next(iter(HANDLERS)), type=click.Choice(HANDLERS), )
     if not config.get("entrypoint"):
         config["entrypoint"] = click.prompt(
-            "Please specify import path for application",
-            default="wsgi.app")
+                "Please specify import path for application",
+                default="wsgi.app")
     if not config.get("django_settings_module") \
             and config["application_type"] == "Django":
         config["django_settings_module"] = click.prompt(
-            "Please specify your DJANGO_SETTINGS_MODULE",
-            default="project.project.settings")
+                "Please specify your DJANGO_SETTINGS_MODULE",
+                default="project.project.settings")
     return config, is_updated

@@ -27,6 +27,7 @@ HANDLERS = {
         "wsgi": "handlers.wsgi.handle",
         "django": "handlers.wsgi.handle",
         "asgi": "handlers.asgi.handle",
+        "manage": "handlers.manage.manage",
         "raw": None,
         }
 DEFAULT_CONFIG_FILENAME = "yappa.yaml"
