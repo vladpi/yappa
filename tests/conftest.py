@@ -59,7 +59,6 @@ def config_filename():
 def config(app_dir, config_filename):
     config = create_default_config(config_filename)
     config.update(
-            profile="default",
             requirements_file="flask_requirements.txt",
             entrypoint="flask_app.app",
             application_type="wsgi",
@@ -95,7 +94,7 @@ def function_name():
 
 @pytest.fixture(scope="session")
 def function(function_name, yc):
-    function, _ = yc.create_function(function_name)
+    function, _ = yc.ensure_function(function_name)
     yield function
     yc.delete_function(function.id)
 

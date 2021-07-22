@@ -4,7 +4,7 @@ import click
 from click import ClickException
 
 from yappa.cli_helpers import (
-    NaturalOrderGroup, create_function,
+    NaturalOrderGroup, ensure_function,
     create_function_version,
     create_gateway, get_missing_details, update_gateway,
     )
@@ -19,6 +19,7 @@ from yappa.settings import (
 from yappa.utils import load_yaml, save_yaml
 from yappa.yc import YC
 from yappa.yc.access import save_key
+from yappa.yc.function_call import call_manage_function
 
 logger = logging.getLogger(__name__)
 
@@ -96,12 +97,11 @@ def deploy(config_file):
         click.echo("saved Yappa config file at "
                    + click.style(config_file, bold=True))
     yc = YC.setup(config=config)
-    function = create_function(yc, config["project_slug"],
+    function = ensure_function(yc, config["project_slug"],
                                config["description"], True)
     if config['django_settings_module']:
-        manage_function = create_function(yc,
-                                          f"{config['project_slug'] - manage}",
-                                          config["description"], False)
+        ensure_function(yc, config["manage_function_name"],
+                        config["description"], False)
     create_function_version(yc, config)
     if config["gw_config"]:
         is_new = create_gateway(yc, config, function.id)
@@ -119,11 +119,19 @@ def undeploy(config_file):
     config = load_yaml(config_file)
     raise ClickException("Oops! Looks like it's not yet implemented")
 
-
-def manage(command):
+@cli.command()
+@click.argument("config-file", type=click.Path(exists=True),
+                default=DEFAULT_CONFIG_FILENAME, )
+def manage(config_file, command, args):
     if command in FORBIDDEN_COMMANDS:
-        raise ClickException(
-                "Sorry. You cannot run this command with Serverless setup")
+        raise ClickException("Sorry. You cannot run this command with "
+                             "Serverless setup")
+    config = load_yaml(config_file, safe=False)
+    yc = YC.setup(config=config)
+    function = ensure_function(yc, config["manage_function_name"],
+                                config["description"], False)
+    response = call_manage_function(yc, function.id, command, args)
+    click.prompt(response["body"])
 
 
 if __name__ == '__main__':

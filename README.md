@@ -113,6 +113,7 @@ However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat
 - demo gif 
 - habr article
 - tests for POST calls to gw and function 
+- refactor tests: make integration tests for all apps. make it uniform 
 ----
 - Django support
     - management commands call

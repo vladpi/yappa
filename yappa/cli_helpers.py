@@ -20,7 +20,7 @@ class NaturalOrderGroup(click.Group):
         return self.commands.keys()
 
 
-def create_function(yc, name, description, is_public):
+def ensure_function(yc, name, description, is_public):
     click.echo("Ensuring function...")
     function, is_new = yc.create_function(name,
                                           description, is_public=is_public)
@@ -69,7 +69,7 @@ def create_function_version(yc, config):
     click.echo(f"Created function version")
     if config["django_settings_module"]:
         yc.create_function_version(
-                f'{config["project_slug"]}-manage',
+                config["manage_function_name"],
                 runtime=config["runtime"],
                 description=config["description"],
                 bucket_name=config["bucket"],
@@ -227,4 +227,6 @@ def get_missing_details(config):
         config["django_settings_module"] = click.prompt(
                 "Please specify your DJANGO_SETTINGS_MODULE",
                 default="project.project.settings")
+    if config["django_settings_module"]:
+        config["manage_function_name"] = f"{config['project_slug']}-manage"
     return config, is_updated
