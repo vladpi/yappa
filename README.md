@@ -62,7 +62,7 @@ Several types of applications could be launched with Yappa:
 
 - [raw serverless function](https://github.com/turokg/yappa/tree/master/examples/raw_function)
 - json API ([Flask](https://github.com/turokg/yappa/tree/master/examples/flask), 
-  [FastAPI](https://github.com/turokg/yappa/tree/master/examples/fastapi), 
+  [FastAPI](https://github.com/turokg/yappa/tree/master/examples/fast_api), 
   [Django rest framework](https://github.com/turokg/yappa/tree/master/examples/django/drf_base))
 - regular Django app
 - single page application
