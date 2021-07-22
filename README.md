@@ -124,7 +124,6 @@ Listed order may not be the chronological order of implementation.
 However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat)
 
 ### pre-release 
-- pretty flask example app
 - demo gif 
 - habr article
 ### next steps

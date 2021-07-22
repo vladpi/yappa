@@ -1,4 +1,5 @@
 import logging
+from contextlib import suppress
 
 import click
 from click import ClickException
@@ -118,12 +119,16 @@ def undeploy(config_file):
     """
     config = load_yaml(config_file)
     yc = YC.setup(config=config)
-    click.echo(f"Deleting function {config['project_slug']}...")
-    yc.delete_function(config["project_slug"])
-    click.echo(f"Deleting api-gateway {config['project_slug']}...")
-    yc.delete_gateway(config['project_slug'])
-    click.echo(f"Destroying bucket {config['bucket']}...")
-    delete_bucket(config["bucket"], **yc.get_s3_key(config["service_account_names"]["creator"]))
+    with suppress(ValueError):
+        click.echo(f"Deleting function {config['project_slug']}...")
+        yc.delete_function(config["project_slug"])
+
+    with suppress(ValueError):
+        click.echo(f"Deleting api-gateway {config['project_slug']}...")
+        yc.delete_gateway(config['project_slug'])
+    with suppress(ValueError):
+        click.echo(f"Destroying bucket {config['bucket']}...")
+        delete_bucket(config["bucket"], **yc.get_s3_key(config["service_account_names"]["creator"]))
     click.echo("That's it! Only service account is left.\n"
                + click.style("Bye!", fg="yellow"))
 

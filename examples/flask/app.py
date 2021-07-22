@@ -1,32 +1,20 @@
-from flask import Flask, request
+from flask import Flask
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def main():
-    return 'Hello from Yappa! root url'
+    return ('<img src="https://github.com/turokg/yappa/raw/master/logo.png"/>'
+            '<center><h1>Hello from Yappa! </h1>'
+            "It's root url"
+            '<div><a href="/json">Go to json API path</a></div></center>'
+            )
 
 
 @app.route('/json')
 def json():
     return {
-        "from": "Yappa",
-        "response type": "json",
-        "sub_result": {"sub": "json"}
-    }
-
-
-@app.route("/query_params")
-def query_params():
-    return {"params": request.args}
-
-
-@app.route("/url_param/<param>")
-def url_param(param):
-    return {"param": param}
-
-
-@app.route("/post/", methods=["POST"])
-def post():
-    return {"request": request.get_json(force=True)}
+            "hello": "from Yappa!",
+            "path": "json",
+            }
