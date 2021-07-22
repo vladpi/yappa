@@ -7,19 +7,19 @@ orchestrators, etc... go **serverless**
 
 
 * [Quickstart](#quickstart)
-    * [updates](#updates)
+    * [Updates](#updates)
 * [Deployment examples](#deployment-examples)
 * [Django](#django)
-    * [management commands](#management-commands)
+    * [Management commands](#management-commands)
     * [Creating superuser](#creating-superuser)
 * [Yandex Cloud authorization](#yandex-cloud-authorization)
 * [Limitations](#limitations)
     * [Database connectivity](#database-connectivity)
     * [Headers and authorization](#headers-and-authorization)
 * [Roadmap](#roadmap)
-    * [pre-release](#pre-release)
-    * [next steps](#next-steps)
-    * [faraway plans](#faraway-plans)
+    * [Pre-release](#pre-release)
+    * [Next steps](#next-steps)
+    * [Far-faraway plans](#faraway-plans)
 * [Troubleshooting](#troubleshooting)
 * [Support and contribution](#support-and-contribution)
 * [Acknowledgements](#acknowledgements)
@@ -44,7 +44,7 @@ $ yappa deploy
 
 ...that's it! Your application is deployed
 
-### updates
+### Updates
 
 when your code is updated just run
 
@@ -70,7 +70,7 @@ Several types of applications could be launched with Yappa:
   ...   
   more examples will be added soon
 ## Django 
-### management commands
+### Management commands
 django manage.py commands are supported. just run 
 ```shell
 $ yappa manage migrate
@@ -122,10 +122,10 @@ Please note that some request headers (like Authorization) are
 Listed order may not be the chronological order of implementation.
 However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat)
 
-### pre-release 
+### Pre-release 
 - demo gif 
 - habr article
-### next steps
+### Next steps
 - Django support
     - postgres support
     - support of S3 storage
@@ -155,7 +155,7 @@ However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat
     - cli logs command
     - why flask.app not working, fix it
 
-### faraway plans
+### Far-faraway plans
 
 - health checks and revert policy
 - celery support
