@@ -108,7 +108,6 @@ Listed order may not be the chronological order of implementation.
 However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat)
 
 ### pre-release 
-- logo
 - pretty flask example app
 - demo gif 
 - habr article
@@ -117,11 +116,8 @@ However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat
 ----
 - Django support
     - management commands call
-      - handler
-      - deploy special function
-      - add deploy to cli
-      - add function call
-      - add cli https://stackoverflow.com/questions/42457484/python-click-consume-options-as-arguments 
+      - try if it's working
+      - (+ creating of super user)
     - postgres support
     - support of S3 storage
 - Improvements in CLI

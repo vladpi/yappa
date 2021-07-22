@@ -19,4 +19,4 @@ excluded_paths:
 environment: {}
 named_service_accounts: {}
 service_account_id: null
-debug: true
+debug: false
