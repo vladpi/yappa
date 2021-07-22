@@ -63,7 +63,7 @@ Several types of applications could be launched with Yappa:
 - [raw serverless function](https://github.com/turokg/yappa/tree/master/examples/raw_function)
 - json API ([Flask](https://github.com/turokg/yappa/tree/master/examples/flask), 
   [FastAPI](https://github.com/turokg/yappa/tree/master/examples/fastapi), 
-  [Django rest framework](https://github.com/turokg/yappa/tree/master/examples/django/drf_base)
+  [Django rest framework](https://github.com/turokg/yappa/tree/master/examples/django/drf_base))
 - regular Django app
 - single page application
 - SPA + multiple API versions  
@@ -104,7 +104,7 @@ Command '$ yappa deploy' supports two types of authorization
 
 ## Limitations
 There are some limitations, however YandexCloud team is constantly releasing the
-features and services. Also, this project will try to keep up. So stay tuned :)
+features and services. Also, the team of this project will try to keep up. So stay tuned :)
 
 ### Database connectivity
 
@@ -115,11 +115,10 @@ Managed Postgress will be added soon, see updates
 ### Headers and authorization
 
 Please note that some request headers (like Authorization) are 
-(deleted before function is invoked)[https://cloud.yandex.ru/docs/functions/concepts/function-invoke]
+[deleted before function is invoked](https://cloud.yandex.ru/docs/functions/concepts/function-invoke)
 
 ## Roadmap
 
-Lots of features are on the way :)  
 Listed order may not be the chronological order of implementation.
 However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat)
 
