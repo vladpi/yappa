@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from django.core.wsgi import get_wsgi_application
 from django.http import HttpResponse
 from django.urls import path
 from rest_framework.decorators import api_view
@@ -15,9 +14,9 @@ def main(request):
 @api_view(["GET"])
 def json(request):
     return Response({
-        "result": "json",
-        "sub_result": {"sub": "json"}
-    })
+            "result": "json",
+            "sub_result": {"sub": "json"}
+            })
 
 
 @api_view(["GET"])
@@ -36,12 +35,12 @@ def post(request):
 
 
 urlpatterns = [
-    path('', main),
-    path('json', json),
-    path('query_params', query_params),
-    path('url_param/<param>', url_param),
-    path('post', post)
-]
+        path('', main),
+        path('json', json),
+        path('query_params', query_params),
+        path('url_param/<param>', url_param),
+        path('post', post)
+        ]
 
 BASE_DIR = Path(__file__).resolve().parent
 ROOT_URLCONF = 'django_settings'
@@ -50,7 +49,6 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-]
-
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        ]

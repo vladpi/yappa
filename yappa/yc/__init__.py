@@ -4,7 +4,6 @@ from contextlib import suppress
 
 import yandexcloud
 from click import ClickException
-from yandexcloud._auth_fabric import get_auth_token_requester
 
 from yappa.settings import DEFAULT_ACCESS_KEY_FILE
 from yappa.yc.access import YcAccessMixin
@@ -17,10 +16,11 @@ class YC(YcAccessMixin, YcFunctionsMixin, YcGatewayMixin):
                  service_account_key=None):
         self.sdk = yandexcloud.SDK(token=token,
                                    service_account_key=service_account_key)
-        self.service_account_id = (service_account_key.get("service_account_id")
-                                   if service_account_key else None)
-        self.token=token
-        self.service_account_key=service_account_key
+        self.service_account_id = (
+            service_account_key.get("service_account_id")
+            if service_account_key else None)
+        self.token = token
+        self.service_account_key = service_account_key
         self.folder_id = folder_id
         self.function = None
         self.gateway = None
@@ -34,8 +34,8 @@ class YC(YcAccessMixin, YcFunctionsMixin, YcGatewayMixin):
           YC_FOLDER env variable
         """
         credentials = {
-            "token": token or os.environ.get("YC_OAUTH"),
-        }
+                "token": token or os.environ.get("YC_OAUTH"),
+                }
         if not credentials["token"]:
             del credentials["token"]
             with suppress(FileNotFoundError):
@@ -54,4 +54,3 @@ class YC(YcAccessMixin, YcFunctionsMixin, YcGatewayMixin):
             raise ClickException("Sorry. Couldn't load folder_id from config "
                                  "file or YC_FOLDER environment variable")
         return cls(folder_id=folder_id, **credentials)
-

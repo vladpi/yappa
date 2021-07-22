@@ -93,18 +93,18 @@ class YcAccessMixin:
                                         AccessBindingDelta(
                                                 action="ADD",
                                                 access_binding=AccessBinding(
-                                                    role_id="editor",
-                                                    subject=Subject(
-                                                            id=account.id,
-                                                            type="serviceAccount")),
+                                                        role_id="editor",
+                                                        subject=Subject(
+                                                                id=account.id,
+                                                                type="serviceAccount")),
                                                 ),
                                         AccessBindingDelta(
                                                 action="ADD",
                                                 access_binding=AccessBinding(
                                                         role_id="serverless.functions.admin",
                                                         subject=Subject(
-                                                            id=account.id,
-                                                            type="serviceAccount")),
+                                                                id=account.id,
+                                                                type="serviceAccount")),
                                                 ),
 
                                         ]
@@ -126,8 +126,8 @@ class YcAccessMixin:
                     service_account_name).id
         response = self.sdk.client(AccessKeyServiceStub).Create(
                 CreateAccessKeyRequest(
-                    service_account_id=self.service_account_id,
-                    description=description))
+                        service_account_id=self.service_account_id,
+                        description=description))
         return {
                 "aws_access_key_id": response.access_key.key_id,
                 "aws_secret_access_key": response.secret

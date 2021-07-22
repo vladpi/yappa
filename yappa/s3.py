@@ -41,8 +41,8 @@ def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
     if to_install_requirements:
         logger.info('Installing requirements...')
         cmd = (
-            f'{sys.executable} -m pip install '
-            f'-r {requirements_file} -t {tmp_dir} --upgrade --quiet'
+                f'{sys.executable} -m pip install '
+                f'-r {requirements_file} -t {tmp_dir} --upgrade --quiet'
         )
         subprocess.check_call(cmd.split())
     return tmp_dir
@@ -50,11 +50,11 @@ def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
 
 def ensure_bucket(bucket_name, aws_access_key_id, aws_secret_access_key):
     s3 = boto3.resource(
-        's3',
-        aws_access_key_id=aws_access_key_id,
-        aws_secret_access_key=aws_secret_access_key,
-        endpoint_url=YANDEX_S3_URL,
-    )
+            's3',
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            endpoint_url=YANDEX_S3_URL,
+            )
     bucket = s3.Bucket(bucket_name)
     try:
         bucket.create()
@@ -73,7 +73,8 @@ def upload_to_bucket(folder, bucket_name, aws_access_key_id,
     archive_path = make_archive(folder, 'zip', folder)
     archive_filename = os.path.basename(archive_path)
     try:
-        bucket = ensure_bucket(bucket_name, aws_access_key_id=aws_access_key_id,
+        bucket = ensure_bucket(bucket_name,
+                               aws_access_key_id=aws_access_key_id,
                                aws_secret_access_key=aws_secret_access_key, )
         bucket.upload_file(archive_filename, archive_filename)
     finally:

@@ -29,7 +29,6 @@ def test_migrate():
 def test_arguments():
     response = manage(dict(body=dict(command="check", args=[])))
     assert response["body"] == (
-        'System check identified no issues (0 silenced).\n')
+            'System check identified no issues (0 silenced).\n')
     response = manage(dict(body=dict(command="check", args=["--deploy"])))
     assert response["body"].startswith("System check identified some issues")
-

@@ -11,9 +11,9 @@ def main():
 @app.route('/json')
 def json():
     return {
-        "result": "json",
-        "sub_result": {"sub": "json"}
-    }
+            "result": "json",
+            "sub_result": {"sub": "json"}
+            }
 
 
 @app.route("/query_params")

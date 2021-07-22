@@ -7,11 +7,11 @@ import pytest
 
 from tests.conftest import (
     EMPTY_FILES, IGNORED_FILES,
-)
+    )
 from yappa.s3 import (
     delete_bucket, ensure_bucket,
     prepare_package, upload_to_bucket,
-)
+    )
 from yappa.settings import (
     DEFAULT_CONFIG_FILENAME, DEFAULT_PACKAGE_DIR,
     YANDEX_S3_URL,
@@ -22,11 +22,11 @@ from yappa.settings import (
 def expected_paths(config):
     *entrypoint_dirs, entrypoint_file = config["entrypoint"].split(".")[:-1]
     return [
-        DEFAULT_CONFIG_FILENAME,
-        Path("handlers", "wsgi.py"),
-        *EMPTY_FILES,
-        Path(*entrypoint_dirs, f"{entrypoint_file}.py"),
-    ]
+            DEFAULT_CONFIG_FILENAME,
+            Path("handlers", "wsgi.py"),
+            *EMPTY_FILES,
+            Path(*entrypoint_dirs, f"{entrypoint_file}.py"),
+            ]
 
 
 def test_files_copy(app_dir, config, expected_paths, config_filename):
@@ -37,7 +37,7 @@ def test_files_copy(app_dir, config, expected_paths, config_filename):
         assert os.path.exists(Path(DEFAULT_PACKAGE_DIR, path)), path
     for path in IGNORED_FILES:
         assert not os.path.exists(
-            Path(DEFAULT_PACKAGE_DIR, path)), os.listdir()
+                Path(DEFAULT_PACKAGE_DIR, path)), os.listdir()
 
 
 @pytest.fixture
@@ -47,11 +47,11 @@ def bucket_name():
 
 def get_bucket_names(aws_access_key_id, aws_secret_access_key):
     buckets = boto3.resource(
-        's3',
-        aws_access_key_id=aws_access_key_id,
-        aws_secret_access_key=aws_secret_access_key,
-        endpoint_url=YANDEX_S3_URL,
-    ).buckets.all()
+            's3',
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            endpoint_url=YANDEX_S3_URL,
+            ).buckets.all()
     return [b.name for b in buckets]
 
 

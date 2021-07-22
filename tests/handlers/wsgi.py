@@ -6,7 +6,9 @@ from urllib.parse import urljoin
 import pytest
 
 from yappa.handlers.wsgi import call_app, load_app, patch_response
+
 BASE_URL = "http://base-url.com"
+
 
 @pytest.fixture(params=[
         ("flask_app.app", None),
@@ -18,13 +20,14 @@ BASE_URL = "http://base-url.com"
 def app(request):
     # TODO сделать зависимой от config, а config - параметризованная фикстура
     # чтобы тесты handler, s3, yc_functions вызывались для каждого приложения
-    sys.path.append(str(Path(Path(__file__).resolve().parent.parent, "test_apps")))
+    sys.path.append(
+        str(Path(Path(__file__).resolve().parent.parent, "test_apps")))
     return load_app(*request.param)
 
 
 def test_load_from_config(config):
     sys.path.append(
-        str(Path(Path(__file__).resolve().parent.parent, "test_apps")))
+            str(Path(Path(__file__).resolve().parent.parent, "test_apps")))
     app = load_app(config.get("entrypoint"), )
     assert callable(app)
 

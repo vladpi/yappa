@@ -11,6 +11,6 @@ def main():
 @app.get('/json')
 def json():
     return {
-        "result": "json",
-        "sub_result": {"sub": "json"}
-    }
+            "result": "json",
+            "sub_result": {"sub": "json"}
+            }
