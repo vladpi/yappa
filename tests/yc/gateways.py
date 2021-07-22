@@ -30,7 +30,7 @@ def gateway_yaml(config, function, gateway_name):
 def gateway(gateway_yaml, yc, gateway_name):
     gw, _ = yc.create_gateway(gateway_name, gateway_yaml)
     yield gw
-    yc.delete_gateway(gateway_name)
+    # yc.delete_gateway(gateway_name)
 
 
 def test_get_gateways(yc):
@@ -58,7 +58,7 @@ def test_gateway_update(gateway, yc):
 def test_gateway_call(gateway, function_version):
     url = f"https://{gateway.domain}"
     response = httpx.get(url)  # TODO add proper url construction
-    assert response.status_code == 200, url
+    assert response.status_code == 200, response.content
     assert response.text == "root url"
 
     response = httpx.get(f"{url}/json")  # TODO compose url properly with furl
