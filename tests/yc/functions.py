@@ -15,7 +15,7 @@ def test_function_creation(yc):
     function, _ = yc.ensure_function(function_name)
     assert function.name == function_name
     assert function in yc._get_functions()
-    yc.delete_function(function.id)
+    yc.delete_function(function_name)
     assert function not in yc._get_functions()
 
 

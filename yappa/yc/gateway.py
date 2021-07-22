@@ -59,10 +59,11 @@ class YcGatewayMixin:
                 )
         return operation_result.response, True
 
-    def delete_gateway(self, gateway_id):
+    def delete_gateway(self, gateway_name):
+        gateway = self.get_gateway(gateway_name)
         operation = self.sdk.client(ApiGatewayServiceStub).Delete(
                 DeleteApiGatewayRequest(
-                        api_gateway_id=gateway_id,
+                        api_gateway_id=gateway.id,
                         ))
         self.sdk.wait_operation_and_get_result(
                 operation,

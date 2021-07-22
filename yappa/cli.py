@@ -11,6 +11,7 @@ from yappa.config_generation import (
     create_default_config,
     )
 from yappa.handlers.manage import FORBIDDEN_COMMANDS
+from yappa.s3 import delete_bucket
 from yappa.settings import (
     DEFAULT_ACCESS_KEY_FILE, DEFAULT_CONFIG_FILENAME,
     YANDEX_OAUTH_URL,
@@ -116,7 +117,15 @@ def undeploy(config_file):
     deletes function, api-gateway and bucket
     """
     config = load_yaml(config_file)
-    raise ClickException("Oops! Looks like it's not yet implemented")
+    yc = YC.setup(config=config)
+    click.echo(f"Deleting function {config['project_slug']}...")
+    yc.delete_function(config["project_slug"])
+    click.echo(f"Deleting api-gateway {config['project_slug']}...")
+    yc.delete_gateway(config['project_slug'])
+    click.echo(f"Destroying bucket {config['bucket']}...")
+    delete_bucket(config["bucket"], **yc.get_s3_key())
+    click.echo("That's it! Only service account is left.\n"
+               + click.style("Bye!", fg="yellow"))
 
 
 @cli.command(context_settings=dict(ignore_unknown_options=True,
@@ -131,8 +140,7 @@ def manage(config_file, command, args):
                              "Serverless setup")
     config = load_yaml(config_file, safe=False)
     yc = YC.setup(config=config)
-    function = ensure_function(yc, config["manage_function_name"],
-                               config["description"], False)
+    function = yc.get_function(config["manage_function_name"])
     response = call_manage_function(yc, function.id, command, args)
     click.prompt(response["body"])
 

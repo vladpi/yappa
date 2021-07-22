@@ -68,10 +68,11 @@ class YcFunctionsMixin:
         self._set_function_access(function.id, is_public)
         return function, True
 
-    def delete_function(self, function_id):
+    def delete_function(self, function_name):
+        function = self.get_function(function_name)
         operation = self.sdk.client(FunctionServiceStub).Delete(
             DeleteFunctionRequest(
-                function_id=function_id
+                function_id=function.id
             ))
         operation_result = self.sdk.wait_operation_and_get_result(
             operation,

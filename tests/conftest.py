@@ -96,7 +96,7 @@ def function_name():
 def function(function_name, yc):
     function, _ = yc.ensure_function(function_name)
     yield function
-    yc.delete_function(function.id)
+    yc.delete_function(function_name)
 
 
 @pytest.fixture(scope="session")

@@ -30,7 +30,7 @@ def gateway_yaml(config, function, gateway_name):
 def gateway(gateway_yaml, yc, gateway_name):
     gw, _ = yc.create_gateway(gateway_name, gateway_yaml)
     yield gw
-    yc.delete_gateway(gw.id)
+    yc.delete_gateway(gateway_name)
 
 
 def test_get_gateways(yc):
@@ -42,7 +42,7 @@ def test_gateway_creation(gateway_yaml, yc):
     gateway_name = "test-create-delete-gateway"
     gateway, _ = yc.create_gateway(gateway_name, gateway_yaml)
     assert gateway in yc._get_gateways()
-    yc.delete_gateway(gateway.id)
+    yc.delete_gateway(gateway_name)
     assert gateway not in yc._get_gateways()
 
 
