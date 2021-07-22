@@ -1,4 +1,5 @@
 import io
+import json
 import logging
 import os
 from contextlib import redirect_stderr, redirect_stdout
@@ -13,7 +14,7 @@ try:
     config = load_yaml(
             Path(Path(__file__).resolve().parent.parent,
                  DEFAULT_CONFIG_FILENAME))
-    os.environ["DJANGO_SETTINGS_MODULE"] = config["DJANGO_SETTINGS_MODULE"]
+    os.environ["DJANGO_SETTINGS_MODULE"] = config["django_settings_module"] or ""
 except KeyError:
     logger.error("DJANGO_SETTINGS_MODULE not present in the config")
 except ValueError:
@@ -57,8 +58,12 @@ def run_command(command, args):
 
 
 def manage(event, context=None):
-    output_buffer = run_command(event["body"]["command"],
-                                event["body"].get("args") or [])
+    logger.error("processing %s", event)
+    logger.error("body is %s", event["body"])
+    # logger.error("body is %s", event["body"].decode())
+    body = json.loads(event["body"])
+    output_buffer = run_command(body["command"],
+                                body.get("args") or [])
     return {
             'statusCode': 200,
             'body': output_buffer,

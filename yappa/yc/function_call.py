@@ -1,5 +1,3 @@
-import json
-
 import httpx
 from furl import furl
 
@@ -11,14 +9,12 @@ def call_manage_function(yc, function_id, command, args):
     response = call_function(function_id, iam_token, "POST",
                              {"command": command,
                               "args": args})
-    return response.json()
+    return response.content.decode()
 
 
 def call_function(function_id, token, method, body):
     url = (furl(YANDEX_FUNCTIONS_URL) / function_id).url
     with httpx.Client(headers=dict(Authorization=f"Bearer {token}")) as client:
-        request = client.build_request(method, url,
-                                       content=json.dumps(body).encode(),
-                                       )
+        request = client.build_request(method, url, json=body)
         response = client.send(request)
     return response

@@ -78,7 +78,7 @@ def create_function_version(yc, config):
                                              config["entrypoint"]),
                 memory=config["memory_limit"],
                 service_account_id=config["service_account_id"],
-                timeout="60s",
+                timeout=300,
                 named_service_accounts=config["named_service_accounts"],
                 environment=config["environment"],
                 )

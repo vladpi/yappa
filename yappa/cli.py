@@ -142,8 +142,8 @@ def manage(config_file, command, args):
     yc = YC.setup(config=config)
     function = yc.get_function(config["manage_function_name"])
     response = call_manage_function(yc, function.id, command, args)
-    click.prompt(response["body"])
+    click.echo(response)
 
 
 if __name__ == '__main__':
-    cli(obj={})
+    cli()
