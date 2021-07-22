@@ -112,6 +112,7 @@ However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat
 - pretty flask example app
 - demo gif 
 - habr article
+- tests for POST calls to gw and function 
 ----
 - Django support
     - management commands call

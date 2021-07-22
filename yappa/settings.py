@@ -18,6 +18,7 @@ AVAILABLE_PYTHON_VERSIONS = (
         "python37",
         )
 YANDEX_S3_URL = 'https://storage.yandexcloud.net'
+YANDEX_FUNCTIONS_URL = "https://functions.yandexcloud.net"
 YANDEX_CLIENT_ID = "9878e3bd8f1e4bc292ee9c74bbc736a2"
 YANDEX_OAUTH_URL = furl("https://oauth.yandex.ru/authorize").add({
         "response_type": "token",

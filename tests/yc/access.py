@@ -35,3 +35,8 @@ def test_key_saving(key):
     with open(DEFAULT_ACCESS_KEY_FILE, "r") as f:
         saved_key = json.loads(f.read())
     assert key == saved_key
+
+
+def test_iam_token(yc):
+    token = yc.get_iam_token()
+    assert token
