@@ -4,9 +4,8 @@ import click
 from click import ClickException
 
 from yappa.cli_helpers import (
-    NaturalOrderGroup, ensure_function,
-    create_function_version,
-    create_gateway, get_missing_details, update_gateway,
+    NaturalOrderGroup, create_function_version, create_gateway,
+    ensure_function, get_missing_details, update_gateway,
     )
 from yappa.config_generation import (
     create_default_config,
@@ -119,9 +118,13 @@ def undeploy(config_file):
     config = load_yaml(config_file)
     raise ClickException("Oops! Looks like it's not yet implemented")
 
-@cli.command()
-@click.argument("config-file", type=click.Path(exists=True),
-                default=DEFAULT_CONFIG_FILENAME, )
+
+@cli.command(context_settings=dict(ignore_unknown_options=True,
+                                   help_option_names=[], ))
+@click.option("--config-file", type=click.Path(exists=True),
+              default=DEFAULT_CONFIG_FILENAME, )
+@click.argument("command", type=str)
+@click.argument('args', nargs=-1, type=click.UNPROCESSED)
 def manage(config_file, command, args):
     if command in FORBIDDEN_COMMANDS:
         raise ClickException("Sorry. You cannot run this command with "
@@ -129,7 +132,7 @@ def manage(config_file, command, args):
     config = load_yaml(config_file, safe=False)
     yc = YC.setup(config=config)
     function = ensure_function(yc, config["manage_function_name"],
-                                config["description"], False)
+                               config["description"], False)
     response = call_manage_function(yc, function.id, command, args)
     click.prompt(response["body"])
 

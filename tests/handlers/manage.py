@@ -32,3 +32,4 @@ def test_arguments():
         'System check identified no issues (0 silenced).\n')
     response = manage(dict(body=dict(command="check", args=["--deploy"])))
     assert response["body"].startswith("System check identified some issues")
+
