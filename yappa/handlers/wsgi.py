@@ -28,7 +28,7 @@ def call_app(app, event):
     see https://cloud.yandex.ru/docs/functions/concepts/function-invoke
     #response
     """
-    host_url = event["headers"].get("Host", "https://raw_function.net")
+    host_url = event["headers"].get("Host", "https://raw-function.net")
     if not host_url.startswith("http"):
         host_url = f"https://{host_url}"
     with httpx.Client(app=app,
@@ -49,7 +49,7 @@ try:
                             DEFAULT_CONFIG_FILENAME))
 
     app = load_app(config.get("entrypoint"),
-                   config.get("DJANGO_SETTINGS_MODULE"))
+                   config.get("django_settings_module"))
 except ValueError:
     logger.warning("Couldn't load app. Looks like broken Yappa config is used")
 

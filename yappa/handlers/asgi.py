@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 async def call_app(app, event):
-    host_url = event["headers"].get("Host", "https://raw_function.net")
+    host_url = event["headers"].get("Host", "https://raw-function.net")
     if not host_url.startswith("http"):
         host_url = f"https://{host_url}"
     async with httpx.AsyncClient(app=app,

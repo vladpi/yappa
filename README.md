@@ -84,7 +84,7 @@ support user inputs: to every command '--no-input' flag is added.
 ### Creating superuser 
 As of Django 3.0 env variables are supported for createsuperuser command. So 
 you should deploy your app with DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_PASSWORD 
-environment variables. And then run 
+environment variables. Then run 
 ```shell
 $ yappa manage createsuperuser
 ```
@@ -133,7 +133,6 @@ However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat
     - support of S3 storage
 - Improvements in CLI
     - env variables at deploy command
-    - undeploy command
     - validation of inputs at yappa setup
     - validation of requirements and entrypoint at yappa deploy
     - auto-suggestion of app path (trying to load asgi or wsgi app)
