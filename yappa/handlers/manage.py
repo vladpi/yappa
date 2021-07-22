@@ -58,9 +58,6 @@ def run_command(command, args):
 
 
 def manage(event, context=None):
-    logger.error("processing %s", event)
-    logger.error("body is %s", event["body"])
-    # logger.error("body is %s", event["body"].decode())
     body = json.loads(event["body"])
     output_buffer = run_command(body["command"],
                                 body.get("args") or [])

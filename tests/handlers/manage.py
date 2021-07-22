@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from pathlib import Path
@@ -15,20 +16,15 @@ def django_settings():
 
 
 def test_help():
-    response = manage(dict(body=dict(command="help", args=[])))
+    response = manage({"body": json.dumps({"command": "help", "args": []})})
     assert response["statusCode"] == 200
     assert response["body"].startswith("\nType 'python -m django")
 
 
-def test_migrate():
-    response = manage(dict(body=dict(command="migrate", args=[])))
-    assert response["statusCode"] == 200
-    assert response["body"].startswith('settings.DATABASES is improperly ')
-
-
 def test_arguments():
-    response = manage(dict(body=dict(command="check", args=[])))
+    response = manage({"body": json.dumps({"command": "check", "args": []})})
     assert response["body"] == (
             'System check identified no issues (0 silenced).\n')
-    response = manage(dict(body=dict(command="check", args=["--deploy"])))
+    response = manage(
+            {"body": json.dumps({"command": "check", "args": ["--deploy"]})})
     assert response["body"].startswith("System check identified some issues")

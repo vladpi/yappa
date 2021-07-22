@@ -12,7 +12,7 @@ def test_get_functions(yc):
 
 def test_function_creation(yc):
     function_name = "create-delete-test-function"
-    function, _ = yc.ensure_function(function_name)
+    function, _ = yc.create_function(function_name)
     assert function.name == function_name
     assert function in yc._get_functions()
     yc.delete_function(function_name)
