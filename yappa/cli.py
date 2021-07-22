@@ -58,14 +58,13 @@ def setup(config_file, token):
     yc = YC.setup(token=token, skip_folder=True)
     clouds = {c.name: c.id for c in yc.get_clouds()}
     cloud_name = click.prompt("Please select cloud", type=click.Choice(clouds),
-                              default=next(iter(clouds)))
+                              default=next(reversed(clouds)))
     folders = {f.name: f.id for f in yc.get_folders(clouds[cloud_name])}
     folder_name = click.prompt("Please select folder",
                                type=click.Choice(folders),
-                               default=next(iter(folders)))
-    click.echo("Creating service account...")
+                               default=next(reversed(folders)))
     yc.folder_id = folders[folder_name]
-    account = yc.create_service_account()
+    account = yc.create_service_account(f"yappa-creator-account-{folder_name}")
     save_key(yc.create_service_account_key(account.id))
     click.echo("Saved service account credentials at " + click.style(
             DEFAULT_ACCESS_KEY_FILE, bold=True))
@@ -73,6 +72,7 @@ def setup(config_file, token):
     config = (load_yaml(config_file, safe=True)
               or create_default_config(config_file))
     config["folder_id"] = folders[folder_name]
+    config["service_account_names"]["creator"] = account.name
     save_yaml(config, config_file)
     click.echo("Saved Yappa config file at "
                + click.style(config_file, bold=True))
@@ -123,7 +123,7 @@ def undeploy(config_file):
     click.echo(f"Deleting api-gateway {config['project_slug']}...")
     yc.delete_gateway(config['project_slug'])
     click.echo(f"Destroying bucket {config['bucket']}...")
-    delete_bucket(config["bucket"], **yc.get_s3_key())
+    delete_bucket(config["bucket"], **yc.get_s3_key(config["service_account_names"]["creator"]))
     click.echo("That's it! Only service account is left.\n"
                + click.style("Bye!", fg="yellow"))
 

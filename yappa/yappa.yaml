@@ -12,6 +12,9 @@ manage_function_name: null
 runtime: python38
 memory_limit: 128MB
 timeout: 1
+service_account_names:
+  creator: yappa-creator-service
+  function_actor: null
 excluded_paths:
   - venv
   - .git

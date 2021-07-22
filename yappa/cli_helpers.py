@@ -49,7 +49,7 @@ def create_function_version(yc, config):
                                   )
     click.echo(f"Uploading to bucket {config['bucket']}...")
     object_key = upload_to_bucket(package_dir, config["bucket"],
-                                  **yc.get_s3_key())
+                                  **yc.get_s3_key(config["service_account_names"]["creator"]))
     click.echo(f"Creating new function version for "
                + click.style(config["project_slug"], bold=True))
     yc.create_function_version(
@@ -191,8 +191,7 @@ PROMPTS = (
          "What's your project name?"),
         ("project_slug", get_slug, [is_valid_slug],
          "What's your project slug?"),
-        ("bucket", get_bucket_name, [is_not_empty,
-                                     is_valid_bucket_name],
+        ("bucket", get_bucket_name, [is_not_empty, is_valid_bucket_name],
          "Please specify bucket name"),
         ("requirements_file", "requirements.txt", [is_not_empty,
                                                    is_valid_requirements_file],
@@ -215,9 +214,11 @@ def get_missing_details(config):
             validator(value)
         config[key] = value
     if not config.get("application_type"):
+        application_types = list(HANDLERS)
+        application_types.remove("manage")
         config["application_type"] = click.prompt(
                 "Please specify application type",
-                default=next(iter(HANDLERS)), type=click.Choice(HANDLERS), )
+                default=application_types[0], type=click.Choice(application_types), )
     if not config.get("entrypoint"):
         config["entrypoint"] = click.prompt(
                 "Please specify import path for application",

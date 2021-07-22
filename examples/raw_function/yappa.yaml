@@ -10,6 +10,9 @@ folder_id: null
 gw_config: null
 runtime: python38
 memory_limit: 128MB
+service_account_names:
+  creator: yappa-creator-service
+  function_actor: null
 timeout: 1
 excluded_paths:
 - venv

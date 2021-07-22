@@ -22,32 +22,17 @@ def load_app(import_path, django_settings_module=None):
     return app
 
 
-def patch_response(response):
-    """
-    returns Http response in the format of
-    {
-     'status code': 200,
-     'body': body,
-     'headers': {}
-    }
-    """
-    return {
-            'statusCode': response.status_code,
-            'headers': dict(response.headers),
-            'body': response.content.decode(),
-            'isBase64Encoded': False,
-            }
-
-
 def call_app(app, event):
     """
     call wsgi app
     see https://cloud.yandex.ru/docs/functions/concepts/function-invoke
     #response
     """
+    host_url = event["headers"].get("Host", "https://raw_function.net")
+    if not host_url.startswith("http"):
+        host_url = f"https://{host_url}"
     with httpx.Client(app=app,
-                      base_url=event["headers"].get("Host",
-                                                    "https://raw_function.net")) as client:
+                      base_url=host_url) as client:
         request = client.build_request(
                 method=event["httpMethod"],
                 url=event["url"],
@@ -69,7 +54,30 @@ except ValueError:
     logger.warning("Couldn't load app. Looks like broken Yappa config is used")
 
 
+def patch_response(response):
+    """
+    returns Http response in the format of
+    {
+     'status code': 200,
+     'body': body,
+     'headers': {}
+    }
+    """
+    return {
+            'statusCode': response.status_code,
+            'headers': dict(response.headers),
+            'body': response.content.decode(),
+            'isBase64Encoded': False,
+            }
+
+
 def handle(event, context):
+    if not event:
+        return {
+                'statusCode': 500,
+                'body': "got empty event",
+                }
+
     response = call_app(app, event)
     if not config["debug"]:
         return patch_response(response)

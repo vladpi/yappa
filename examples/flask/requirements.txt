@@ -34,4 +34,4 @@ sniffio==1.2.0
 urllib3==1.26.6
 Werkzeug==2.0.1
 yandexcloud==0.97.0
-yappa>=0.4.5
+yappa==0.4.9
