@@ -124,9 +124,6 @@ Please note that some request headers (like Authorization) are
 Listed order may not be the chronological order of implementation.
 However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat)
 
-### Pre-release 
-- demo gif 
-- habr article
 ### Next steps
 - Django support
     - postgres support
