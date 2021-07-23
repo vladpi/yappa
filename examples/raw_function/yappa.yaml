@@ -4,7 +4,7 @@ description: null
 requirements_file: requirements.txt
 bucket: raw-function-example-140d41fd
 application_type: raw
-entrypoint: app.handler
+entrypoint: function.handler
 django_settings_module: null
 folder_id: null
 gw_config: null
