@@ -6,7 +6,7 @@
 Forget about setting up your own infrastructure, vps, network, 
 orchestrators, etc... go **serverless**
 
-<p align="center"><img src="demo.gif" width="720" height="404"></p>
+<p align="center"><img src="demo.gif" width="720" ></p>
 
 * [Quickstart](#quickstart)
     * [Updates](#updates)
