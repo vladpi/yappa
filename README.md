@@ -1,13 +1,12 @@
+<p align="center"><img src="logo.png" width="400"></p>
+
+
 # Simple deploy of python web-apps @YandexCloud
-
-
-<img src="logo.png" width="816" height="309">
-
 
 Forget about setting up your own infrastructure, vps, network, 
 orchestrators, etc... go **serverless**
 
-<img src="demo.gif" width="720" height="404">
+<p align="center"><img src="demo.gif" width="720" height="404"></p>
 
 * [Quickstart](#quickstart)
     * [Updates](#updates)
@@ -22,7 +21,7 @@ orchestrators, etc... go **serverless**
 * [Roadmap](#roadmap)
     * [Pre-release](#pre-release)
     * [Next steps](#next-steps)
-    * [Far-faraway plans](#faraway-plans)
+    * [Far-faraway plans](#far-faraway-plans)
 * [Troubleshooting](#troubleshooting)
 * [Support and contribution](#support-and-contribution)
 * [Acknowledgements](#acknowledgements)
