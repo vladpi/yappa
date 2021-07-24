@@ -19,7 +19,6 @@ orchestrators, etc... go **serverless**
     * [Database connectivity](#database-connectivity)
     * [Headers and authorization](#headers-and-authorization)
 * [Roadmap](#roadmap)
-    * [Pre-release](#pre-release)
     * [Next steps](#next-steps)
     * [Far-faraway plans](#far-faraway-plans)
 * [Troubleshooting](#troubleshooting)
