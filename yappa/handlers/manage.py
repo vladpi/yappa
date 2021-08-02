@@ -2,12 +2,12 @@ import io
 import json
 import logging
 import os
-from contextlib import redirect_stderr, redirect_stdout, suppress
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-from .handle_utils import set_access_token
 from yappa.settings import DEFAULT_CONFIG_FILENAME
 from yappa.utils import load_yaml
+from .handle_utils import set_access_token
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,8 @@ try:
     config = load_yaml(
         Path(Path(__file__).resolve().parent.parent,
              DEFAULT_CONFIG_FILENAME))
-    os.environ["DJANGO_SETTINGS_MODULE"] = config["django_settings_module"] or ""
+    os.environ["DJANGO_SETTINGS_MODULE"] = config[
+                                               "django_settings_module"] or ""
 except KeyError:
     logger.error("DJANGO_SETTINGS_MODULE not present in the config")
 except ValueError:

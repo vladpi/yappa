@@ -30,7 +30,7 @@ def gateway_yaml(config, function, gateway_name):
 def gateway(gateway_yaml, yc, gateway_name):
     gw, _ = yc.create_gateway(gateway_name, gateway_yaml)
     yield gw
-    # yc.delete_gateway(gateway_name)
+    yc.delete_gateway(gateway_name)
 
 
 def test_get_gateways(yc):

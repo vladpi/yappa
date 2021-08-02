@@ -1,16 +1,14 @@
 import json
 import logging
 import os
-from contextlib import suppress
 from importlib import import_module
 from pathlib import Path
 
 import httpx
 
-from yappa.handlers.handle_utils import set_access_token, \
-    update_django_pg_connection
 from yappa.settings import DEFAULT_CONFIG_FILENAME
 from yappa.utils import load_yaml
+from .handle_utils import (set_access_token, update_django_pg_connection)
 
 logger = logging.getLogger(__name__)
 
@@ -37,12 +35,12 @@ def call_app(app, event):
     with httpx.Client(app=app,
                       base_url=host_url) as client:
         request = client.build_request(
-                method=event["httpMethod"],
-                url=event["url"],
-                headers=event["headers"],
-                params=event["queryStringParameters"],
-                content=json.dumps(event["body"]).encode(),
-                )
+            method=event["httpMethod"],
+            url=event["url"],
+            headers=event["headers"],
+            params=event["queryStringParameters"],
+            content=json.dumps(event["body"]).encode(),
+        )
         response = client.send(request)
         return response
 
@@ -68,11 +66,11 @@ def patch_response(response):
     }
     """
     return {
-            'statusCode': response.status_code,
-            'headers': dict(response.headers),
-            'body': response.content.decode(),
-            'isBase64Encoded': False,
-            }
+        'statusCode': response.status_code,
+        'headers': dict(response.headers),
+        'body': response.content.decode(),
+        'isBase64Encoded': False,
+    }
 
 
 def handle(event, context):
