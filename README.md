@@ -107,9 +107,14 @@ features and services. Also, the team of this project will try to keep up. So st
 
 ### Database connectivity
 
-Only YandexDB is supported inside Yandex Cloud. So any database you use has to have public IP address    
+Managed Postgres and YandexDB is supported inside Yandex Cloud. 
+Any other database you use has to have public IP address    
 
-Managed Postgress will be added soon, see updates
+For details on how te set up connection with managed postgres please 
+refer to 
+- [YandexCloud docs](https://cloud.yandex.ru/docs/functions/operations/database-connection)
+- [raw function + Postgres example](https://github.com/turokg/yappa/tree/master/examples/raw_function_postgres)
+- [django example](https://github.com/turokg/yappa/tree/master/examples/django/drf_base)
 
 ### Headers and authorization
 
@@ -124,6 +129,9 @@ Listed order may not be the chronological order of implementation.
 However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat)
 
 ### Next steps
+- tests 
+  - if db connection is not updated - poll for hours 
+  - stress test 
 - Django support
     - postgres support
       - add docs about psycopg2 in requirements

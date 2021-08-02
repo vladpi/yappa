@@ -24,10 +24,10 @@ environment:
   DJANGO_SUPERUSER_USERNAME: superuser
   DJANGO_SUPERUSER_PASSWORD: LOLiAMnot_secure!
   DJANGO_SUPERUSER_EMAIL: chang@me.com
-  PG_CONNECTION_ID: akfg8iemf1lcfnom4019
+  PG_CONNECTION_ID: akfrhhp29ipa93s294qd
   PG_USER: user1
-  PG_HOST: akfg8iemf1lcfnom4019.postgresql-proxy.serverless.yandexcloud.net
+  PG_HOST: akfrhhp29ipa93s294qd.postgresql-proxy.serverless.yandexcloud.net
   PG_PORT: '6432'
-named_service_accounts: {}
 service_account_id: ajek47377f918mdmmqha
+named_service_accounts: {}
 debug: false

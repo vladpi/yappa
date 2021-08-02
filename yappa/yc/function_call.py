@@ -16,5 +16,5 @@ def call_function(function_id, token, method, body):
     url = (furl(YANDEX_FUNCTIONS_URL) / function_id).url
     with httpx.Client(headers=dict(Authorization=f"Bearer {token}")) as client:
         request = client.build_request(method, url, json=body)
-        response = client.send(request)
+        response = client.send(request, timeout=600)
     return response

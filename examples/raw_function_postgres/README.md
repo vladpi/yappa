@@ -1,6 +1,7 @@
 # raw function with Postgres connection 
 
-for more details on how to set up serverless connection to Postgres go to [YandexCLoud docs](https://cloud.yandex.ru/docs/functions/operations/database-connection)
+for more details on how to set up serverless connection to
+Postgres go to [YandexCloud docs](https://cloud.yandex.ru/docs/functions/operations/database-connection)
 
 before deployment, you should manually create:
 - postgres cluster 
