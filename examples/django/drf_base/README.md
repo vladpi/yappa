@@ -29,7 +29,7 @@ $ cd drf_base
 $ django startapp example_app
 ```
 
-set up DRF, paste this lines of code to the end of settings.py:
+set up DRF, paste these lines of code to the end of settings.py:
 
 ```python
 DEBUG = False
@@ -67,7 +67,6 @@ def root(request):
     db_message = f"Couldn't connect to db ({e})"
   return Response({"message": "Hello, from Yappa!",
                    "message from db": db_message})
-
 ```
 
 setup urls settings   
@@ -98,30 +97,30 @@ check that app is properly setup
 This is a step-by-step guide, which you can find at 
 [YandexCloud docs](https://cloud.yandex.ru/docs/functions/operations/database-connection)
 
-### 1. create postgres cluster 
-First you should create managed postgres cluster. Go to your 
+### 1. Create Postgres cluster 
+First you should create managed Postgres cluster. Go to your 
 folder at YandexCloud console and set it up :)
 
 Don't forget to check "access from serverless" option in cluster settings
-### 2. create serverless connection 
+### 2. Create serverless connection 
 Python app will not have access to db directly. It will use
 [Odyssey connection manager](https://github.com/yandex/odyssey). 
 So you should create connection from YandexCloud console 
 (Folder -> Cloud Functions -> DB Connection). 
 
-### 3. create service account 
+### 3. Create service account 
 Create service account which will be associated with serverless 
 function. 
 - go to YandexCloud console, Folder -> Service Accounts 
 - create service account 
 - add permission 'serverless.mdbProxies.user'
 
-### 4. configure yappa.yaml 
-[if you don't have yappa.yaml file yet, run $ yappa setup && yappa deploy]
+### 4. Configure yappa.yaml 
+(if you don't have yappa.yaml file yet, run $ yappa setup && yappa deploy)
 
 - add superuser credentials (after you've created superuser you can
   save them elsewhere and delete from this file)
-- PG_USER is property of postgres cluster from 1st step
+- PG_USER is property of Postgres cluster from 1st step
 - PG_CONNECTION_ID, PG_HOST are properties of connection created on the 2nd step
 - PG_PORT - 6432 is default for YandexCloud 
 - service_account_id - is id of service account you've created on the 3rd step.
@@ -142,7 +141,8 @@ service_account_id: ajek47377f918mdmmqha
 ```
 
 ## Deploy 
-Change env variables at yappa.yaml DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_PASSWORD, DJANGO_SUPERUSER_EMAIL
+Change env variables at yappa.yaml DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_PASSWORD, 
+DJANGO_SUPERUSER_EMAIL
 
 run
 ```shell
