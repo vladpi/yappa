@@ -130,8 +130,8 @@ after that yappa.yaml file will look like this:
 ...
 environment:
   DJANGO_SUPERUSER_USERNAME: superuser
-  DJANGO_SUPERUSER_PASSWORD: LOLiAMnot_secure!
-  DJANGO_SUPERUSER_EMAIL: chang@me.com
+  DJANGO_SUPERUSER_PASSWORD: LOOKiAMnot_secure!
+  DJANGO_SUPERUSER_EMAIL: change@me.com
   
   PG_USER: user1
   PG_CONNECTION_ID: akfrhhp29ipa93s294qd
@@ -141,8 +141,6 @@ service_account_id: ajek47377f918mdmmqha
 ```
 
 ## Deploy 
-Change env variables at yappa.yaml DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_PASSWORD, 
-DJANGO_SUPERUSER_EMAIL
 
 run
 ```shell
