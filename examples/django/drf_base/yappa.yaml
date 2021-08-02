@@ -12,8 +12,8 @@ gw_config: yappa_gw.yaml
 runtime: python38
 memory_limit: 128MB
 service_account_names:
-  creator: yappa-creator-service
-  function_actor: null
+  creator: yappa-creator-account-default
+  function_actor: drf-base-example-function-actor-account
 timeout: 1
 excluded_paths:
 - venv
@@ -24,6 +24,10 @@ environment:
   DJANGO_SUPERUSER_USERNAME: superuser
   DJANGO_SUPERUSER_PASSWORD: LOLiAMnot_secure!
   DJANGO_SUPERUSER_EMAIL: chang@me.com
+  PG_CONNECTION_ID: akfg8iemf1lcfnom4019
+  PG_USER: user1
+  PG_HOST: akfg8iemf1lcfnom4019.postgresql-proxy.serverless.yandexcloud.net
+  PG_PORT: '6432'
 named_service_accounts: {}
-service_account_id: null
+service_account_id: ajek47377f918mdmmqha
 debug: false
