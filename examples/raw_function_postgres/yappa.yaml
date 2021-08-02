@@ -1,0 +1,25 @@
+project_name: raw function postgres example
+project_slug: raw-function-postgres-example
+description: null
+requirements_file: requirements.txt
+bucket: raw-function-postgres-example-140d41fd
+application_type: raw
+entrypoint: function.handler
+django_settings_module: null
+folder_id: null
+gw_config: null
+runtime: python38
+memory_limit: 128MB
+service_account_names:
+  creator: yappa-creator-account-default
+  function_actor: null
+timeout: 1
+excluded_paths:
+- venv
+- .git
+- .idea
+- requirements.txt
+environment: {}
+named_service_accounts: {}
+service_account_id: ajek47377f918mdmmqha
+debug: false

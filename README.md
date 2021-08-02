@@ -126,6 +126,7 @@ However, it's up to you, welcome to our  [telegram chat](https://t.me/yappa_chat
 ### Next steps
 - Django support
     - postgres support
+      - add docs about psycopg2 in requirements
     - support of S3 storage
 - Improvements in CLI
     - env variables at deploy command

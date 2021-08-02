@@ -7,6 +7,8 @@ from pathlib import Path
 
 import httpx
 
+from yappa.handlers.handle_utils import set_access_token, \
+    update_django_pg_connection
 from yappa.settings import DEFAULT_CONFIG_FILENAME
 from yappa.utils import load_yaml
 
@@ -46,6 +48,7 @@ def call_app(app, event):
 
 
 try:
+    set_access_token()
     config = load_yaml(Path(Path(__file__).resolve().parent.parent,
                             DEFAULT_CONFIG_FILENAME))
 
@@ -73,21 +76,12 @@ def patch_response(response):
 
 
 def handle(event, context):
-    with suppress(AttributeError, KeyError):
-        os.environ["IAM_TOKEN"] = context.token["access_token"]
+    set_access_token()
     if not event:
-        return {
-                'statusCode': 500,
-                'body': "got empty event",
-                }
+        raise ValueError("Got empty event")
 
+    if config["django_settings_module"]:
+        update_django_pg_connection(context.token["access_token"])
+        # TODO check if it's necessary to update db settings
     response = call_app(app, event)
-    if not config["debug"]:
-        return patch_response(response)
-    return {
-            'statusCode': 200,
-            'body': {
-                    "event": event,
-                    "response": response,
-                    },
-            }
+    return patch_response(response)

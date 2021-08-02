@@ -41,9 +41,6 @@ except ValueError:
 
 
 async def handle(event, context):
-    with suppress(AttributeError, KeyError):
-        os.environ["IAM_TOKEN"] = context.token["access_token"]
-
     if not event:
         return {
                 'statusCode': 500,
