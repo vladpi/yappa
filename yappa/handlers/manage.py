@@ -2,7 +2,7 @@ import io
 import json
 import logging
 import os
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout, suppress
 from pathlib import Path
 
 from yappa.settings import DEFAULT_CONFIG_FILENAME
@@ -58,6 +58,8 @@ def run_command(command, args):
 
 
 def manage(event, context=None):
+    with suppress(AttributeError, KeyError):
+        os.environ["IAM_TOKEN"] = context.token["access_token"]
     body = json.loads(event["body"])
     output_buffer = run_command(body["command"],
                                 body.get("args") or [])
