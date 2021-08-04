@@ -136,58 +136,19 @@ Please note that some request headers (like Authorization) are
 
 - https://habr.com/ru/post/569674/
 
-## Roadmap
+## Development and Contribution
 
-Listed order may not be the chronological order of implementation. However, it's up to you, welcome to
+Please see [project boards](https://github.com/turokg/yappa/projects)
+and [issues](https://github.com/turokg/yappa/issues). With any questions and suggestions please visit
 our  [telegram chat](https://t.me/yappa_chat)
 
-### Next steps
-
-- tests
-    - if db connection is not updated - poll for hours
-    - stress test
-- Django support
-    - postgres support
-        - add docs about psycopg2 in requirements
-    - support of S3 storage for static 
-- Improvements in CLI
-    - env variables at deploy command
-    - validation of inputs at yappa setup
-    - validation of requirements and entrypoint at yappa deploy
-    - auto-suggestion of app path (trying to load asgi or wsgi app)
-    - upload_to_bucket - add progress bar
-- Error handling
-    - no access
-- Documentation
-    - add deployment examples
-        - classic django with s3
-        - SPA
-        - SPA + DRF + authorization
-        - SPA + two api versions
-    - habr articles with deployment examples
-    - habr article with full cycle of web-site (from code to domain)
-- Random features
-    - refactor tests: make integration tests for all apps. make it uniform
-    - delete s3 key after deploy
-    - avoiding s3 or avoiding reinstalling of all pip packages
-    - cli logs command
-    - why flask.app not working, fix it
-
-### Far-faraway plans
-
-- health checks and revert policy
-- celery support
-- django: ydb orm support
+In the near future we will be focused on documentation improvements (mainly deployment examples) and support of async
+tasks (serverless forkers and scheduling for celery).
 
 ## Troubleshooting
 
 - installing grpcio on Apple M1: installing with anaconda may help. Also look
   at [stackoverflow](https://stackoverflow.com/questions/66640705/how-can-i-install-grpcio-on-an-apple-m1-silicon-laptop)
-
-## Support and contribution
-
-Feel free to make pull request or ask anything at [telegram chat](https://t.me/yappa_chat)    
-Also looking for contributors %)
 
 ## Acknowledgements
 

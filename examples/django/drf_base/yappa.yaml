@@ -1,5 +1,5 @@
 project_name: DRF base example
-project_slug: drf-base-example
+project_slug: long-token-test-default
 description: null
 requirements_file: requirements.txt
 bucket: brf-base-example-dec4b228
@@ -30,4 +30,4 @@ environment:
   PG_PORT: '6432'
 service_account_id: ajek47377f918mdmmqha
 named_service_accounts: { }
-is_public: false  # if function is accessible for non authorized requests
+is_public: true  # if function is accessible for non authorized requests
