@@ -15,6 +15,6 @@ def main():
 @app.route('/json')
 def json():
     return {
-            "hello": "from Yappa!",
-            "path": "json",
-            }
+        "hello": "from Yappa!",
+        "path": "json",
+    }

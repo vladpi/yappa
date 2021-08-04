@@ -10,10 +10,10 @@ from yappa.settings import HANDLERS
 MIN_MEMORY, MAX_MEMORY = 134217728, 2147483648
 
 SIZE_SUFFIXES = {
-        'kb': 1024,
-        'mb': 1024 * 1024,
-        'gb': 1024 * 1024 * 1024,
-        }
+    'kb': 1024,
+    'mb': 1024 * 1024,
+    'gb': 1024 * 1024 * 1024,
+}
 
 
 def convert_size_to_bytes(size_str):
@@ -34,10 +34,10 @@ def get_yc_entrypoint(application_type, raw_entrypoint):
         entrypoint = raw_entrypoint
     if not entrypoint:
         raise ValueError(
-                f"Sorry, supported app types are: "
-                f"{','.join(HANDLERS.keys())}. "
-                f"Got {application_type}"
-                )
+            f"Sorry, supported app types are: "
+            f"{','.join(HANDLERS.keys())}. "
+            f"Got {application_type}"
+        )
     return entrypoint
 
 

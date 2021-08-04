@@ -7,16 +7,16 @@ from click import ClickException
 from yappa.cli_helpers import (
     NaturalOrderGroup, create_function_version, create_gateway,
     ensure_function, get_missing_details, update_gateway,
-    )
+)
 from yappa.config_generation import (
     create_default_config,
-    )
+)
 from yappa.handlers.manage import FORBIDDEN_COMMANDS
 from yappa.s3 import delete_bucket
 from yappa.settings import (
     DEFAULT_ACCESS_KEY_FILE, DEFAULT_CONFIG_FILENAME,
     YANDEX_OAUTH_URL,
-    )
+)
 from yappa.utils import load_yaml, save_yaml
 from yappa.yc import YC
 from yappa.yc.access import save_key
@@ -68,7 +68,7 @@ def setup(config_file, token):
     account = yc.create_service_account(f"yappa-creator-account-{folder_name}")
     save_key(yc.create_service_account_key(account.id))
     click.echo("Saved service account credentials at " + click.style(
-            DEFAULT_ACCESS_KEY_FILE, bold=True))
+        DEFAULT_ACCESS_KEY_FILE, bold=True))
 
     config = (load_yaml(config_file, safe=True)
               or create_default_config(config_file))
@@ -128,7 +128,8 @@ def undeploy(config_file):
         yc.delete_gateway(config['project_slug'])
     with suppress(ValueError):
         click.echo(f"Destroying bucket {config['bucket']}...")
-        delete_bucket(config["bucket"], **yc.get_s3_key(config["service_account_names"]["creator"]))
+        delete_bucket(config["bucket"], **yc.get_s3_key(
+            config["service_account_names"]["creator"]))
     click.echo("That's it! Only service account is left.\n"
                + click.style("Bye!", fg="yellow"))
 

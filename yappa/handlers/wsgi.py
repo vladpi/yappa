@@ -39,7 +39,7 @@ def call_app(app, event):
             url=event["url"],
             headers=event["headers"],
             params=event["queryStringParameters"],
-            content=json.dumps(event["body"]).encode(),
+            json=json.loads(event["body"]) if event["body"] else None,
         )
         response = client.send(request)
         return response

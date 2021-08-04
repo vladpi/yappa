@@ -3,11 +3,12 @@ from collections import Iterable
 import httpx
 import pytest
 import yaml
+from furl import furl
 
 from yappa.config_generation import (
     create_default_gw_config,
     inject_function_id,
-    )
+)
 
 
 @pytest.fixture(scope="session")
@@ -55,20 +56,23 @@ def test_gateway_update(gateway, yc):
     """
 
 
-def test_gateway_call(gateway, function_version):
-    url = f"https://{gateway.domain}"
-    response = httpx.get(url)  # TODO add proper url construction
+def test_gateway_call(gateway, function_version, faker):
+    f = furl(f"https://{gateway.domain}")
+    response = httpx.get(f.url, timeout=300)
     assert response.status_code == 200, response.content
     assert response.text == "root url"
 
-    response = httpx.get(f"{url}/json")  # TODO compose url properly with furl
-    assert response.status_code == 200
+    response = httpx.get((f / "json").url)
+    assert response.status_code == 200, response.content
     assert response.json() == {"result": "json",
                                "sub_result": {"sub": "json"}
                                }
-    num = "param"  # TODO generate random string or number?
-    response = httpx.get(f"{url}/url_param/{num}")  # TODO compose url properly
-    assert response.status_code == 200
-    assert response.json() == {"param": num}
+    param_value = f"{faker.pyint}"
+    response = httpx.get((f / "url_param" / param_value).url)
+    assert response.status_code == 200, response.content
+    assert response.json() == {"param": param_value}
 
-    # TODO add another two urls
+    response = httpx.post((f / "post").url, json={"sample": "request"})
+    assert response.status_code == 200, response.content
+    assert response.json() == {"request": {"sample": "request"}}, \
+        response.json()

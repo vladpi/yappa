@@ -11,9 +11,9 @@ def main():
 @app.route('/json')
 def json():
     return {
-            "result": "json",
-            "sub_result": {"sub": "json"}
-            }
+        "result": "json",
+        "sub_result": {"sub": "json"}
+    }
 
 
 @app.route("/query_params")
@@ -26,6 +26,6 @@ def url_param(param):
     return {"param": param}
 
 
-@app.route("/post/", methods=["POST"])
+@app.route("/post", methods=["POST"])
 def post():
     return {"request": request.get_json(force=True)}

@@ -8,7 +8,7 @@ from click import ClickException
 from yappa.config_generation import (
     create_default_gw_config,
     inject_function_id,
-    )
+)
 from yappa.s3 import prepare_package, upload_to_bucket
 from yappa.settings import HANDLERS
 from yappa.utils import get_yc_entrypoint, load_yaml, save_yaml
@@ -49,39 +49,41 @@ def create_function_version(yc, config):
                                   )
     click.echo(f"Uploading to bucket {config['bucket']}...")
     object_key = upload_to_bucket(package_dir, config["bucket"],
-                                  **yc.get_s3_key(config["service_account_names"]["creator"]))
+                                  **yc.get_s3_key(
+                                      config["service_account_names"][
+                                          "creator"]))
     click.echo(f"Creating new function version for "
                + click.style(config["project_slug"], bold=True))
     yc.create_function_version(
-            config["project_slug"],
+        config["project_slug"],
+        runtime=config["runtime"],
+        description=config["description"],
+        bucket_name=config["bucket"],
+        object_name=object_key,
+        entrypoint=get_yc_entrypoint(config["application_type"],
+                                     config["entrypoint"]),
+        memory=config["memory_limit"],
+        service_account_id=config["service_account_id"],
+        timeout=config["timeout"],
+        named_service_accounts=config["named_service_accounts"],
+        environment=config["environment"],
+    )
+    click.echo(f"Created function version")
+    if config["django_settings_module"]:
+        yc.create_function_version(
+            config["manage_function_name"],
             runtime=config["runtime"],
             description=config["description"],
             bucket_name=config["bucket"],
             object_name=object_key,
-            entrypoint=get_yc_entrypoint(config["application_type"],
+            entrypoint=get_yc_entrypoint("manage",
                                          config["entrypoint"]),
             memory=config["memory_limit"],
             service_account_id=config["service_account_id"],
-            timeout=config["timeout"],
+            timeout=300,
             named_service_accounts=config["named_service_accounts"],
             environment=config["environment"],
-            )
-    click.echo(f"Created function version")
-    if config["django_settings_module"]:
-        yc.create_function_version(
-                config["manage_function_name"],
-                runtime=config["runtime"],
-                description=config["description"],
-                bucket_name=config["bucket"],
-                object_name=object_key,
-                entrypoint=get_yc_entrypoint("manage",
-                                             config["entrypoint"]),
-                memory=config["memory_limit"],
-                service_account_id=config["service_account_id"],
-                timeout=300,
-                named_service_accounts=config["named_service_accounts"],
-                environment=config["environment"],
-                )
+        )
 
 
 def create_gateway(yc, config, function_id):
@@ -187,16 +189,16 @@ def get_slug(config):
 
 
 PROMPTS = (
-        ("project_name", "My project", [is_not_empty],
-         "What's your project name?"),
-        ("project_slug", get_slug, [is_valid_slug],
-         "What's your project slug?"),
-        ("bucket", get_bucket_name, [is_not_empty, is_valid_bucket_name],
-         "Please specify bucket name"),
-        ("requirements_file", "requirements.txt", [is_not_empty,
-                                                   is_valid_requirements_file],
-         "Please specify requirements file")
-        )
+    ("project_name", "My project", [is_not_empty],
+     "What's your project name?"),
+    ("project_slug", get_slug, [is_valid_slug],
+     "What's your project slug?"),
+    ("bucket", get_bucket_name, [is_not_empty, is_valid_bucket_name],
+     "Please specify bucket name"),
+    ("requirements_file", "requirements.txt", [is_not_empty,
+                                               is_valid_requirements_file],
+     "Please specify requirements file")
+)
 
 
 def get_missing_details(config):
@@ -217,17 +219,18 @@ def get_missing_details(config):
         application_types = list(HANDLERS)
         application_types.remove("manage")
         config["application_type"] = click.prompt(
-                "Please specify application type",
-                default=application_types[0], type=click.Choice(application_types), )
+            "Please specify application type",
+            default=application_types[0],
+            type=click.Choice(application_types), )
     if not config.get("entrypoint"):
         config["entrypoint"] = click.prompt(
-                "Please specify import path for application",
-                default="wsgi.app")
+            "Please specify import path for application",
+            default="wsgi.app")
     if not config.get("django_settings_module") \
             and config["application_type"] == "Django":
         config["django_settings_module"] = click.prompt(
-                "Please specify your DJANGO_SETTINGS_MODULE",
-                default="project.project.settings")
+            "Please specify your DJANGO_SETTINGS_MODULE",
+            default="project.project.settings")
     if config["django_settings_module"]:
         config["manage_function_name"] = f"{config['project_slug']}-manage"
     return config, is_updated

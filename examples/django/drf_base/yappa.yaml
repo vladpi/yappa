@@ -16,10 +16,10 @@ service_account_names:
   function_actor: drf-base-example-function-actor-account
 timeout: 1
 excluded_paths:
-- venv
-- .git
-- .idea
-- requirements.txt
+  - venv
+  - .git
+  - .idea
+  - requirements.txt
 environment:
   DJANGO_SUPERUSER_USERNAME: superuser
   DJANGO_SUPERUSER_PASSWORD: LOLiAMnot_secure!
@@ -29,5 +29,5 @@ environment:
   PG_HOST: akfrhhp29ipa93s294qd.postgresql-proxy.serverless.yandexcloud.net
   PG_PORT: '6432'
 service_account_id: ajek47377f918mdmmqha
-named_service_accounts: {}
+named_service_accounts: { }
 debug: false

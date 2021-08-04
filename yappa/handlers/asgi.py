@@ -1,7 +1,5 @@
 import json
 import logging
-import os
-from contextlib import suppress
 from pathlib import Path
 
 import httpx
@@ -20,12 +18,12 @@ async def call_app(app, event):
     async with httpx.AsyncClient(app=app,
                                  base_url=host_url) as client:
         request = client.build_request(
-                method=event["httpMethod"],
-                url=event["url"],
-                headers=event["headers"],
-                params=event["queryStringParameters"],
-                content=json.dumps(event["body"]).encode(),
-                )
+            method=event["httpMethod"],
+            url=event["url"],
+            headers=event["headers"],
+            params=event["queryStringParameters"],
+            content=json.dumps(event["body"]).encode(),
+        )
         response = await client.send(request)
         return response
 
@@ -43,17 +41,8 @@ except ValueError:
 async def handle(event, context):
     if not event:
         return {
-                'statusCode': 500,
-                'body': "got empty event",
-                }
-
+            'statusCode': 500,
+            'body': "got empty event",
+        }
     response = await call_app(app, event)
-    if not config["debug"]:
-        return patch_response(response)
-    return {
-            'statusCode': 200,
-            'body': {
-                    "event": event,
-                    "response": response,
-                    },
-            }
+    return patch_response(response)

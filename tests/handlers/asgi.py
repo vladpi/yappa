@@ -12,15 +12,15 @@ BASE_URL = "http://base-url.com"
 
 
 @pytest.fixture(params=[
-        ("fastapi_app.app", None),
-        ], ids=[
-        "fastAPI",
-        ], )
+    ("fastapi_app.app", None),
+], ids=[
+    "fastAPI",
+], )
 def app(request):
     # TODO сделать зависимой от config, а config - параметризованная фикстура
     # чтобы тесты handler, s3, yc_functions вызывались для каждого приложения
     sys.path.append(
-            str(Path(Path(__file__).resolve().parent.parent, "test_apps")))
+        str(Path(Path(__file__).resolve().parent.parent, "test_apps")))
     return load_app(*request.param)
 
 
@@ -54,4 +54,4 @@ async def test_json_response(app, sample_event):
     response = patch_response(response)
     assert response["statusCode"] == 200
     assert response["body"].replace("\n", "") == json.dumps(
-            {"result": "json", "sub_result": {"sub": "json"}}).replace(" ", "")
+        {"result": "json", "sub_result": {"sub": "json"}}).replace(" ", "")

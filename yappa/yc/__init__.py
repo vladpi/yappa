@@ -34,8 +34,8 @@ class YC(YcAccessMixin, YcFunctionsMixin, YcGatewayMixin):
           YC_FOLDER env variable
         """
         credentials = {
-                "token": token or os.environ.get("YC_OAUTH"),
-                }
+            "token": token or os.environ.get("YC_OAUTH"),
+        }
         if not credentials["token"]:
             del credentials["token"]
             with suppress(FileNotFoundError):

@@ -31,7 +31,7 @@ def test_function_version_creation(yc, function, function_version, config):
     assert version.entrypoint == get_yc_entrypoint(config["application_type"],
                                                    config["entrypoint"])
     assert version.resources.memory == convert_size_to_bytes(
-            config["memory_limit"])
+        config["memory_limit"])
     assert version.execution_timeout.seconds == float(config["timeout"])
     if config["service_account_id"]:
         assert version.service_account_id == config["service_account_id"]

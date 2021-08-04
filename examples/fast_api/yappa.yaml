@@ -15,11 +15,11 @@ service_account_names:
   function_actor: null
 timeout: 1
 excluded_paths:
-- venv
-- .git
-- .idea
-- requirements.txt
-environment: {}
-named_service_accounts: {}
+  - venv
+  - .git
+  - .idea
+  - requirements.txt
+environment: { }
+named_service_accounts: { }
 service_account_id: null
 debug: false
