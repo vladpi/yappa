@@ -133,8 +133,8 @@ Please note that some request headers (like Authorization) are
 [deleted before function is invoked](https://cloud.yandex.ru/docs/functions/concepts/function-invoke)
 
 ## Articles
-
-- https://habr.com/ru/post/569674/
+Habr:
+- [Yappa: запускаем python web-приложения. Просто. Бессерверно. В Яндекс Облаке]( https://habr.com/ru/post/569674/ )
 
 ## Development and Contribution
 
