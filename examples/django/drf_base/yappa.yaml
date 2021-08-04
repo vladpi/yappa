@@ -30,4 +30,4 @@ environment:
   PG_PORT: '6432'
 service_account_id: ajek47377f918mdmmqha
 named_service_accounts: { }
-debug: false
+is_public: false  # if function is accessible for non authorized requests

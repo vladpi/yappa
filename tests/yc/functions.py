@@ -21,9 +21,9 @@ def test_function_creation(yc):
 
 def test_function_access(yc, function):
     assert yc._is_function_public(function.id) == True
-    yc._set_function_access(function.id, is_public=False)
+    yc.set_function_access(function.id, is_public=False)
     assert yc._is_function_public(function.id) == False
-    yc._set_function_access(function.id, is_public=True)
+    yc.set_function_access(function.id, is_public=True)
 
 
 def test_function_version_creation(yc, function, function_version, config):

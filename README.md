@@ -167,7 +167,6 @@ our  [telegram chat](https://t.me/yappa_chat)
     - habr articles with deployment examples
     - habr article with full cycle of web-site (from code to domain)
 - Random features
-    - tests for POST calls to gw and function
     - refactor tests: make integration tests for all apps. make it uniform
     - delete s3 key after deploy
     - avoiding s3 or avoiding reinstalling of all pip packages

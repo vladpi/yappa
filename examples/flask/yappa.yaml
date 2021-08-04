@@ -22,4 +22,4 @@ excluded_paths:
 environment: { }
 named_service_accounts: { }
 service_account_id: null
-debug: false
+is_public: true # if function is accessible for non authorized requests

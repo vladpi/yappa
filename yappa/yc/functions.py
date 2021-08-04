@@ -51,6 +51,9 @@ class YcFunctionsMixin:
 
     def create_function(self, name, description="",
                         is_public=True) -> Function:
+        """
+        returns function and if it is new function
+        """
         with suppress(ValueError):
             function = self.get_function(name)
             return function, False
@@ -66,7 +69,7 @@ class YcFunctionsMixin:
             meta_type=CreateFunctionMetadata,
         )
         function = operation_result.response
-        self._set_function_access(function.id, is_public)
+        self.set_function_access(function.id, is_public)
         return function, True
 
     def delete_function(self, function_name):
@@ -82,7 +85,15 @@ class YcFunctionsMixin:
         )
         return operation_result.response
 
-    def _set_function_access(self, function_id, is_public=True):
+    def set_function_access(self, function_id=None, is_public=True,
+                            function_name=None):
+        """
+        returns if access has changed
+        """
+        if function_name and not function_id:
+            function_id = self.get_function(function_name).id
+        if self._is_function_public(function_id) == is_public:
+            return False
         if is_public:
             access_bindings = [AccessBinding(
                 role_id='serverless.functions.invoker',
@@ -103,7 +114,7 @@ class YcFunctionsMixin:
             response_type=Empty,
             meta_type=SetAccessBindingsMetadata,
         )
-        return is_public
+        return True
 
     def _is_function_public(self, function_id) -> bool:
         access_bindings = self.sdk.client(

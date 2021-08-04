@@ -69,6 +69,12 @@ def create_function_version(yc, config):
         environment=config["environment"],
     )
     click.echo(f"Created function version")
+    access_changed = yc.set_function_access(
+        function_name=config["project_slug"], is_public=config["is_public"])
+    if access_changed:
+        click.echo(f"Changed function access. Now it is "
+                   f" {'not' if config['is_public'] else 'open to'} public")
+
     if config["django_settings_module"]:
         yc.create_function_version(
             config["manage_function_name"],
