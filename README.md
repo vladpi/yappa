@@ -144,7 +144,7 @@ and [issues](https://github.com/turokg/yappa/issues). With any questions and sug
 our  [telegram chat](https://t.me/yappa_chat)
 
 In the near future we will be focused on documentation improvements (mainly deployment examples) and support of async
-tasks (serverless forkers and scheduling for celery).
+tasks (serverless workers and scheduler for celery).
 
 ## Troubleshooting
 
