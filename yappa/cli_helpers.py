@@ -9,9 +9,8 @@ from yappa.config_generation import (
     create_default_gw_config,
     inject_function_id,
 )
-from yappa.s3 import prepare_package, upload_to_bucket
 from yappa.settings import HANDLERS
-from yappa.utils import get_yc_entrypoint, load_yaml, save_yaml
+from yappa.utils import load_yaml, save_yaml
 
 
 class NaturalOrderGroup(click.Group):
@@ -39,57 +38,6 @@ def ensure_function(yc, name, description, is_public):
                    + "\n\tinvoke url : "
                    + click.style(f"{function.http_invoke_url}", fg="yellow"))
     return function
-
-
-def create_function_version(yc, config):
-    click.echo("Preparing package...")
-    package_dir = prepare_package(config["requirements_file"],
-                                  config["excluded_paths"],
-                                  to_install_requirements=True,
-                                  )
-    click.echo(f"Uploading to bucket {config['bucket']}...")
-    object_key = upload_to_bucket(package_dir, config["bucket"],
-                                  **yc.get_s3_key(
-                                      config["service_account_names"][
-                                          "creator"]))
-    click.echo(f"Creating new function version for "
-               + click.style(config["project_slug"], bold=True))
-    yc.create_function_version(
-        config["project_slug"],
-        runtime=config["runtime"],
-        description=config["description"],
-        bucket_name=config["bucket"],
-        object_name=object_key,
-        entrypoint=get_yc_entrypoint(config["application_type"],
-                                     config["entrypoint"]),
-        memory=config["memory_limit"],
-        service_account_id=config["service_account_id"],
-        timeout=config["timeout"],
-        named_service_accounts=config["named_service_accounts"],
-        environment=config["environment"],
-    )
-    click.echo(f"Created function version")
-    access_changed = yc.set_function_access(
-        function_name=config["project_slug"], is_public=config["is_public"])
-    if access_changed:
-        click.echo(f"Changed function access. Now it is "
-                   f" {'not' if config['is_public'] else 'open to'} public")
-
-    if config["django_settings_module"]:
-        yc.create_function_version(
-            config["manage_function_name"],
-            runtime=config["runtime"],
-            description=config["description"],
-            bucket_name=config["bucket"],
-            object_name=object_key,
-            entrypoint=get_yc_entrypoint("manage",
-                                         config["entrypoint"]),
-            memory=config["memory_limit"],
-            service_account_id=config["service_account_id"],
-            timeout=300,
-            named_service_accounts=config["named_service_accounts"],
-            environment=config["environment"],
-        )
 
 
 def create_gateway(yc, config, function_id):

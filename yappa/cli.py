@@ -5,9 +5,10 @@ import click
 from click import ClickException
 
 from yappa.cli_helpers import (
-    NaturalOrderGroup, create_function_version, create_gateway,
+    NaturalOrderGroup, create_gateway,
     ensure_function, get_missing_details, update_gateway,
 )
+from yappa.packaging.s3 import create_function_version_s3
 from yappa.config_generation import (
     create_default_config,
 )
@@ -103,7 +104,7 @@ def deploy(config_file):
     if config['django_settings_module']:
         ensure_function(yc, config["manage_function_name"],
                         config["description"], False)
-    create_function_version(yc, config)
+    create_function_version_s3(yc, config)
     if config["gw_config"]:
         is_new = create_gateway(yc, config, function.id)
         if not is_new:

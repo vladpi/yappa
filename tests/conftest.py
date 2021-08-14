@@ -4,6 +4,7 @@ from shutil import copy2
 
 import pytest
 
+import yappa.packaging.s3
 from yappa.config_generation import create_default_config
 from yappa.s3 import delete_bucket, prepare_package, upload_to_bucket
 from yappa.utils import get_yc_entrypoint, save_yaml
@@ -101,7 +102,7 @@ def function(function_name, yc):
 
 @pytest.fixture(scope="session")
 def function_version(yc, function, uploaded_package, config):
-    return yc.create_function_version(
+    return yappa.packaging.s3.create_function_version_s3(
         function.name,
         runtime=config["runtime"],
         description=config["description"],
