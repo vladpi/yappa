@@ -14,6 +14,7 @@ DEFAULT_IGNORED_FILES = (
     "requirements.txt",
 )
 AVAILABLE_PYTHON_VERSIONS = (
+    "python39-preview",
     "python38",
     "python37",
 )
