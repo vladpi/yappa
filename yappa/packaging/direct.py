@@ -1,2 +1,99 @@
-def create_function_version_direct(yc, config):
-    pass
+import logging
+import os
+import subprocess
+import sys
+from contextlib import suppress
+from pathlib import Path
+from shutil import copytree, ignore_patterns
+
+import click
+
+from yappa.settings import (
+    DEFAULT_CONFIG_FILENAME, DEFAULT_IGNORED_FILES,
+    DEFAULT_PACKAGE_DIR,
+    DEFAULT_REQUIREMENTS_FILE,
+    HANDLERS_DIR, )
+from yappa.utils import get_yc_entrypoint
+
+logger = logging.getLogger(__name__)
+
+
+def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
+                    ignored_files=DEFAULT_IGNORED_FILES,
+                    tmp_dir=DEFAULT_PACKAGE_DIR, to_install_requirements=True,
+                    config_filename=DEFAULT_CONFIG_FILENAME):
+    """
+    prepares package folder
+    - copy project files
+    - copy handler.py
+    - copy requirements file and rename it to 'requirements.txt'
+    """
+    logger.info('Copying project files to %s', tmp_dir)
+    with suppress(FileExistsError):
+        os.mkdir(tmp_dir)
+    copytree(os.getcwd(), tmp_dir,
+             ignore=ignore_patterns(*ignored_files, tmp_dir),
+             dirs_exist_ok=True)
+    copytree(Path(Path(__file__).resolve().parent, HANDLERS_DIR),
+             Path(tmp_dir, "handlers"), dirs_exist_ok=True)
+    os.rename(Path(tmp_dir, config_filename),
+              Path(tmp_dir, DEFAULT_CONFIG_FILENAME))
+    if to_install_requirements:
+        logger.info('Installing requirements...')
+        cmd = (
+            f'{sys.executable} -m pip install '
+            f'-r {requirements_file} -t {tmp_dir} --upgrade --quiet'
+        )
+        subprocess.check_call(cmd.split())
+    return tmp_dir
+
+
+def create_function_version(yc, config):
+    click.echo("Preparing package...")
+    package_dir = prepare_package(config["requirements_file"],
+                                  config["excluded_paths"],
+                                  to_install_requirements=True,
+                                  )
+    click.echo(f"Uploading to bucket {config['bucket']}...")
+    object_key = upload_to_bucket(package_dir, config["bucket"],
+                                  **yc.get_s3_key(
+                                      config["service_account_names"][
+                                          "creator"]))
+    click.echo(f"Creating new function version for "
+               + click.style(config["project_slug"], bold=True))
+    yc.create_function_version(
+        config["project_slug"],
+        runtime=config["runtime"],
+        description=config["description"],
+        bucket_name=config["bucket"],
+        object_name=object_key,
+        entrypoint=get_yc_entrypoint(config["application_type"],
+                                     config["entrypoint"]),
+        memory=config["memory_limit"],
+        service_account_id=config["service_account_id"],
+        timeout=config["timeout"],
+        named_service_accounts=config["named_service_accounts"],
+        environment=config["environment"],
+    )
+    click.echo(f"Created function version")
+    access_changed = yc.set_function_access(
+        function_name=config["project_slug"], is_public=config["is_public"])
+    if access_changed:
+        click.echo(f"Changed function access. Now it is "
+                   f" {'not' if config['is_public'] else 'open to'} public")
+
+    if config["django_settings_module"]:
+        yc.create_function_version(
+            config["manage_function_name"],
+            runtime=config["runtime"],
+            description=config["description"],
+            bucket_name=config["bucket"],
+            object_name=object_key,
+            entrypoint=get_yc_entrypoint("manage",
+                                         config["entrypoint"]),
+            memory=config["memory_limit"],
+            service_account_id=config["service_account_id"],
+            timeout=300,
+            named_service_accounts=config["named_service_accounts"],
+            environment=config["environment"],
+        )

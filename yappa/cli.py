@@ -5,15 +5,14 @@ import click
 from click import ClickException
 
 from yappa.cli_helpers import (
-    NaturalOrderGroup, create_gateway,
+    NaturalOrderGroup, UPLOAD_FUNCTIONS, create_function_version,
+    create_gateway,
     ensure_function, get_missing_details, update_gateway,
 )
-from yappa.packaging.s3 import create_function_version_s3
 from yappa.config_generation import (
     create_default_config,
 )
 from yappa.handlers.manage import FORBIDDEN_COMMANDS
-from yappa.s3 import delete_bucket
 from yappa.settings import (
     DEFAULT_ACCESS_KEY_FILE, DEFAULT_CONFIG_FILENAME,
     YANDEX_OAUTH_URL,
@@ -81,9 +80,11 @@ def setup(config_file, token):
 
 
 @cli.command(short_help='generate config files, create function & api-gateway')
+@click.argument("upload-strategy", type=click.Choice(UPLOAD_FUNCTIONS.keys()),
+                default="direct", )
 @click.argument("config-file", type=click.Path(exists=False),
                 default=DEFAULT_CONFIG_FILENAME, )
-def deploy(config_file):
+def deploy(upload_strategy, config_file):
     """\b
     - generates yappa.yaml (skipped if file exists)
     - creates function
@@ -104,7 +105,7 @@ def deploy(config_file):
     if config['django_settings_module']:
         ensure_function(yc, config["manage_function_name"],
                         config["description"], False)
-    create_function_version_s3(yc, config)
+    create_function_version(yc, config, upload_strategy, config_file)
     if config["gw_config"]:
         is_new = create_gateway(yc, config, function.id)
         if not is_new:

@@ -11,7 +11,6 @@ DEFAULT_IGNORED_FILES = (
     ".idea",
     ".git",
     "venv",
-    "requirements.txt",
 )
 AVAILABLE_PYTHON_VERSIONS = (
     "python39-preview",

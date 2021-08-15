@@ -5,16 +5,20 @@ from uuid import uuid4
 import boto3
 import pytest
 
-from tests.conftest import (
-    EMPTY_FILES, IGNORED_FILES,
-)
-from yappa.s3 import (
+from yappa.packaging.s3 import (
     delete_bucket, ensure_bucket,
     prepare_package, upload_to_bucket,
 )
 from yappa.settings import (
     DEFAULT_CONFIG_FILENAME, DEFAULT_PACKAGE_DIR,
     YANDEX_S3_URL,
+)
+
+IGNORED_FILES = (
+    Path("requirements.txt"),
+    Path(".idea"),
+    Path(".git", "config"),
+    Path("venv", "flask.py"),
 )
 
 
@@ -24,7 +28,8 @@ def expected_paths(config):
     return [
         DEFAULT_CONFIG_FILENAME,
         Path("handlers", "wsgi.py"),
-        *EMPTY_FILES,
+        Path("package", "utils.py"),
+        Path("package", "subpackage", "subutils.py"),
         Path(*entrypoint_dirs, f"{entrypoint_file}.py"),
     ]
 

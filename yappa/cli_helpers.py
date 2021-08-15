@@ -12,6 +12,9 @@ from yappa.config_generation import (
 from yappa.settings import HANDLERS
 from yappa.utils import load_yaml, save_yaml
 
+from yappa.packaging import s3, direct
+
+
 
 class NaturalOrderGroup(click.Group):
 
@@ -38,6 +41,17 @@ def ensure_function(yc, name, description, is_public):
                    + "\n\tinvoke url : "
                    + click.style(f"{function.http_invoke_url}", fg="yellow"))
     return function
+
+
+UPLOAD_FUNCTIONS = {
+    "s3": s3.create_function_version,
+    "direct": direct.create_function_version
+}
+
+
+def create_function_version(yc, config, strategy,  config_filename):
+    creator = UPLOAD_FUNCTIONS[strategy]
+    return creator(yc, config, config_filename)
 
 
 def create_gateway(yc, config, function_id):
@@ -147,8 +161,6 @@ PROMPTS = (
      "What's your project name?"),
     ("project_slug", get_slug, [is_valid_slug],
      "What's your project slug?"),
-    ("bucket", get_bucket_name, [is_not_empty, is_valid_bucket_name],
-     "Please specify bucket name"),
     ("requirements_file", "requirements.txt", [is_not_empty,
                                                is_valid_requirements_file],
      "Please specify requirements file")
@@ -187,4 +199,6 @@ def get_missing_details(config):
             default="project.project.settings")
     if config["django_settings_module"]:
         config["manage_function_name"] = f"{config['project_slug']}-manage"
+    if not config.get("bucket_name"):
+        config["bucket_name"] = get_bucket_name(config)
     return config, is_updated

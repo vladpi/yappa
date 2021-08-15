@@ -34,9 +34,9 @@ def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
     with suppress(FileExistsError):
         os.mkdir(tmp_dir)
     copytree(os.getcwd(), tmp_dir,
-             ignore=ignore_patterns(*ignored_files, tmp_dir),
+             ignore=ignore_patterns(*ignored_files, tmp_dir, requirements_file),
              dirs_exist_ok=True)
-    copytree(Path(Path(__file__).resolve().parent, HANDLERS_DIR),
+    copytree(Path(Path(__file__).resolve().parent.parent, HANDLERS_DIR),
              Path(tmp_dir, "handlers"), dirs_exist_ok=True)
     os.rename(Path(tmp_dir, config_filename),
               Path(tmp_dir, DEFAULT_CONFIG_FILENAME))
@@ -95,11 +95,12 @@ def delete_bucket(bucket_name, aws_access_key_id, aws_secret_access_key):
     bucket.delete()
 
 
-def create_function_version_s3(yc, config):
+def create_function_version(yc, config, config_filename):
     click.echo("Preparing package...")
     package_dir = prepare_package(config["requirements_file"],
                                   config["excluded_paths"],
                                   to_install_requirements=True,
+                                  config_filename=config_filename,
                                   )
     click.echo(f"Uploading to bucket {config['bucket']}...")
     object_key = upload_to_bucket(package_dir, config["bucket"],
@@ -108,7 +109,7 @@ def create_function_version_s3(yc, config):
                                           "creator"]))
     click.echo(f"Creating new function version for "
                + click.style(config["project_slug"], bold=True))
-    yc.create_function_version_s3(
+    yc.create_function_version(
         config["project_slug"],
         runtime=config["runtime"],
         description=config["description"],
@@ -130,7 +131,7 @@ def create_function_version_s3(yc, config):
                    f" {'not' if config['is_public'] else 'open to'} public")
 
     if config["django_settings_module"]:
-        yc.create_function_version_s3(
+        yc.create_function_version(
             config["manage_function_name"],
             runtime=config["runtime"],
             description=config["description"],

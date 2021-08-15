@@ -4,10 +4,9 @@ from shutil import copy2
 
 import pytest
 
-import yappa.packaging.s3
+from yappa.cli_helpers import create_function_version
 from yappa.config_generation import create_default_config
-from yappa.s3 import delete_bucket, prepare_package, upload_to_bucket
-from yappa.utils import get_yc_entrypoint, save_yaml
+from yappa.utils import save_yaml
 from yappa.yc import YC
 
 
@@ -21,12 +20,9 @@ COPIED_FILES = (
     Path(Path(__file__).resolve().parent, "test_apps",
          "flask_requirements.txt"),
 )
-EMPTY_FILES = (
+PACKAGE_FILES = (
     Path("package", "utils.py"),
-    Path("package", "subpackage", "subutils.py")
-)
-
-IGNORED_FILES = (
+    Path("package", "subpackage", "subutils.py"),
     Path("requirements.txt"),
     Path(".idea"),
     Path(".git", "config"),
@@ -45,7 +41,7 @@ def app_dir(tmpdir_factory):
     dir_ = tmpdir_factory.mktemp('package')
     os.chdir(dir_)
     assert not os.listdir()
-    create_empty_files(*EMPTY_FILES, *IGNORED_FILES)
+    create_empty_files(*PACKAGE_FILES)
     for file in COPIED_FILES:
         copy2(file, ".")
     return dir_
@@ -60,6 +56,7 @@ def config_filename():
 def config(app_dir, config_filename):
     config = create_default_config(config_filename)
     config.update(
+        project_slug="test-function-session",
         requirements_file="flask_requirements.txt",
         entrypoint="flask_app.app",
         application_type="wsgi",
@@ -75,47 +72,30 @@ def config(app_dir, config_filename):
     return config
 
 
-@pytest.fixture(scope="session")
-def uploaded_package(config, app_dir, s3_credentials, config_filename):
-    package_dir = prepare_package(config["requirements_file"],
-                                  config["excluded_paths"],
-                                  to_install_requirements=True,
-                                  config_filename=config_filename,
-                                  )
-    object_key = upload_to_bucket(package_dir, config["bucket"],
-                                  **s3_credentials)
-    yield object_key
-    delete_bucket(config["bucket"], **s3_credentials)
+#
+# @pytest.fixture(scope="session")
+# def uploaded_package(config, app_dir, s3_credentials, config_filename):
+#     package_dir = prepare_package(config["requirements_file"],
+#                                   config["excluded_paths"],
+#                                   to_install_requirements=True,
+#                                   config_filename=config_filename,
+#                                   )
+#     object_key = upload_to_bucket(package_dir, config["bucket"],
+#                                   **s3_credentials)
+#     yield object_key
+#     delete_bucket(config["bucket"], **s3_credentials)
 
 
 @pytest.fixture(scope="session")
-def function_name():
-    return "test-function-session"
-
-
-@pytest.fixture(scope="session")
-def function(function_name, yc):
-    function, _ = yc.create_function(function_name)
+def function(config, yc):
+    function, _ = yc.create_function(config["project_slug"])
     yield function
-    yc.delete_function(function_name)
+    yc.delete_function(config["project_slug"])
 
 
 @pytest.fixture(scope="session")
-def function_version(yc, function, uploaded_package, config):
-    return yappa.packaging.s3.create_function_version_s3(
-        function.name,
-        runtime=config["runtime"],
-        description=config["description"],
-        entrypoint=get_yc_entrypoint(config["application_type"],
-                                     config["entrypoint"]),
-        bucket_name=config["bucket"],
-        object_name=uploaded_package,
-        memory=config["memory_limit"],
-        timeout=config["timeout"],
-        environment=config["environment"],
-        service_account_id=config["service_account_id"],
-        named_service_accounts=config["named_service_accounts"],
-    )
+def function_version(yc, function, config, config_filename):
+    create_function_version(yc, config, "s3", config_filename)
 
 
 @pytest.fixture(scope="session")
