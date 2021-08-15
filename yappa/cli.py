@@ -14,10 +14,10 @@ from yappa.config_generation import (
 )
 from yappa.handlers.manage import FORBIDDEN_COMMANDS
 from yappa.settings import (
-    DEFAULT_ACCESS_KEY_FILE, DEFAULT_CONFIG_FILENAME,
-    YANDEX_OAUTH_URL,
+    DEFAULT_ACCESS_KEY_FILE, YANDEX_OAUTH_URL,
 )
-from yappa.utils import load_yaml, save_yaml
+from yappa.utils import save_yaml
+from yappa.handlers.common import DEFAULT_CONFIG_FILENAME, load_yaml
 from yappa.yc import YC
 from yappa.yc.access import save_key
 from yappa.yc.function_call import call_manage_function

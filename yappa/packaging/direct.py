@@ -7,15 +7,29 @@ from shutil import copytree, ignore_patterns, make_archive, rmtree
 import click
 from click import ClickException
 
+from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
 from yappa.packaging.common import validate_requirements_file
 from yappa.settings import (
-    DEFAULT_CONFIG_FILENAME, DEFAULT_IGNORED_FILES,
+    DEFAULT_IGNORED_FILES,
     DEFAULT_PACKAGE_DIR,
     DEFAULT_REQUIREMENTS_FILE,
     HANDLERS_DIR, )
-from yappa.utils import get_yc_entrypoint, load_yaml
+from yappa.utils import get_yc_entrypoint
 
 logger = logging.getLogger(__name__)
+
+
+def clear_requirements(requirements_file):
+    """
+    removes Yappa package from requirements
+    """
+    buffer = []
+    with open(requirements_file, "r") as f:
+        for line in f.readlines():
+            if "yappa" not in line:
+                buffer.append(line)
+    with open(requirements_file, "w+") as f:
+        f.write("".join(buffer))
 
 
 def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
@@ -47,6 +61,7 @@ def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
 
     os.rename(Path(tmp_dir, requirements_file),
               Path(tmp_dir, "requirements.txt"))
+    clear_requirements(Path(tmp_dir, "requirements.txt"))
     return tmp_dir
 
 
@@ -88,7 +103,7 @@ def create_function_version(yc, config, config_filename):
                                                  config["entrypoint"]),
                     memory=config["memory_limit"],
                     service_account_id=config["service_account_id"],
-                    timeout=60*10,
+                    timeout=60 * 10,
                     named_service_accounts=config["named_service_accounts"],
                     environment=config["environment"],
                 )
@@ -100,5 +115,3 @@ def create_function_version(yc, config, config_filename):
     if access_changed:
         click.echo(f"Changed function access. Now it is "
                    f" {'not' if config['is_public'] else 'open to'} public")
-
-

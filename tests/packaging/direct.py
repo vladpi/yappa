@@ -6,8 +6,9 @@ import pytest
 from yappa.packaging.direct import (
     prepare_package, )
 from yappa.settings import (
-    DEFAULT_CONFIG_FILENAME, DEFAULT_PACKAGE_DIR,
+    DEFAULT_PACKAGE_DIR,
 )
+from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
 
 IGNORED_FILES = (
     Path(".idea"),

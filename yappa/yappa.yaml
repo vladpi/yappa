@@ -19,6 +19,7 @@ excluded_paths:
   - venv
   - .git
   - .idea
+  - .DS_Store
 environment: { }
 named_service_accounts: { }
 service_account_id: null

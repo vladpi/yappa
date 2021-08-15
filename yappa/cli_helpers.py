@@ -10,7 +10,8 @@ from yappa.config_generation import (
     inject_function_id,
 )
 from yappa.settings import HANDLERS
-from yappa.utils import load_yaml, save_yaml
+from yappa.utils import save_yaml
+from yappa.handlers.common import load_yaml
 
 from yappa.packaging import s3, direct
 

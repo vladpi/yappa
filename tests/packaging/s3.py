@@ -10,9 +10,10 @@ from yappa.packaging.s3 import (
     prepare_package, upload_to_bucket,
 )
 from yappa.settings import (
-    DEFAULT_CONFIG_FILENAME, DEFAULT_PACKAGE_DIR,
+    DEFAULT_PACKAGE_DIR,
     YANDEX_S3_URL,
 )
+from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
 
 IGNORED_FILES = (
     Path("flask_requirements.txt"),

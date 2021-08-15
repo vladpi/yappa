@@ -11,11 +11,12 @@ import click
 
 from yappa.packaging.common import validate_requirements_file
 from yappa.settings import (
-    DEFAULT_CONFIG_FILENAME, DEFAULT_IGNORED_FILES,
+    DEFAULT_IGNORED_FILES,
     DEFAULT_PACKAGE_DIR,
     DEFAULT_REQUIREMENTS_FILE,
     HANDLERS_DIR, YANDEX_S3_URL,
 )
+from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
 from yappa.utils import get_yc_entrypoint
 
 logger = logging.getLogger(__name__)

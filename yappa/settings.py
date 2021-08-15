@@ -31,4 +31,3 @@ HANDLERS = {
     "manage": "handlers.manage.manage",
     "raw": None,
 }
-DEFAULT_CONFIG_FILENAME = "yappa.yaml"

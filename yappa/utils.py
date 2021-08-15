@@ -41,17 +41,6 @@ def get_yc_entrypoint(application_type, raw_entrypoint):
     return entrypoint
 
 
-def load_yaml(file, safe=False):
-    try:
-        with open(file, "r") as f:
-            return yaml.load(f.read(), Loader)
-    except FileNotFoundError:
-        if safe:
-            return dict()
-        else:
-            raise
-
-
 def save_yaml(config, filename):
     with open(filename, "w+") as f:
         f.write(yaml.dump(config, sort_keys=False))

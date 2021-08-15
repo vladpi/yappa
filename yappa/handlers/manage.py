@@ -5,9 +5,7 @@ import os
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-from yappa.settings import DEFAULT_CONFIG_FILENAME
-from yappa.utils import load_yaml
-from .common import set_access_token
+from .common import DEFAULT_CONFIG_FILENAME, load_yaml, set_access_token
 
 logger = logging.getLogger(__name__)
 

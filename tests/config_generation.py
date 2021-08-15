@@ -3,7 +3,8 @@ from pathlib import Path
 import pytest
 
 from yappa.config_generation import inject_function_id
-from yappa.utils import get_yc_entrypoint, load_yaml
+from yappa.utils import get_yc_entrypoint
+from yappa.handlers.common import load_yaml
 
 
 @pytest.mark.parametrize(

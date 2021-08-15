@@ -2,6 +2,12 @@ import logging
 import os
 
 import httpx
+import yaml
+
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
 
 logger = logging.getLogger(__name__)
 TOKEN_URL = 'http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token'
@@ -19,7 +25,15 @@ def set_access_token(iam_token=None):
     os.environ["IAM_TOKEN"] = iam_token
 
 
-def update_django_pg_connection(iam_token):
-    from django.db import connections
-    connections.databases["default"]["PASSWORD"] = iam_token
-    # TODO not hard code db name
+def load_yaml(file, safe=False):
+    try:
+        with open(file, "r") as f:
+            return yaml.load(f.read(), Loader)
+    except FileNotFoundError:
+        if safe:
+            return dict()
+        else:
+            raise
+
+
+DEFAULT_CONFIG_FILENAME = "yappa.yaml"
