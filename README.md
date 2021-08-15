@@ -1,11 +1,9 @@
-<p align="center">
-<img src="https://github.com/turokg/yappa/blob/master/logo.png" width="400"></p>
+![](https://raw.githubusercontent.com/turokg/yappa/master/logo.png)
 
 # Simple deploy of python web-apps @YandexCloud
 
 Forget about setting up your own infrastructure, vps, network, orchestrators, etc... go **serverless**
-
-<p align="center"><img src="https://github.com/turokg/yappa/blob/master/demo.gif" width="720" ></p>
+![](https://raw.githubusercontent.com/turokg/yappa/master/demo.gif)
 
 * [Quickstart](#quickstart)
     * [Updates](#updates)
