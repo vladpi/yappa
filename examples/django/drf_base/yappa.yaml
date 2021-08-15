@@ -1,5 +1,5 @@
 project_name: DRF base example
-project_slug: long-token-test-default
+project_slug: drf-base-example
 description: null
 requirements_file: requirements.txt
 bucket: brf-base-example-dec4b228
@@ -19,7 +19,6 @@ excluded_paths:
   - venv
   - .git
   - .idea
-  - requirements.txt
 environment:
   DJANGO_SUPERUSER_USERNAME: superuser
   DJANGO_SUPERUSER_PASSWORD: LOLiAMnot_secure!

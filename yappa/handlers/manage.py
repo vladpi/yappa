@@ -7,7 +7,7 @@ from pathlib import Path
 
 from yappa.settings import DEFAULT_CONFIG_FILENAME
 from yappa.utils import load_yaml
-from .handle_utils import set_access_token
+from .common import set_access_token
 
 logger = logging.getLogger(__name__)
 

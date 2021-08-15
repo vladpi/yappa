@@ -6,6 +6,7 @@ import pytest
 
 from yappa.cli_helpers import create_function_version
 from yappa.config_generation import create_default_config
+from yappa.packaging.s3 import delete_bucket
 from yappa.utils import save_yaml
 from yappa.yc import YC
 
@@ -23,7 +24,6 @@ COPIED_FILES = (
 PACKAGE_FILES = (
     Path("package", "utils.py"),
     Path("package", "subpackage", "subutils.py"),
-    Path("requirements.txt"),
     Path(".idea"),
     Path(".git", "config"),
     Path("venv", "flask.py"),
@@ -65,25 +65,10 @@ def config(app_dir, config_filename):
             ".idea",
             ".git",
             "venv",
-            "requirements.txt",
         )
     )
     save_yaml(config, config_filename)
     return config
-
-
-#
-# @pytest.fixture(scope="session")
-# def uploaded_package(config, app_dir, s3_credentials, config_filename):
-#     package_dir = prepare_package(config["requirements_file"],
-#                                   config["excluded_paths"],
-#                                   to_install_requirements=True,
-#                                   config_filename=config_filename,
-#                                   )
-#     object_key = upload_to_bucket(package_dir, config["bucket"],
-#                                   **s3_credentials)
-#     yield object_key
-#     delete_bucket(config["bucket"], **s3_credentials)
 
 
 @pytest.fixture(scope="session")
@@ -93,9 +78,12 @@ def function(config, yc):
     yc.delete_function(config["project_slug"])
 
 
-@pytest.fixture(scope="session")
-def function_version(yc, function, config, config_filename):
-    create_function_version(yc, config, "s3", config_filename)
+@pytest.fixture(scope="session",
+                params=["s3", "direct"], ids=["s3", "direct"], )
+def function_version(request, yc, function, config, config_filename,
+                     s3_credentials):
+    yield create_function_version(yc, config, request.param, config_filename)
+    delete_bucket(config["bucket"], **s3_credentials)
 
 
 @pytest.fixture(scope="session")

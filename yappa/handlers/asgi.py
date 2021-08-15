@@ -4,9 +4,9 @@ from pathlib import Path
 
 import httpx
 
-from yappa.handlers.wsgi import load_app, patch_response
 from yappa.settings import DEFAULT_CONFIG_FILENAME
 from yappa.utils import load_yaml
+from .wsgi import load_app, patch_response
 
 logger = logging.getLogger(__name__)
 

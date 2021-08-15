@@ -6,10 +6,10 @@ from pathlib import Path
 
 import httpx
 
-from yappa.handlers.handle_utils import (set_access_token,
-                                         update_django_pg_connection)
 from yappa.settings import DEFAULT_CONFIG_FILENAME
 from yappa.utils import load_yaml
+from .common import (set_access_token,
+                     update_django_pg_connection)
 
 logger = logging.getLogger(__name__)
 

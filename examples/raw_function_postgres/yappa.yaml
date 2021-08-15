@@ -18,7 +18,6 @@ excluded_paths:
   - venv
   - .git
   - .idea
-  - requirements.txt
 environment: { }
 named_service_accounts: { }
 service_account_id: ajek47377f918mdmmqha

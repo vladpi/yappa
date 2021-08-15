@@ -9,6 +9,7 @@ from shutil import copytree, ignore_patterns, make_archive, rmtree
 import boto3
 import click
 
+from yappa.packaging.common import validate_requirements_file
 from yappa.settings import (
     DEFAULT_CONFIG_FILENAME, DEFAULT_IGNORED_FILES,
     DEFAULT_PACKAGE_DIR,
@@ -30,6 +31,8 @@ def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
     - copy handler.py
     - install packages
     """
+    validate_requirements_file(requirements_file)
+
     logger.info('Copying project files to %s', tmp_dir)
     with suppress(FileExistsError):
         os.mkdir(tmp_dir)

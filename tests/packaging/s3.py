@@ -15,7 +15,7 @@ from yappa.settings import (
 )
 
 IGNORED_FILES = (
-    Path("requirements.txt"),
+    Path("flask_requirements.txt"),
     Path(".idea"),
     Path(".git", "config"),
     Path("venv", "flask.py"),
@@ -75,8 +75,11 @@ def test_bucket_creation(bucket_name, s3_credentials):
     assert bucket_name not in get_bucket_names(**s3_credentials)
 
 
-def test_s3_upload(app_dir, bucket_name, s3_credentials):
-    dir = prepare_package(to_install_requirements=False)
+def test_s3_upload(app_dir, bucket_name, s3_credentials, config,
+                   config_filename):
+    dir = prepare_package(to_install_requirements=False,
+                          config_filename=config_filename,
+                          requirements_file=config["requirements_file"])
     object_key = upload_to_bucket(dir, bucket_name, **s3_credentials)
     assert bucket_name in get_bucket_names(**s3_credentials)
     bucket = ensure_bucket(bucket_name, **s3_credentials)

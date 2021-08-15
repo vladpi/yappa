@@ -129,27 +129,45 @@ class YcFunctionsMixin:
         return False
 
     def create_function_version(self, function_name, runtime, description,
-                                bucket_name, object_name,
                                 entrypoint,
+                                bucket_name=None, object_name=None,
                                 memory="128MB", service_account_id=None,
                                 timeout=None, named_service_accounts=None,
-                                environment=None) -> Version:
+                                environment=None, content=None) -> Version:
         function = self.get_function(function_name)
-        operation = self.sdk.client(FunctionServiceStub).CreateVersion(
-            CreateFunctionVersionRequest(
-                function_id=function.id,
-                runtime=runtime,
-                description=description,
-                entrypoint=entrypoint,
-                resources=Resources(
-                    memory=convert_size_to_bytes(memory)),
-                execution_timeout=Duration(seconds=timeout),
-                service_account_id=service_account_id,
-                package=Package(bucket_name=bucket_name,
-                                object_name=object_name),
-                named_service_accounts=named_service_accounts,
-                environment=environment
-            ))
+        if content and bucket_name and object_name:
+            raise ValueError("either content of s3 bucket must be specified")
+        if content:
+            operation = self.sdk.client(FunctionServiceStub).CreateVersion(
+                CreateFunctionVersionRequest(
+                    function_id=function.id,
+                    runtime=runtime,
+                    description=description,
+                    entrypoint=entrypoint,
+                    resources=Resources(
+                        memory=convert_size_to_bytes(memory)),
+                    execution_timeout=Duration(seconds=timeout),
+                    service_account_id=service_account_id,
+                    content=content,
+                    named_service_accounts=named_service_accounts,
+                    environment=environment
+                ))
+        else:
+            operation = self.sdk.client(FunctionServiceStub).CreateVersion(
+                CreateFunctionVersionRequest(
+                    function_id=function.id,
+                    runtime=runtime,
+                    description=description,
+                    entrypoint=entrypoint,
+                    resources=Resources(
+                        memory=convert_size_to_bytes(memory)),
+                    execution_timeout=Duration(seconds=timeout),
+                    service_account_id=service_account_id,
+                    package=Package(bucket_name=bucket_name,
+                                    object_name=object_name),
+                    named_service_accounts=named_service_accounts,
+                    environment=environment
+                ))
         operation_result = self.sdk.wait_operation_and_get_result(
             operation,
             response_type=Version,
