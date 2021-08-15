@@ -66,4 +66,4 @@ typing-extensions==3.10.0.0
 urllib3==1.26.5
 Werkzeug==2.0.1
 wsgi-request-logger==0.4.6
-yandexcloud==0.92.0
+yandexcloud==0.102.1
