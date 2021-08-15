@@ -9,6 +9,7 @@ from shutil import copytree, ignore_patterns, make_archive, rmtree
 import boto3
 import click
 
+from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
 from yappa.packaging.common import validate_requirements_file
 from yappa.settings import (
     DEFAULT_IGNORED_FILES,
@@ -16,8 +17,12 @@ from yappa.settings import (
     DEFAULT_REQUIREMENTS_FILE,
     HANDLERS_DIR, YANDEX_S3_URL,
 )
-from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
 from yappa.utils import get_yc_entrypoint
+
+"""
+limitations:
+- 128 MB - resulting zip archive 
+"""
 
 logger = logging.getLogger(__name__)
 

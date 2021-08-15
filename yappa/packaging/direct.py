@@ -17,6 +17,11 @@ from yappa.settings import (
 from yappa.utils import get_yc_entrypoint
 
 logger = logging.getLogger(__name__)
+"""
+limitations:
+- 4 mb - for resulting zip archive 
+- 5 min - time to install requirements
+"""
 
 
 def clear_requirements(requirements_file):
@@ -80,7 +85,7 @@ def create_function_version(yc, config, config_filename):
 
         click.echo(f"Creating new function version for "
                    + click.style(config["project_slug"], bold=True)
-                   + f" ({archive_size//1e6:.2f}MB)")
+                   + f" ({archive_size // 1e6:.2f}MB)")
         with open(archive_path, "rb") as f:
             content = f.read()
             yc.create_function_version(
