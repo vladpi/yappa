@@ -1,8 +1,8 @@
 ![](https://raw.githubusercontent.com/turokg/yappa/master/logo.png)
 
 # Simple deploy of python web-apps @YandexCloud
-
 Forget about setting up your own infrastructure, vps, network, orchestrators, etc... go **serverless**
+
 ![](https://raw.githubusercontent.com/turokg/yappa/master/demo.gif)
 
 * [Quickstart](#quickstart)
