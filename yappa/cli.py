@@ -13,6 +13,7 @@ from yappa.config_generation import (
     create_default_config,
 )
 from yappa.handlers.manage import FORBIDDEN_COMMANDS
+from yappa.packaging.s3 import delete_bucket
 from yappa.settings import (
     DEFAULT_ACCESS_KEY_FILE, YANDEX_OAUTH_URL,
 )
