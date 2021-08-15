@@ -75,9 +75,5 @@ def handle(event, context):
     set_access_token()
     if not event:
         raise ValueError("Got empty event")
-
-    if config["django_settings_module"]:
-        update_django_pg_connection(context.token["access_token"])
-        # TODO check if it's necessary to update db settings
     response = call_app(app, event)
     return patch_response(response)
