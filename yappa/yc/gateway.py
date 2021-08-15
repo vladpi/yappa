@@ -2,7 +2,6 @@ import logging
 from contextlib import suppress
 from typing import Iterable
 
-import yandexcloud
 from google.protobuf.empty_pb2 import Empty
 from yandex.cloud.serverless.apigateway.v1.apigateway_pb2 import ApiGateway
 from yandex.cloud.serverless.apigateway.v1.apigateway_service_pb2 import \
@@ -15,9 +14,6 @@ from yandex.cloud.serverless.apigateway.v1.apigateway_service_pb2 import \
 from yandex.cloud.serverless.apigateway.v1.apigateway_service_pb2_grpc import \
     ApiGatewayServiceStub
 
-yandexcloud._sdk._supported_modules[
-    'yandex.cloud.serverless.apigateway'] = 'serverless-apigateway'
-# TODO remove monkey patch when update is in PIP
 logger = logging.getLogger(__name__)
 
 
