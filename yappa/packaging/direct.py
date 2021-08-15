@@ -70,6 +70,19 @@ def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
     return tmp_dir
 
 
+SUFFIXES = {
+    1e6: "MB",
+    1e3: "KB",
+    1: " bytes",
+}
+
+
+def to_readable_size(size):
+    for s, suffix in SUFFIXES.items():
+        if size / s > 1:
+            return f"{size / s:.3f}{suffix}"
+
+
 def create_function_version(yc, config, config_filename):
     click.echo("Preparing package...")
     package_dir = prepare_package(config["requirements_file"],
@@ -80,12 +93,13 @@ def create_function_version(yc, config, config_filename):
     archive_size = os.path.getsize(archive_path)
     try:
         if archive_size > MAX_DIRECT_ARCHIVE_SIZE:
-            raise ClickException("Sorry. Looks like archive size is too big."
-                                 " Try deploying through s3 ($yappa deploy s3)")
+            raise ClickException(
+                f"Sorry. Looks like archive size ({to_readable_size(archive_size)}) is over the limit ({to_readable_size(MAX_DIRECT_ARCHIVE_SIZE)})."
+                " Try deploying through s3 ($yappa deploy s3)")
 
         click.echo(f"Creating new function version for "
                    + click.style(config["project_slug"], bold=True)
-                   + f" ({archive_size // 1e6:.2f}MB)")
+                   + f" ({to_readable_size(archive_size)})")
         with open(archive_path, "rb") as f:
             content = f.read()
             yc.create_function_version(
