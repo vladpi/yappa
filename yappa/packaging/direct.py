@@ -13,7 +13,7 @@ from yappa.settings import (
     DEFAULT_IGNORED_FILES,
     DEFAULT_PACKAGE_DIR,
     DEFAULT_REQUIREMENTS_FILE,
-    HANDLERS_DIR, )
+    HANDLERS_DIR, MAX_DIRECT_ARCHIVE_SIZE, )
 from yappa.utils import get_yc_entrypoint
 
 logger = logging.getLogger(__name__)
@@ -72,12 +72,18 @@ def create_function_version(yc, config, config_filename):
                                   config_filename,
                                   )
     archive_path = make_archive(package_dir, 'zip', package_dir)
+    archive_size = os.path.getsize(archive_path)
     try:
+        if archive_size > MAX_DIRECT_ARCHIVE_SIZE:
+            raise ClickException("Sorry. Looks like archive size is too big."
+                                 " Try deploying through s3 ($yappa deploy s3)")
+
         click.echo(f"Creating new function version for "
-                   + click.style(config["project_slug"], bold=True))
+                   + click.style(config["project_slug"], bold=True)
+                   + f" ({archive_size//1e6:.2f}MB)")
         with open(archive_path, "rb") as f:
             content = f.read()
-            function_version = yc.create_function_version(
+            yc.create_function_version(
                 config["project_slug"],
                 runtime=config["runtime"],
                 description=config["description"],

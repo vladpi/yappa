@@ -31,3 +31,4 @@ HANDLERS = {
     "manage": "handlers.manage.manage",
     "raw": None,
 }
+MAX_DIRECT_ARCHIVE_SIZE = 4170000
