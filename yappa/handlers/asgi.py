@@ -21,7 +21,7 @@ async def call_app(app, event):
             url=event["url"],
             headers=event["headers"],
             params=event["queryStringParameters"],
-            content=json.dumps(event["body"]).encode(),
+            json=json.load(event["body"]) if event["body"] else None,
         )
         response = await client.send(request)
         return response
