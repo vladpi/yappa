@@ -17,12 +17,12 @@ async def call_app(app, event):
     async with httpx.AsyncClient(app=app,
                                  base_url=host_url) as client:
         request = client.build_request(
-            method=event["httpMethod"],
-            url=event["url"],
-            headers=event["headers"],
-            params=event["queryStringParameters"],
-            json=json.load(event["body"]) if event["body"] else None,
-        )
+                method=event["httpMethod"],
+                url=event["url"],
+                headers=event["headers"],
+                params=event["queryStringParameters"],
+                json=json.loads(event["body"]) if event["body"] else None,
+                )
         response = await client.send(request)
         return response
 
@@ -40,8 +40,16 @@ except ValueError:
 async def handle(event, context):
     if not event:
         return {
-            'statusCode': 500,
-            'body': "got empty event",
-        }
-    response = await call_app(app, event)
-    return patch_response(response)
+                'statusCode': 500,
+                'body': "got empty event",
+                }
+    try:
+        response = await call_app(app, event)
+        return patch_response(response)
+    except Exception as e:
+        logger.error("unhandled error", exc_info=True)
+        return {
+                "statusCode": 500,
+                "body": f"got unhandled exception ({e}). Most likely on "
+                        f"Yappa side. See clouds logs for traceback"
+                }

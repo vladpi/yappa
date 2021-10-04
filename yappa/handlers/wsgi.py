@@ -74,6 +74,17 @@ def patch_response(response):
 def handle(event, context):
     set_access_token()
     if not event:
-        raise ValueError("Got empty event")
-    response = call_app(app, event)
-    return patch_response(response)
+        return {
+                'statusCode': 500,
+                'body': "got empty event",
+                }
+    try:
+        response = call_app(app, event)
+        return patch_response(response)
+    except Exception as e:
+        logger.error("unhandled error", exc_info=True)
+        return {
+                "statusCode": 500,
+                "body": f"got unhandled exception ({e}). Most likely on "
+                        f"Yappa side. See clouds logs for traceback"
+                }
