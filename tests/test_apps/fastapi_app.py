@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -14,3 +15,13 @@ def json():
         "result": "json",
         "sub_result": {"sub": "json"}
     }
+
+
+class Request(BaseModel):
+    test_str: str
+    test_num: int
+
+
+@app.post('/post')
+def post(request: Request):
+    return {"request": request}

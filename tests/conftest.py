@@ -113,4 +113,4 @@ def sample_event():
             "requestTime": "18/Jun/2021:03:56:37 +0000",
             "requestTimeEpoch": 1623988597},
         "body": "",
-        "isBase64Encoded": True}
+        "isBase64Encoded": False}

@@ -1,5 +1,6 @@
 import json
 import sys
+from copy import copy
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -55,3 +56,20 @@ async def test_json_response(app, sample_event):
     assert response["statusCode"] == 200
     assert response["body"].replace("\n", "") == json.dumps(
         {"result": "json", "sub_result": {"sub": "json"}}).replace(" ", "")
+
+
+@pytest.mark.asyncio
+async def test_post(app, sample_event):
+    body = {"test_str": "ok!",
+            "test_num": 5}
+    event = copy(sample_event)
+    event.update(
+        url=urljoin(BASE_URL, "post"),
+        httpMethod="POST",
+        headers={"Content-Type": "application/json"},
+        body=json.dumps(body),
+    )
+    response = await call_app(app, event)
+    response = patch_response(response)
+    assert response["statusCode"] == 200, response
+    assert json.loads(response["body"])["request"] == body

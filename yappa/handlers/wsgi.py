@@ -6,7 +6,7 @@ from pathlib import Path
 
 import httpx
 
-from .common import (DEFAULT_CONFIG_FILENAME, load_yaml, set_access_token)
+from .common import (DEFAULT_CONFIG_FILENAME, load_yaml, set_access_token, body_to_bytes)
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +30,8 @@ def call_app(app, event):
     host_url = event["headers"].get("Host", "https://raw-function.net")
     if not host_url.startswith("http"):
         host_url = f"https://{host_url}"
+    body_to_bytes(event)
+
     with httpx.Client(app=app,
                       base_url=host_url) as client:
         request = client.build_request(
@@ -37,7 +39,7 @@ def call_app(app, event):
             url=event["url"],
             headers=event["headers"],
             params=event["queryStringParameters"],
-            json=json.loads(event["body"]) if event["body"] else None,
+            content=event["body"],
         )
         response = client.send(request)
         return response

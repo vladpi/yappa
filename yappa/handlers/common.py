@@ -1,5 +1,6 @@
 import logging
 import os
+from base64 import b64decode
 
 import httpx
 import yaml
@@ -34,6 +35,15 @@ def load_yaml(file, safe=False):
             return dict()
         else:
             raise
+
+
+def body_to_bytes(event):
+    if not event["body"]:
+        pass
+    elif event["isBase64Encoded"]:
+        event["body"] = b64decode(event["body"])
+    else:
+        event["body"] = event["body"].encode()
 
 
 DEFAULT_CONFIG_FILENAME = "yappa.yaml"
