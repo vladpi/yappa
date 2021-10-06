@@ -43,6 +43,6 @@ def test_function_version_creation(yc, function, function_version, config):
 
 def test_function_call(function, function_version):
     url = function.http_invoke_url
-    response = httpx.get(url)
+    response = httpx.get(url, timeout=300)
     assert response.status_code == 200
     assert response.text == "root url"
