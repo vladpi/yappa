@@ -67,12 +67,14 @@ def test_gateway_call(gateway, function_version, faker):
     assert response.json() == {"result": "json",
                                "sub_result": {"sub": "json"}
                                }
+
     param_value = f"{faker.pyint}"
-    response = httpx.get((f / "url_param" / param_value).url)
+    response = httpx.get((f / "path_param" / param_value).url)
     assert response.status_code == 200, response.content
     assert response.json() == {"param": param_value}
 
-    response = httpx.post((f / "post").url, json={"sample": "request"})
+    sample_body = {"test_str": "request", "test_num": 10}
+    response = httpx.post((f / "post").url, json=sample_body)
     assert response.status_code == 200, response.content
-    assert response.json() == {"request": {"sample": "request"}}, \
+    assert response.json() == {"request": sample_body}, \
         response.json()

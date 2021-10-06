@@ -73,9 +73,9 @@ def test_query_params(app, sample_event):
         {"params": params}).replace(" ", "")
 
 
-def test_url_param(app, sample_event):
+def test_path_param(app, sample_event):
     param_value = "random_param"  # TODO randomize
-    sample_event["url"] = urljoin(BASE_URL, f"/url_param/{param_value}")
+    sample_event["url"] = urljoin(BASE_URL, f"/path_param/{param_value}")
     response = patch_response(call_app(app, sample_event))
     assert response["statusCode"] == 200
     assert response["body"].replace("\n", "") == json.dumps(

@@ -21,8 +21,8 @@ def query_params():
     return {"params": request.args}
 
 
-@app.route("/url_param/<param>")
-def url_param(param):
+@app.route("/path_param/<param>")
+def path_param(param):
     return {"param": param}
 
 

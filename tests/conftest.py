@@ -17,9 +17,12 @@ def yc():
 
 
 COPIED_FILES = (
+    Path(Path(__file__).resolve().parent, "test_apps", "fastapi_app.py"),
+    Path(Path(__file__).resolve().parent, "test_apps", "django_wsgi.py"),
+    Path(Path(__file__).resolve().parent, "test_apps", "django_settings.py"),
     Path(Path(__file__).resolve().parent, "test_apps", "flask_app.py"),
     Path(Path(__file__).resolve().parent, "test_apps",
-         "flask_requirements.txt"),
+         "apps_requirements.txt"),
 )
 PACKAGE_FILES = (
     Path("package", "utils.py"),
@@ -37,7 +40,7 @@ def create_empty_files(*paths):
 
 
 @pytest.fixture(scope="session")
-def app_dir(tmpdir_factory):
+def apps_dir(tmpdir_factory):
     dir_ = tmpdir_factory.mktemp('package')
     os.chdir(dir_)
     assert not os.listdir()
@@ -52,20 +55,32 @@ def config_filename():
     return "yappa-config.yaml"
 
 
-@pytest.fixture(scope="session")
-def config(app_dir, config_filename):
+APPS_CONFIGS = (
+    # ("flask", "flask_app.app", None, "wsgi"),
+    ("django", "django_wsgi.app", "django_settings", "wsgi"),
+    # ("fastapi", "fastapi_app.app", None, "asgi"),
+)
+
+
+@pytest.fixture(scope="session",
+                params=APPS_CONFIGS,
+                ids=[config[0] for config in APPS_CONFIGS])
+def config(request, apps_dir, config_filename):
     config = create_default_config(config_filename)
     config.update(
-        project_slug="test-function-session",
-        requirements_file="flask_requirements.txt",
-        entrypoint="flask_app.app",
-        application_type="wsgi",
+        project_slug=f"test-function-session-{request.param[0]}",
+        manage_function_name=f"test-function-session-{request.param[0]}-manage",
+        requirements_file="apps_requirements.txt",
+        entrypoint=request.param[1],
+        application_type=request.param[3],
+        django_settings_module=request.param[2],
         bucket="test-bucket-231",
         excluded_paths=(
             ".idea",
             ".git",
             "venv",
-        )
+        ),
+        is_public=True,
     )
     save_yaml(config, config_filename)
     return config
@@ -74,8 +89,12 @@ def config(app_dir, config_filename):
 @pytest.fixture(scope="session")
 def function(config, yc):
     function, _ = yc.create_function(config["project_slug"])
+    if config["django_settings_module"]:
+        yc.create_function(config["manage_function_name"])
     yield function
     yc.delete_function(config["project_slug"])
+    if config["django_settings_module"]:
+        yc.delete_function(config["manage_function_name"])
 
 
 @pytest.fixture(scope="session",

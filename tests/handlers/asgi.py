@@ -35,7 +35,7 @@ async def test_sample_call(app, sample_event):
     response = await call_app(app, sample_event)
     response = patch_response(response)
     assert response["statusCode"] == 200
-    assert response["body"] == '"root url"'
+    assert response["body"] == 'root url'
     assert isinstance(response["headers"], dict)
     assert not isinstance(response['body'], bytes)
 

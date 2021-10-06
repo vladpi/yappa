@@ -30,7 +30,7 @@ def expected_paths(config):
     ]
 
 
-def test_files_copy(app_dir, config, expected_paths, config_filename):
+def test_files_copy(apps_dir, config, expected_paths, config_filename):
     prepare_package(config["requirements_file"], config["excluded_paths"],
                     config_filename=config_filename)
     for path in expected_paths:

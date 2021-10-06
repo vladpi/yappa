@@ -6,20 +6,20 @@ bucket: fastapi-example-dec4b228
 application_type: asgi
 entrypoint: app.app
 django_settings_module: null
-folder_id: null
+folder_id: b1ghi1v6nbmr34stdhii
 gw_config: yappa_gw.yaml
 runtime: python39-preview
 memory_limit: 128MB
 service_account_names:
-  creator: yappa-creator-service
+  creator: yappa-creator-account-default
   function_actor: null
 timeout: 1
 excluded_paths:
-  - venv
-  - .git
-  - .idea
-  - .DS_Store
-environment: { }
-named_service_accounts: { }
+- venv
+- .git
+- .idea
+- .DS_Store
+environment: {}
+named_service_accounts: {}
 service_account_id: null
-is_public: true # if function is accessible for non authorized requests: false
+is_public: true

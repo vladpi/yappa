@@ -25,7 +25,7 @@ def query_params(request):
 
 
 @api_view(["GET"])
-def url_param(request, param):
+def path_param(request, param):
     return Response({"param": param})
 
 
@@ -38,7 +38,7 @@ urlpatterns = [
     path('', main),
     path('json', json),
     path('query_params', query_params),
-    path('url_param/<param>', url_param),
+    path('path_param/<param>', path_param),
     path('post', post)
 ]
 

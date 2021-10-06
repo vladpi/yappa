@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from starlette.responses import PlainTextResponse
 
 app = FastAPI()
 
 
 @app.get('/')
 def main():
-    return 'root url'
+    return PlainTextResponse('root url')
 
 
 @app.get('/json')
@@ -15,6 +16,11 @@ def json():
         "result": "json",
         "sub_result": {"sub": "json"}
     }
+
+
+@app.get("/path_param/{param}")
+def path_param(param):
+    return {"param": param}
 
 
 class Request(BaseModel):

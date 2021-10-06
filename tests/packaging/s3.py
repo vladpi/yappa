@@ -16,7 +16,7 @@ from yappa.settings import (
 from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
 
 IGNORED_FILES = (
-    Path("flask_requirements.txt"),
+    Path("apps_requirements.txt"),
     Path(".idea"),
     Path(".git", "config"),
     Path("venv", "flask.py"),
@@ -35,7 +35,7 @@ def expected_paths(config):
     ]
 
 
-def test_files_copy(app_dir, config, expected_paths, config_filename):
+def test_files_copy(apps_dir, config, expected_paths, config_filename):
     prepare_package(config["requirements_file"], config["excluded_paths"],
                     to_install_requirements=False,
                     config_filename=config_filename)
@@ -76,7 +76,7 @@ def test_bucket_creation(bucket_name, s3_credentials):
     assert bucket_name not in get_bucket_names(**s3_credentials)
 
 
-def test_s3_upload(app_dir, bucket_name, s3_credentials, config,
+def test_s3_upload(apps_dir, bucket_name, s3_credentials, config,
                    config_filename):
     dir = prepare_package(to_install_requirements=False,
                           config_filename=config_filename,
