@@ -13,13 +13,14 @@ from yappa.settings import (
     DEFAULT_IGNORED_FILES,
     DEFAULT_PACKAGE_DIR,
     DEFAULT_REQUIREMENTS_FILE,
-    HANDLERS_DIR, MAX_DIRECT_ARCHIVE_SIZE, )
+    HANDLERS_DIR, MAX_DIRECT_ARCHIVE_SIZE,
+    )
 from yappa.utils import get_yc_entrypoint
 
 logger = logging.getLogger(__name__)
 """
 limitations:
-- 4 mb - for resulting zip archive 
+- 4 mb - for resulting zip archive
 - 5 min - time to install requirements
 """
 
@@ -74,7 +75,7 @@ SUFFIXES = {
     1e6: "MB",
     1e3: "KB",
     1: " bytes",
-}
+    }
 
 
 def to_readable_size(size):
@@ -94,10 +95,12 @@ def create_function_version(yc, config, config_filename):
     try:
         if archive_size > MAX_DIRECT_ARCHIVE_SIZE:
             raise ClickException(
-                f"Sorry. Looks like archive size ({to_readable_size(archive_size)}) is over the limit ({to_readable_size(MAX_DIRECT_ARCHIVE_SIZE)})."
+                f"Sorry. Looks like archive size "
+                f"({to_readable_size(archive_size)}) is over the limit"
+                f" ({to_readable_size(MAX_DIRECT_ARCHIVE_SIZE)})."
                 " Try deploying through s3 ($yappa deploy s3)")
 
-        click.echo(f"Creating new function version for "
+        click.echo("Creating new function version for "
                    + click.style(config["project_slug"], bold=True)
                    + f" ({to_readable_size(archive_size)})")
         with open(archive_path, "rb") as f:
@@ -114,8 +117,8 @@ def create_function_version(yc, config, config_filename):
                 timeout=config["timeout"],
                 named_service_accounts=config["named_service_accounts"],
                 environment=config["environment"],
-            )
-            click.echo(f"Created function version")
+                )
+            click.echo("Created function version")
             if config["django_settings_module"]:
                 click.echo("Creating new function version for management"
                            " commands")
@@ -131,7 +134,7 @@ def create_function_version(yc, config, config_filename):
                     timeout=60 * 10,
                     named_service_accounts=config["named_service_accounts"],
                     environment=config["environment"],
-                )
+                    )
     finally:
         os.remove(archive_path)
         rmtree(package_dir)

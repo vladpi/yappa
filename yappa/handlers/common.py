@@ -6,9 +6,9 @@ import httpx
 import yaml
 
 try:
-    from yaml import CLoader as Loader, CDumper as Dumper
+    from yaml import CLoader as Loader
 except ImportError:
-    from yaml import Loader, Dumper
+    from yaml import Loader
 
 logger = logging.getLogger(__name__)
 TOKEN_URL = ('http://169.254.169.254/computeMetadata/v1/'

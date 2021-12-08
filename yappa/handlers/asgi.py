@@ -1,10 +1,9 @@
-import json
 import logging
 from pathlib import Path
 
 import httpx
 
-from .common import DEFAULT_CONFIG_FILENAME, load_yaml, body_to_bytes
+from .common import DEFAULT_CONFIG_FILENAME, body_to_bytes, load_yaml
 from .wsgi import load_app, patch_response
 
 logger = logging.getLogger(__name__)
@@ -19,12 +18,12 @@ async def call_app(app, event):
     async with httpx.AsyncClient(app=app,
                                  base_url=host_url) as client:
         request = client.build_request(
-                method=event["httpMethod"],
-                url=event["url"],
-                headers=event["headers"],
-                params=event["queryStringParameters"],
-                content=event["body"],
-                )
+            method=event["httpMethod"],
+            url=event["url"],
+            headers=event["headers"],
+            params=event["queryStringParameters"],
+            content=event["body"],
+            )
         response = await client.send(request)
         return response
 
@@ -42,16 +41,16 @@ except ValueError:
 async def handle(event, context):
     if not event:
         return {
-                'statusCode': 500,
-                'body': "got empty event",
-                }
+            'statusCode': 500,
+            'body': "got empty event",
+            }
     try:
         response = await call_app(app, event)
         return patch_response(response)
     except Exception as e:
         logger.error("unhandled error", exc_info=True)
         return {
-                "statusCode": 500,
-                "body": f"got unhandled exception ({e}). Most likely on "
-                        f"Yappa side. See clouds logs for traceback"
-                }
+            "statusCode": 500,
+            "body": f"got unhandled exception ({e}). Most likely on "
+                    f"Yappa side. See clouds logs for traceback"
+            }

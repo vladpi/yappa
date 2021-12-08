@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 from importlib import import_module
@@ -6,7 +5,9 @@ from pathlib import Path
 
 import httpx
 
-from .common import (DEFAULT_CONFIG_FILENAME, load_yaml, set_access_token, body_to_bytes)
+from .common import (
+    DEFAULT_CONFIG_FILENAME, body_to_bytes, load_yaml, set_access_token,
+    )
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ def call_app(app, event):
             headers=event["headers"],
             params=event["queryStringParameters"],
             content=event["body"],
-        )
+            )
         response = client.send(request)
         return response
 
@@ -70,23 +71,23 @@ def patch_response(response):
         'headers': dict(response.headers),
         'body': response.content.decode(),
         'isBase64Encoded': False,
-    }
+        }
 
 
 def handle(event, context):
     set_access_token()
     if not event:
         return {
-                'statusCode': 500,
-                'body': "got empty event",
-                }
+            'statusCode': 500,
+            'body': "got empty event",
+            }
     try:
         response = call_app(app, event)
         return patch_response(response)
     except Exception as e:
         logger.error("unhandled error", exc_info=True)
         return {
-                "statusCode": 500,
-                "body": f"got unhandled exception ({e}). Most likely on "
-                        f"Yappa side. See clouds logs for traceback"
-                }
+            "statusCode": 500,
+            "body": f"got unhandled exception ({e}). Most likely on "
+                    f"Yappa side. See clouds logs for traceback"
+            }

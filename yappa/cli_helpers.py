@@ -8,13 +8,11 @@ from click import ClickException
 from yappa.config_generation import (
     create_default_gw_config,
     inject_function_id,
-)
+    )
+from yappa.handlers.common import load_yaml
+from yappa.packaging import direct, s3
 from yappa.settings import HANDLERS
 from yappa.utils import save_yaml
-from yappa.handlers.common import load_yaml
-
-from yappa.packaging import s3, direct
-
 
 
 class NaturalOrderGroup(click.Group):
@@ -47,10 +45,10 @@ def ensure_function(yc, name, description, is_public):
 UPLOAD_FUNCTIONS = {
     "s3": s3.create_function_version,
     "direct": direct.create_function_version
-}
+    }
 
 
-def create_function_version(yc, config, strategy,  config_filename):
+def create_function_version(yc, config, strategy, config_filename):
     creator = UPLOAD_FUNCTIONS[strategy]
     return creator(yc, config, config_filename)
 
@@ -79,7 +77,7 @@ def create_gateway(yc, config, function_id):
 
 def update_gateway(yc, config):
     gateway = yc.get_gateway(config["project_slug"])
-    click.echo(f"Updating api-gateway "
+    click.echo("Updating api-gateway "
                + click.style(f"{gateway.name}", bold=True))
     yc.update_gateway(gateway.name, config["description"],
                       load_yaml(config["gw_config"]))
@@ -108,8 +106,8 @@ def is_valid_bucket_name(bucket_name):
                               " characters or underscores")
     for label in bucket_name.split("."):
         if len(label) < 1 \
-                or not (label[0].islower() or label[0].isdigit()) \
-                or not (label[-1].islower() or label[-1].isdigit()):
+            or not (label[0].islower() or label[0].isdigit()) \
+            or not (label[-1].islower() or label[-1].isdigit()):
             raise ValidationError("Each label must start and end with a "
                                   "lowercase letter or a number")
     if all([s.isdigit() for s in bucket_name.split(".")]):
@@ -165,7 +163,7 @@ PROMPTS = (
     ("requirements_file", "requirements.txt", [is_not_empty,
                                                is_valid_requirements_file],
      "Please specify requirements file")
-)
+    )
 
 
 def get_missing_details(config):
@@ -194,7 +192,7 @@ def get_missing_details(config):
             "Please specify import path for application",
             default="wsgi.app")
     if not config.get("django_settings_module") \
-            and config["application_type"] == "Django":
+        and config["application_type"] == "Django":
         config["django_settings_module"] = click.prompt(
             "Please specify your DJANGO_SETTINGS_MODULE",
             default="project.project.settings")

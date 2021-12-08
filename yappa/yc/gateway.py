@@ -21,14 +21,17 @@ class YcGatewayMixin:
     sdk = None
     folder_id = None
 
-    def get_gateway(self, name) -> ApiGateway:
+    def get_gateway(self, name: str) -> ApiGateway:
         """
-         convenience method to get deployed gateway
-         """
-        for gw in self._get_gateways():
+        convenience method to get deployed gateway
+        """
+        gateways = self._get_gateways()
+        for gw in gateways:
             if gw.name == name:
                 return gw
-        raise ValueError(f"Oops. Didn't find any gateway by name {name}")
+        raise ValueError("Oops. Didn't find any gateway by name "
+                         f"{name}, saw only "
+                         f"{','.join([gw.name for gw in gateways])}")
 
     def _get_gateways(self, filter_=None) -> Iterable[ApiGateway]:
         gateways = self.sdk.client(ApiGatewayServiceStub).List(

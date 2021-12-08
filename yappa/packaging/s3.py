@@ -16,12 +16,12 @@ from yappa.settings import (
     DEFAULT_PACKAGE_DIR,
     DEFAULT_REQUIREMENTS_FILE,
     HANDLERS_DIR, YANDEX_S3_URL,
-)
+    )
 from yappa.utils import get_yc_entrypoint
 
 """
 limitations:
-- 128 MB - resulting zip archive 
+- 128 MB - resulting zip archive
 """
 
 logger = logging.getLogger(__name__)
@@ -43,7 +43,8 @@ def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
     with suppress(FileExistsError):
         os.mkdir(tmp_dir)
     copytree(os.getcwd(), tmp_dir,
-             ignore=ignore_patterns(*ignored_files, tmp_dir, requirements_file),
+             ignore=ignore_patterns(*ignored_files, tmp_dir,
+                                    requirements_file),
              dirs_exist_ok=True)
     copytree(Path(Path(__file__).resolve().parent.parent, HANDLERS_DIR),
              Path(tmp_dir, "handlers"), dirs_exist_ok=True)
@@ -65,7 +66,7 @@ def ensure_bucket(bucket_name, aws_access_key_id, aws_secret_access_key):
         aws_access_key_id=aws_access_key_id,
         aws_secret_access_key=aws_secret_access_key,
         endpoint_url=YANDEX_S3_URL,
-    )
+        )
     bucket = s3.Bucket(bucket_name)
     try:
         bucket.create()
@@ -116,7 +117,7 @@ def create_function_version(yc, config, config_filename):
                                   **yc.get_s3_key(
                                       config["service_account_names"][
                                           "creator"]))
-    click.echo(f"Creating new function version for "
+    click.echo("Creating new function version for "
                + click.style(config["project_slug"], bold=True))
     yc.create_function_version(
         config["project_slug"],
@@ -131,8 +132,8 @@ def create_function_version(yc, config, config_filename):
         timeout=config["timeout"],
         named_service_accounts=config["named_service_accounts"],
         environment=config["environment"],
-    )
-    click.echo(f"Created function version")
+        )
+    click.echo("Created function version")
     access_changed = yc.set_function_access(
         function_name=config["project_slug"], is_public=config["is_public"])
     if access_changed:
@@ -153,4 +154,4 @@ def create_function_version(yc, config, config_filename):
             timeout=300,
             named_service_accounts=config["named_service_accounts"],
             environment=config["environment"],
-        )
+            )

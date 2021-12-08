@@ -54,7 +54,7 @@ def setup(config_file, token):
     """
     click.echo("Welcome to " + click.style("Yappa", fg="yellow") + "!")
     if not token:
-        click.echo(f"Please obtain OAuth token at "
+        click.echo("Please obtain OAuth token at "
                    + click.style(YANDEX_OAUTH_URL, fg="yellow"))
         token = click.prompt("Please enter OAuth token")
     yc = YC.setup(token=token, skip_folder=True)
