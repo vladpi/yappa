@@ -9,7 +9,7 @@ django_settings_module: drf_base.settings
 manage_function_name: drf-base-nodb-example-manage
 folder_id: b1ghi1v6nbmr34stdhii
 gw_config: yappa_gw.yaml
-runtime: python38
+runtime: python39
 memory_limit: 128MB
 service_account_names:
   creator: yappa-creator-account-default

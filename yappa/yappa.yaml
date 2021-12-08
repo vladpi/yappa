@@ -9,7 +9,7 @@ django_settings_module: null
 folder_id: null
 gw_config: yappa_gw.yaml
 manage_function_name: null
-runtime: python38
+runtime: python39
 memory_limit: 128MB
 timeout: 1
 service_account_names:

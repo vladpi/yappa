@@ -1,9 +1,9 @@
 import json
+import os
 from collections.abc import Iterable
 
 import pytest
 
-from yappa.settings import DEFAULT_ACCESS_KEY_FILE
 from yappa.yc.access import save_key
 
 
@@ -30,9 +30,15 @@ def key(yc):
     yc.delete_key(key["id"])
 
 
-def test_key_saving(key):
-    save_key(key)
-    with open(DEFAULT_ACCESS_KEY_FILE, "r") as f:
+@pytest.fixture
+def saved_key(key):
+    filepath = save_key(key)
+    yield filepath
+    os.remove(filepath)
+
+
+def test_key_saving(saved_key, key):
+    with open(saved_key, "r") as f:
         saved_key = json.loads(f.read())
     assert key == saved_key
 

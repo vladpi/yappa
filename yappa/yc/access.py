@@ -46,6 +46,7 @@ def save_key(access_key, output_filename=DEFAULT_ACCESS_KEY_FILE):
     """
     with open(output_filename, "w+") as f:
         f.write(json.dumps(access_key, indent=4))
+        return output_filename
 
 
 logger = logging.getLogger(__name__)

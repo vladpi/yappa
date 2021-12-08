@@ -8,7 +8,7 @@ entrypoint: app.app
 django_settings_module: null
 folder_id: b1ghi1v6nbmr34stdhii
 gw_config: yappa_gw.yaml
-runtime: python39-preview
+runtime: python39
 memory_limit: 128MB
 service_account_names:
   creator: yappa-creator-account-default

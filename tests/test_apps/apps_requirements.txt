@@ -3,7 +3,8 @@ botocore==1.20.95
 Flask==2.0.1
 httpx==0.18.2
 PyYAML==5.4.1
-yappa>=0.4.9
+yappa>=0.4.18
 fastapi==0.65.2
 djangorestframework==3.12.4
 Django>=3.2.5
+pytz

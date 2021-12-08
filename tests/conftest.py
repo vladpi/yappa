@@ -23,14 +23,14 @@ COPIED_FILES = (
     Path(Path(__file__).resolve().parent, "test_apps", "flask_app.py"),
     Path(Path(__file__).resolve().parent, "test_apps",
          "apps_requirements.txt"),
-)
+    )
 PACKAGE_FILES = (
     Path("package", "utils.py"),
     Path("package", "subpackage", "subutils.py"),
     Path(".idea"),
     Path(".git", "config"),
     Path("venv", "flask.py"),
-)
+    )
 
 
 def create_empty_files(*paths):
@@ -59,7 +59,7 @@ APPS_CONFIGS = (
     ("flask", "flask_app.app", None, "wsgi"),
     ("django", "django_wsgi.app", "django_settings", "wsgi"),
     ("fastapi", "fastapi_app.app", None, "asgi"),
-)
+    )
 
 
 @pytest.fixture(scope="session",
@@ -68,8 +68,8 @@ APPS_CONFIGS = (
 def config(request, apps_dir, config_filename):
     config = create_default_config(config_filename)
     config.update(
-        project_slug=f"test-function-session-{request.param[0]}",
-        manage_function_name=f"test-function-session-{request.param[0]}-manage",
+        project_slug=f"test-function-{request.param[0]}",
+        manage_function_name=f"test-function-{request.param[0]}-manage",
         requirements_file="apps_requirements.txt",
         entrypoint=request.param[1],
         application_type=request.param[3],
@@ -79,9 +79,9 @@ def config(request, apps_dir, config_filename):
             ".idea",
             ".git",
             "venv",
-        ),
+            ),
         is_public=True,
-    )
+        )
     save_yaml(config, config_filename)
     return config
 
@@ -97,8 +97,13 @@ def function(config, yc):
         yc.delete_function(config["manage_function_name"])
 
 
-@pytest.fixture(scope="session",
-                params=["s3", "direct"], ids=["s3", "direct"], )
+UPLOAD_STATEGIES = (
+    "s3",
+    "direct",
+    )
+
+
+@pytest.fixture(scope="session", params=UPLOAD_STATEGIES, ids=UPLOAD_STATEGIES)
 def function_version(request, yc, function, config, config_filename,
                      s3_credentials):
     yield create_function_version(yc, config, request.param, config_filename)
@@ -116,7 +121,7 @@ def sample_event():
         "httpMethod": "GET",
         "headers": {
             "HTTP_HOST": ""
-        },
+            },
         "url": "http://sampleurl.ru/",
         "params": {},
         "multiValueParams": {},
