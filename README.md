@@ -1,9 +1,9 @@
-![](https://raw.githubusercontent.com/turokg/yappa/master/logo.png)
+![](https://raw.githubusercontent.com/turokg/yappa/master/docs/logo.png)
 
 # Simple deploy of python web-apps @YandexCloud
 Forget about setting up your own infrastructure, vps, network, orchestrators, etc... go **serverless**
 
-![](https://raw.githubusercontent.com/turokg/yappa/master/demo.gif)
+![](https://raw.githubusercontent.com/turokg/yappa/master/docs/demo.gif)
 
 * [Quickstart](#quickstart)
     * [Updates](#updates)
@@ -60,10 +60,10 @@ Furthermore, not just regular json API could be deployed this way. Several types
 Yappa:
 
 - [raw serverless function](https://github.com/turokg/yappa/tree/master/examples/raw_function)
+- [raw serverless function + Postgres](https://github.com/turokg/yappa/tree/master/examples/raw_function_postgres)
 - json API ([Flask](https://github.com/turokg/yappa/tree/master/examples/flask),
   [FastAPI](https://github.com/turokg/yappa/tree/master/examples/fast_api),
-  [Django rest framework](https://github.com/turokg/yappa/tree/master/examples/django/drf_base))
-- regular Django app
+  [Django rest framework](https://github.com/turokg/yappa/tree/master/examples/django/1_drf_base_managed_postges))
 - single page application
 - SPA + multiple API versions  
   ...   
@@ -72,9 +72,9 @@ Yappa:
 ## Django
 
 please see examples:
-
-- [Django Rest Framework](https://github.com/turokg/yappa/tree/master/examples/django/drf_base) - simple DRF app with
-  managed postgres connectivity
+- [Django Rest Framework basic](https://github.com/turokg/yappa/tree/master/examples/django/1_drf_base_managed_postges) - basic DRF app. To explore serverless and Yappa features, like management commands
+- [Django Rest Framework + Postgres](https://github.com/turokg/yappa/tree/master/examples/django/1_drf_base_managed_postges) - 
+- DRF app with managed Postgres connectivity
 
 ### Management commands
 
@@ -102,9 +102,10 @@ The other way around would be to implement custom management command (see
 
 ## Yandex Cloud authorization
 
-Command '$ yappa setup' prompts you for OAuth token. Then, Yappa creates service account "yappa-uploader-service" with
-roles editor and serverless.functions.admin for the specified folder. Key for this account is created and saved locally
-at .yc file.
+Command '$ yappa setup' prompts you for OAuth token. Then, Yappa creates 
+service account "yappa-uploader-service" with
+roles editor and serverless.functions.admin for the specified folder.
+Key for this account is created and saved locally at .yc file.
 
 Command '$ yappa deploy' supports two types of authorization
 
@@ -113,14 +114,17 @@ Command '$ yappa deploy' supports two types of authorization
 
 ## Limitations
 
-There are some limitations, however YandexCloud team is constantly releasing new features and services. Also, the team
+There are some limitations, however YandexCloud team is constantly 
+releasing new features and services. Also, the team
 of this project will try to keep up. So stay tuned :)
 
 ### Database connectivity
 
-Managed Postgres and YandexDB is supported inside Yandex Cloud. Any other database you use has to have public IP address
+Managed Postgres and YandexDB is supported inside Yandex Cloud. 
+In case any other DB - it has to have public IP address
 
-For details on how te set up connection with managed postgres please refer to
+For details on how te set up connection with managed postgres 
+please refer to
 
 - [YandexCloud docs](https://cloud.yandex.ru/docs/functions/operations/database-connection)
 - [raw function + Postgres example](https://github.com/turokg/yappa/tree/master/examples/raw_function_postgres)
