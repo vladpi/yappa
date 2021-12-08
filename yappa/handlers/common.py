@@ -11,7 +11,8 @@ except ImportError:
     from yaml import Loader, Dumper
 
 logger = logging.getLogger(__name__)
-TOKEN_URL = 'http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token'
+TOKEN_URL = ('http://169.254.169.254/computeMetadata/v1/'
+             'instance/service-accounts/default/token')
 
 
 def set_access_token(iam_token=None):

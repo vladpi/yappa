@@ -18,6 +18,7 @@ excluded_paths:
   - venv
   - .git
   - .idea
+  - .yc
 environment: { }
 named_service_accounts: { }
 service_account_id: null

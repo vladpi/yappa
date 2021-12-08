@@ -45,8 +45,6 @@ def run_command(command, args):
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
-    from django.conf import settings
-    logger.error(json.dumps(settings.DATABASES, indent=4))
     with io.StringIO() as buf, redirect_stdout(buf), redirect_stderr(buf):
         try:
             if not {"--noinput", "--no-input"}.intersection(args) \
@@ -60,8 +58,10 @@ def run_command(command, args):
 
 
 def manage(event, context=None):
-    if context:
+    if context and context.token:
         set_access_token(context.token["access_token"])
+    else:
+        set_access_token()
     body = json.loads(event["body"])
     output_buffer = run_command(body["command"],
                                 body.get("args") or [])

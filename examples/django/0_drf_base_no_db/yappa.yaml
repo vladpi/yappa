@@ -1,13 +1,13 @@
-project_name: DRF base example
-project_slug: drf-base-example
+project_name: DRF base no DB example
+project_slug: drf-base-nodb-example
 description: null
 requirements_file: requirements.txt
-bucket: brf-base-example-dec4b228
+bucket: drf-base-nodb-example-dec4b228
 application_type: django
 entrypoint: drf_base.wsgi.application
 django_settings_module: drf_base.settings
-manage_function_name: drf-base-example-manage
-folder_id: null
+manage_function_name: drf-base-nodb-example-manage
+folder_id: b1ghi1v6nbmr34stdhii
 gw_config: yappa_gw.yaml
 runtime: python38
 memory_limit: 128MB
@@ -19,14 +19,11 @@ excluded_paths:
   - venv
   - .git
   - .idea
+  - .yc
 environment:
   DJANGO_SUPERUSER_USERNAME: superuser
   DJANGO_SUPERUSER_PASSWORD: LOLiAMnot_secure!
   DJANGO_SUPERUSER_EMAIL: chang@me.com
-  PG_CONNECTION_ID: akfrhhp29ipa93s294qd
-  PG_USER: user1
-  PG_HOST: akfrhhp29ipa93s294qd.postgresql-proxy.serverless.yandexcloud.net
-  PG_PORT: '6432'
-service_account_id: ajek47377f918mdmmqha
-named_service_accounts: { }
-is_public: true  # if function is accessible for non authorized requests
+service_account_id: null
+named_service_accounts: {}
+is_public: true

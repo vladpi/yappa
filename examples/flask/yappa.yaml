@@ -18,7 +18,8 @@ excluded_paths:
   - venv
   - .git
   - .idea
-environment: { }
-named_service_accounts: { }
+  - .yc
+environment: {}
+named_service_accounts: {}
 service_account_id: null
-is_public: true # if function is accessible for non authorized requests
+is_public: true

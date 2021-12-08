@@ -1,0 +1,33 @@
+project_name: DRF base example
+project_slug: drf-base-example
+description: null
+requirements_file: requirements.txt
+bucket: brf-base-example-dec4b228
+application_type: django
+entrypoint: drf_base.wsgi.application
+django_settings_module: drf_base.settings
+manage_function_name: drf-base-example-manage
+folder_id: null
+gw_config: yappa_gw.yaml
+runtime: python38
+memory_limit: 128MB
+service_account_names:
+  creator: yappa-creator-account-default
+  function_actor: drf-base-example-function-actor-account
+timeout: 1
+excluded_paths:
+  - venv
+  - .git
+  - .idea
+  - .yc
+environment:
+  DJANGO_SUPERUSER_USERNAME: superuser
+  DJANGO_SUPERUSER_PASSWORD: LOLiAMnot_secure!
+  DJANGO_SUPERUSER_EMAIL: chang@me.com
+  PG_CONNECTION_ID: akfrhhp29ipa93s294qd
+  PG_USER: user1
+  PG_HOST: akfrhhp29ipa93s294qd.postgresql-proxy.serverless.yandexcloud.net
+  PG_PORT: '6432'
+service_account_id: ajek47377f918mdmmqha
+named_service_accounts: { }
+is_public: true

@@ -56,9 +56,9 @@ def config_filename():
 
 
 APPS_CONFIGS = (
-    # ("flask", "flask_app.app", None, "wsgi"),
+    ("flask", "flask_app.app", None, "wsgi"),
     ("django", "django_wsgi.app", "django_settings", "wsgi"),
-    # ("fastapi", "fastapi_app.app", None, "asgi"),
+    ("fastapi", "fastapi_app.app", None, "asgi"),
 )
 
 

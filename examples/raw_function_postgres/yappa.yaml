@@ -17,6 +17,7 @@ timeout: 1
 excluded_paths:
   - venv
   - .git
+  - .yc
   - .idea
 environment: { }
 named_service_accounts: { }
