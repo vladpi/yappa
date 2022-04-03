@@ -152,7 +152,7 @@ tasks (serverless workers and scheduler for celery).
 
 - installing grpcio on Apple M1: installing with anaconda may help. Also look
   at [stackoverflow](https://stackoverflow.com/questions/66640705/how-can-i-install-grpcio-on-an-apple-m1-silicon-laptop)
-- Versions of python 3.7 support yappa up to 0.3.12. You should use python 3.8 and above for new versions of yappa.
+- versions of python 3.7 support yappa up to 0.3.12. You should use python 3.8 and above for new versions of yappa.
 
 ## Acknowledgements
 
