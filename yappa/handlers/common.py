@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 from base64 import b64decode
 
 import httpx
@@ -48,3 +49,35 @@ def body_to_bytes(event):
 
 
 DEFAULT_CONFIG_FILENAME = "yappa.yaml"
+
+ENCODED_CONTENT_TYPES = (
+    re.compile(r"image/.*"),
+    re.compile(r"video/.*"),
+    re.compile(r"audio/.*"),
+    re.compile(r".*zip"),
+    re.compile(r".*pdf"),
+)
+
+
+def get_encoding(response):
+    content_type = response.headers["content-type"]
+    for re_ in ENCODED_CONTENT_TYPES:
+        if re_.match(content_type):
+            return True
+
+
+def patch_response(response):
+    """
+    returns Http response in the format of
+    {
+     'status code': 200,
+     'body': body,
+     'headers': {}
+    }
+    """
+    return {
+        'statusCode': response.status_code,
+        'headers': dict(response.headers),
+        'body': response.content.decode(),
+        'isBase64Encoded': get_encoding(response),
+    }

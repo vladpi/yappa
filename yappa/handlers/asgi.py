@@ -3,8 +3,9 @@ from pathlib import Path
 
 import httpx
 
-from .common import DEFAULT_CONFIG_FILENAME, body_to_bytes, load_yaml
-from .wsgi import load_app, patch_response
+from .common import DEFAULT_CONFIG_FILENAME, body_to_bytes, load_yaml, \
+    patch_response
+from .wsgi import load_app
 
 logger = logging.getLogger(__name__)
 

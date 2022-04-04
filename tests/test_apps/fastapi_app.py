@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from starlette.responses import PlainTextResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 
 app = FastAPI()
 
@@ -31,3 +31,19 @@ class Request(BaseModel):
 @app.post('/post')
 def post(request: Request):
     return {"request": request}
+
+
+@app.get('/file')
+def file():
+    path = "tmp_file.zip"
+    with open(path, "w+") as f:
+        f.write(path)
+    return FileResponse(path)
+
+
+@app.get('/jpeg')
+def jpeg():
+    path = "tmp_file"
+    with open(path, "w+") as f:
+        f.write(path)
+    return FileResponse(path, media_type='image/jpeg')

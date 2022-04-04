@@ -7,7 +7,8 @@ import httpx
 
 from .common import (
     DEFAULT_CONFIG_FILENAME, body_to_bytes, load_yaml, set_access_token,
-    )
+    patch_response,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -55,23 +56,6 @@ try:
                    config.get("django_settings_module"))
 except ValueError:
     logger.warning("Couldn't load app. Looks like broken Yappa config is used")
-
-
-def patch_response(response):
-    """
-    returns Http response in the format of
-    {
-     'status code': 200,
-     'body': body,
-     'headers': {}
-    }
-    """
-    return {
-        'statusCode': response.status_code,
-        'headers': dict(response.headers),
-        'body': response.content.decode(),
-        'isBase64Encoded': False,
-        }
 
 
 def handle(event, context):

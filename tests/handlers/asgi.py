@@ -7,7 +7,8 @@ from urllib.parse import urljoin
 import pytest
 
 from yappa.handlers.asgi import call_app
-from yappa.handlers.wsgi import load_app, patch_response
+from yappa.handlers.wsgi import load_app
+from yappa.handlers.common import patch_response
 
 BASE_URL = "http://base-url.com"
 
@@ -38,6 +39,7 @@ async def test_sample_call(app, sample_event):
     assert response["body"] == 'root url'
     assert isinstance(response["headers"], dict)
     assert not isinstance(response['body'], bytes)
+    assert not response["isBase64Encoded"]
 
 
 @pytest.mark.asyncio
@@ -56,6 +58,7 @@ async def test_json_response(app, sample_event):
     assert response["statusCode"] == 200
     assert response["body"].replace("\n", "") == json.dumps(
         {"result": "json", "sub_result": {"sub": "json"}}).replace(" ", "")
+    assert not response["isBase64Encoded"]
 
 
 @pytest.mark.asyncio
@@ -73,3 +76,26 @@ async def test_post(app, sample_event):
     response = patch_response(response)
     assert response["statusCode"] == 200, response
     assert json.loads(response["body"])["request"] == body
+    assert not response["isBase64Encoded"]
+
+@pytest.mark.asyncio
+async def test_file(app, sample_event):
+    event = copy(sample_event)
+    event.update(
+        url=urljoin(BASE_URL, "file")
+    )
+    response = await call_app(app, event)
+    response = patch_response(response)
+    assert response["statusCode"] == 200
+    assert response["isBase64Encoded"]
+
+@pytest.mark.asyncio
+async def test_jpeg(app, sample_event):
+    event = copy(sample_event)
+    event.update(
+        url=urljoin(BASE_URL, "jpeg")
+    )
+    response = await call_app(app, event)
+    response = patch_response(response)
+    assert response["statusCode"] == 200
+    assert response["isBase64Encoded"]
