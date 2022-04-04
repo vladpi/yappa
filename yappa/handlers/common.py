@@ -64,6 +64,7 @@ def get_encoding(response):
     for re_ in ENCODED_CONTENT_TYPES:
         if re_.match(content_type):
             return True
+    return False
 
 
 def patch_response(response):
@@ -75,9 +76,10 @@ def patch_response(response):
      'headers': {}
     }
     """
+    is_encoded = get_encoding(response)
     return {
         'statusCode': response.status_code,
         'headers': dict(response.headers),
-        'body': response.content.decode(),
-        'isBase64Encoded': get_encoding(response),
+        'body': response.content if is_encoded else response.content.encode(),
+        'isBase64Encoded': is_encoded,
     }

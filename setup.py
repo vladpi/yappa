@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name='yappa',
-    version='0.4.20',
+    version='0.4.21',
     url='https://github.com/turokg/yappa',
     description='Easy serverless deploy of python web applications',
     long_description_content_type="text/markdown",
