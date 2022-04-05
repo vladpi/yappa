@@ -78,6 +78,7 @@ async def test_post(app, sample_event):
     assert json.loads(response["body"])["request"] == body
     assert not response["isBase64Encoded"]
 
+
 @pytest.mark.asyncio
 async def test_file(app, sample_event):
     event = copy(sample_event)
@@ -87,15 +88,16 @@ async def test_file(app, sample_event):
     response = await call_app(app, event)
     response = patch_response(response)
     assert response["statusCode"] == 200
+    assert isinstance(response["body"], str)
     assert response["isBase64Encoded"]
+
 
 @pytest.mark.asyncio
 async def test_jpeg(app, sample_event):
     event = copy(sample_event)
-    event.update(
-        url=urljoin(BASE_URL, "jpeg")
-    )
+    event["url"] = urljoin(BASE_URL, "jpeg")
     response = await call_app(app, event)
     response = patch_response(response)
     assert response["statusCode"] == 200
+    assert isinstance(response["body"], str)
     assert response["isBase64Encoded"]

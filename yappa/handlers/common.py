@@ -1,7 +1,7 @@
 import logging
 import os
 import re
-from base64 import b64decode
+from base64 import b64decode, b64encode
 
 import httpx
 import yaml
@@ -59,7 +59,7 @@ ENCODED_CONTENT_TYPES = (
 )
 
 
-def get_encoding(response):
+def is_binary(response):
     content_type = response.headers["content-type"]
     for re_ in ENCODED_CONTENT_TYPES:
         if re_.match(content_type):
@@ -72,14 +72,18 @@ def patch_response(response):
     returns Http response in the format of
     {
      'status code': 200,
-     'body': body,
+     'body': body - string or base64-string in case of binary content,
      'headers': {}
     }
     """
-    is_encoded = get_encoding(response)
+    is_binary_ = is_binary(response)
+    if is_binary_:
+        body = b64encode(response.content).decode('utf-8')
+    else:
+        body = response.content.decode()
     return {
         'statusCode': response.status_code,
         'headers': dict(response.headers),
-        'body': response.content if is_encoded else response.content.encode(),
-        'isBase64Encoded': is_encoded,
+        'body': body,
+        'isBase64Encoded': is_binary_,
     }

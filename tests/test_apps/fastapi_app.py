@@ -1,6 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from pydantic import BaseModel
-from fastapi.responses import FileResponse, PlainTextResponse
+from starlette.responses import PlainTextResponse, FileResponse, Response
 
 app = FastAPI()
 
@@ -43,7 +45,7 @@ def file():
 
 @app.get('/jpeg')
 def jpeg():
-    path = "tmp_file"
-    with open(path, "w+") as f:
-        f.write(path)
-    return FileResponse(path, media_type='image/jpeg')
+    path = Path(Path(__file__).resolve().parent, "image.jpeg")
+    with open(path, "rb") as f:
+        content = f.read()
+    return Response(content=content, media_type="image/jpeg")
