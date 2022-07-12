@@ -1,8 +1,10 @@
 import logging
+import os
 from contextlib import suppress
 
 import click
 from click import ClickException
+from grpc._channel import _InactiveRpcError
 
 from yappa.cli_helpers import (
     NaturalOrderGroup, UPLOAD_FUNCTIONS, create_function_version,
@@ -58,7 +60,12 @@ def setup(config_file, token):
                    + click.style(YANDEX_OAUTH_URL, fg="yellow"))
         token = click.prompt("Please enter OAuth token")
     yc = YC.setup(token=token, skip_folder=True)
-    clouds = {c.name: c.id for c in yc.get_clouds()}
+    try:
+        clouds = {c.name: c.id for c in yc.get_clouds()}
+    except _InactiveRpcError as e:
+        click.echo("You have invalid or expired token")
+        os.environ.pop("YC_OAUTH", None)
+        return setup()  # reboot `setup` without `YC_OAUTH`
     cloud_name = click.prompt("Please select cloud", type=click.Choice(clouds),
                               default=next(reversed(clouds)))
     folders = {f.name: f.id for f in yc.get_folders(clouds[cloud_name])}
@@ -66,7 +73,11 @@ def setup(config_file, token):
                                type=click.Choice(folders),
                                default=next(reversed(folders)))
     yc.folder_id = folders[folder_name]
-    account = yc.create_service_account(f"yappa-creator-account-{folder_name}")
+    try:
+        account = yc.create_service_account(f"yappa-creator-account-{folder_name}")
+    except _InactiveRpcError as e:
+        click.echo(f"{e.details()}")
+        return
     save_key(yc.create_service_account_key(account.id))
     click.echo("Saved service account credentials at " + click.style(
         DEFAULT_ACCESS_KEY_FILE, bold=True))
