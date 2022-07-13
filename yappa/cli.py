@@ -78,7 +78,14 @@ def setup(config_file, token):
     except _InactiveRpcError as e:
         click.echo(f"{e.details()}")
         return
-    save_key(yc.create_service_account_key(account.id))
+    try:
+        save_key(yc.create_service_account_key(account.id))
+    except _InactiveRpcError as e:
+        click.echo(f"{e.details()}")
+        return
+    except Exception as e:
+        click.echo(f"{e}")
+        return
     click.echo("Saved service account credentials at " + click.style(
         DEFAULT_ACCESS_KEY_FILE, bold=True))
 
