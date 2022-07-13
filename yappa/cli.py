@@ -4,6 +4,7 @@ from contextlib import suppress
 
 import click
 from click import ClickException
+from grpc import RpcError
 from grpc._channel import _InactiveRpcError
 
 from yappa.cli_helpers import (
@@ -62,40 +63,37 @@ def setup(config_file, token):
     yc = YC.setup(token=token, skip_folder=True)
     try:
         clouds = {c.name: c.id for c in yc.get_clouds()}
-    except _InactiveRpcError as e:
+    except RpcError as e:
         click.echo("You have invalid or expired token")
         os.environ.pop("YC_OAUTH", None)
         return setup()  # reboot `setup` without `YC_OAUTH`
-    cloud_name = click.prompt("Please select cloud", type=click.Choice(clouds),
-                              default=next(reversed(clouds)))
-    folders = {f.name: f.id for f in yc.get_folders(clouds[cloud_name])}
-    folder_name = click.prompt("Please select folder",
-                               type=click.Choice(folders),
-                               default=next(reversed(folders)))
-    yc.folder_id = folders[folder_name]
     try:
-        account = yc.create_service_account(f"yappa-creator-account-{folder_name}")
-    except _InactiveRpcError as e:
-        click.echo(f"{e.details()}")
-        return
-    try:
+        cloud_name = click.prompt("Please select cloud", type=click.Choice(clouds),
+                                  default=next(reversed(clouds)))
+        folders = {f.name: f.id for f in yc.get_folders(clouds[cloud_name])}
+        folder_name = click.prompt("Please select folder",
+                                   type=click.Choice(folders),
+                                   default=next(reversed(folders)))
+        yc.folder_id = folders[folder_name]
+        account = yc.create_service_account(
+            f"yappa-creator-account-{folder_name}"
+        )
         save_key(yc.create_service_account_key(account.id))
-    except _InactiveRpcError as e:
+        click.echo("Saved service account credentials at " + click.style(
+            DEFAULT_ACCESS_KEY_FILE, bold=True))
+        config = (load_yaml(config_file, safe=True)
+                  or create_default_config(config_file))
+        config["folder_id"] = folders[folder_name]
+        config["service_account_names"]["creator"] = account.name
+        save_yaml(config, config_file)
+        click.echo("Saved Yappa config file at "
+                   + click.style(config_file, bold=True))
+    except RpcError as e:
         click.echo(f"{e.details()}")
         return
     except Exception as e:
         click.echo(f"{e}")
         return
-    click.echo("Saved service account credentials at " + click.style(
-        DEFAULT_ACCESS_KEY_FILE, bold=True))
-
-    config = (load_yaml(config_file, safe=True)
-              or create_default_config(config_file))
-    config["folder_id"] = folders[folder_name]
-    config["service_account_names"]["creator"] = account.name
-    save_yaml(config, config_file)
-    click.echo("Saved Yappa config file at "
-               + click.style(config_file, bold=True))
 
 
 @cli.command(short_help='generate config files, create function & api-gateway')
@@ -111,24 +109,31 @@ def deploy(upload_strategy, config_file):
     - generates yappa-gw.yaml (skipped if file exists)
     - creates api-gateway
     """
-    config = (load_yaml(config_file, safe=True)
-              or create_default_config(config_file))
-    config, is_updated = get_missing_details(config)
-    if is_updated:
-        save_yaml(config, config_file)
-        click.echo("saved Yappa config file at "
-                   + click.style(config_file, bold=True))
-    yc = YC.setup(config=config)
-    function = ensure_function(yc, config["project_slug"],
-                               config["description"], True)
-    if config['django_settings_module']:
-        ensure_function(yc, config["manage_function_name"],
-                        config["description"], False)
-    create_function_version(yc, config, upload_strategy, config_file)
-    if config["gw_config"]:
-        is_new = create_gateway(yc, config, function.id)
-        if not is_new:
-            update_gateway(yc, config)
+    try:
+        config = (load_yaml(config_file, safe=True)
+                  or create_default_config(config_file))
+        config, is_updated = get_missing_details(config)
+        if is_updated:
+            save_yaml(config, config_file)
+            click.echo("saved Yappa config file at "
+                       + click.style(config_file, bold=True))
+        yc = YC.setup(config=config)
+        function = ensure_function(yc, config["project_slug"],
+                                   config["description"], True)
+        if config['django_settings_module']:
+            ensure_function(yc, config["manage_function_name"],
+                                config["description"], False)
+        create_function_version(yc, config, upload_strategy, config_file)
+        if config["gw_config"]:
+            is_new = create_gateway(yc, config, function.id)
+            if not is_new:
+                update_gateway(yc, config)
+    except RpcError as e:
+        click.echo(f"{e.details()}")
+        return
+    except Exception as e:
+        click.echo(f"{e}")
+        return
 
 
 @cli.command()
@@ -138,21 +143,28 @@ def undeploy(config_file):
     """
     deletes function, api-gateway and bucket
     """
-    config = load_yaml(config_file)
-    yc = YC.setup(config=config)
-    with suppress(ValueError):
-        click.echo(f"Deleting function {config['project_slug']}...")
-        yc.delete_function(config["project_slug"])
+    try:
+        config = load_yaml(config_file)
+        yc = YC.setup(config=config)
+        with suppress(ValueError):
+            click.echo(f"Deleting function {config['project_slug']}...")
+            yc.delete_function(config["project_slug"])
 
-    with suppress(ValueError):
-        click.echo(f"Deleting api-gateway {config['project_slug']}...")
-        yc.delete_gateway(config['project_slug'])
-    with suppress(ValueError):
-        click.echo(f"Destroying bucket {config['bucket']}...")
-        delete_bucket(config["bucket"], **yc.get_s3_key(
-            config["service_account_names"]["creator"]))
-    click.echo("That's it! Only service account is left.\n"
-               + click.style("Bye!", fg="yellow"))
+        with suppress(ValueError):
+            click.echo(f"Deleting api-gateway {config['project_slug']}...")
+            yc.delete_gateway(config['project_slug'])
+        with suppress(ValueError):
+            click.echo(f"Destroying bucket {config['bucket']}...")
+            delete_bucket(config["bucket"], **yc.get_s3_key(
+                config["service_account_names"]["creator"]))
+        click.echo("That's it! Only service account is left.\n"
+                   + click.style("Bye!", fg="yellow"))
+    except RpcError as e:
+        click.echo(f"{e.details()}")
+        return
+    except Exception as e:
+        click.echo(f"{e}")
+        return
 
 
 @cli.command(context_settings=dict(ignore_unknown_options=True,
@@ -162,14 +174,21 @@ def undeploy(config_file):
 @click.argument("command", type=str)
 @click.argument('args', nargs=-1, type=click.UNPROCESSED)
 def manage(config_file, command, args):
-    if command in FORBIDDEN_COMMANDS:
-        raise ClickException("Sorry. You cannot run this command with "
-                             "Serverless setup")
-    config = load_yaml(config_file, safe=False)
-    yc = YC.setup(config=config)
-    function = yc.get_function(config["manage_function_name"])
-    response = call_manage_function(yc, function.id, command, args)
-    click.echo(response)
+    try:
+        if command in FORBIDDEN_COMMANDS:
+            raise ClickException("Sorry. You cannot run this command with "
+                                 "Serverless setup")
+        config = load_yaml(config_file, safe=False)
+        yc = YC.setup(config=config)
+        function = yc.get_function(config["manage_function_name"])
+        response = call_manage_function(yc, function.id, command, args)
+        click.echo(response)
+    except RpcError as e:
+        click.echo(f"{e.details()}")
+        return
+    except Exception as e:
+        click.echo(f"{e}")
+        return
 
 
 if __name__ == '__main__':
