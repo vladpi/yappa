@@ -9,16 +9,15 @@ from grpc import RpcError
 from yappa.cli_helpers import (
     NaturalOrderGroup, UPLOAD_FUNCTIONS, create_function_version,
     create_gateway,
-    ensure_function, get_missing_details, update_gateway,
+    ensure_function, get_missing_details, update_gateway, safe,
 )
 from yappa.config_generation import (
     create_default_config,
 )
-from yappa.error_handlers import handle_error
 from yappa.handlers.manage import FORBIDDEN_COMMANDS
 from yappa.packaging.s3 import delete_bucket
 from yappa.settings import (
-    DEFAULT_ACCESS_KEY_FILE, YANDEX_OAUTH_URL,
+    DEFAULT_ACCESS_KEY_FILE, YANDEX_OAUTH_URL, ENV_YC_OAUTH,
 )
 from yappa.utils import save_yaml
 from yappa.handlers.common import DEFAULT_CONFIG_FILENAME, load_yaml
@@ -38,9 +37,9 @@ def cli():
 @click.argument("config-file", type=click.Path(exists=False),
                 default=DEFAULT_CONFIG_FILENAME, )
 @click.option("-t", '--token', default="",
-              help="yandex OAuth token", envvar="YC_OAUTH"
+              help="yandex OAuth token", envvar=ENV_YC_OAUTH
               )
-@handle_error
+@safe
 def setup(config_file, token):
     """
     setup of cloud access:
@@ -57,17 +56,14 @@ def setup(config_file, token):
     (see README for authentication details)
     """
     click.echo("Welcome to " + click.style("Yappa", fg="yellow") + "!")
+    if token == os.environ.get(ENV_YC_OAUTH):
+        click.echo("Using YC_OAUTH environment variable")
     if not token:
         click.echo("Please obtain OAuth token at "
                    + click.style(YANDEX_OAUTH_URL, fg="yellow"))
         token = click.prompt("Please enter OAuth token")
     yc = YC.setup(token=token, skip_folder=True)
-    try:
-        clouds = {c.name: c.id for c in yc.get_clouds()}
-    except RpcError as e:
-        click.echo("You have invalid or expired token")
-        os.environ.pop("YC_OAUTH", None)
-        return setup()  # reboot `setup` without `YC_OAUTH`
+    clouds = {c.name: c.id for c in yc.get_clouds()}
     cloud_name = click.prompt("Please select cloud", type=click.Choice(clouds),
                               default=next(reversed(clouds)))
     folders = {f.name: f.id for f in yc.get_folders(clouds[cloud_name])}
@@ -95,7 +91,7 @@ def setup(config_file, token):
                 default="direct", )
 @click.argument("config-file", type=click.Path(exists=False),
                 default=DEFAULT_CONFIG_FILENAME, )
-@handle_error
+@safe
 def deploy(upload_strategy, config_file):
     """\b
     - generates yappa.yaml (skipped if file exists)
@@ -116,7 +112,7 @@ def deploy(upload_strategy, config_file):
                                config["description"], True)
     if config['django_settings_module']:
         ensure_function(yc, config["manage_function_name"],
-                            config["description"], False)
+                        config["description"], False)
     create_function_version(yc, config, upload_strategy, config_file)
     if config["gw_config"]:
         is_new = create_gateway(yc, config, function.id)
@@ -127,7 +123,7 @@ def deploy(upload_strategy, config_file):
 @cli.command()
 @click.argument("config-file", type=click.Path(exists=True),
                 default=DEFAULT_CONFIG_FILENAME, )
-@handle_error
+@safe
 def undeploy(config_file):
     """
     deletes function, api-gateway and bucket
@@ -154,7 +150,7 @@ def undeploy(config_file):
               default=DEFAULT_CONFIG_FILENAME, )
 @click.argument("command", type=str)
 @click.argument('args', nargs=-1, type=click.UNPROCESSED)
-@handle_error
+@safe
 def manage(config_file, command, args):
     if command in FORBIDDEN_COMMANDS:
         raise ClickException("Sorry. You cannot run this command with "

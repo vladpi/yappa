@@ -1,9 +1,13 @@
+import functools
+import re
 from uuid import uuid4
 
 import click
 import yaml
 from boltons.strutils import slugify
 from click import ClickException
+from grpc import RpcError
+from grpc._channel import _InactiveRpcError
 
 from yappa.config_generation import (
     create_default_gw_config,
@@ -201,3 +205,20 @@ def get_missing_details(config):
     if not config.get("bucket_name"):
         config["bucket_name"] = get_bucket_name(config)
     return config, is_updated
+
+
+def safe(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except RpcError as e:
+            details = e.details()
+            if re.search('UNAUTHENTICATED', details, re.IGNORECASE):
+                details = "You have expired or incorrect token"
+            click.secho(details, fg='red')
+            return
+        except OSError as e:
+            click.secho(e, fg='red')
+            return
+    return wrapper
