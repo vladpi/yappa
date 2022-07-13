@@ -91,7 +91,7 @@ def setup(config_file, token):
     except RpcError as e:
         click.echo(f"{e.details()}")
         return
-    except Exception as e:
+    except OSError as e:
         click.echo(f"{e}")
         return
 
@@ -131,7 +131,7 @@ def deploy(upload_strategy, config_file):
     except RpcError as e:
         click.echo(f"{e.details()}")
         return
-    except Exception as e:
+    except OSError as e:
         click.echo(f"{e}")
         return
 
@@ -162,7 +162,7 @@ def undeploy(config_file):
     except RpcError as e:
         click.echo(f"{e.details()}")
         return
-    except Exception as e:
+    except OSError as e:
         click.echo(f"{e}")
         return
 
@@ -186,7 +186,7 @@ def manage(config_file, command, args):
     except RpcError as e:
         click.echo(f"{e.details()}")
         return
-    except Exception as e:
+    except OSError as e:
         click.echo(f"{e}")
         return
 
