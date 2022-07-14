@@ -1,19 +1,17 @@
 [MASTER]
-py-version = 3.8
+py-version >= 3.8
 disable=
     C0114,  # missing-module-docstring
     C0115,  # missing-class-docstring
     C0116,  # missing-function-docstring
-    E501,
-    E265,
-    F811,
-    PT001,
-    DJ05,
-    D100,
-    D105,
-    D104,
-    W504,
-    W292,
+    E0501,
+    E0265,
+    F0811,
+    D0100,
+    D0105,
+    D0104,
+    W0504,
+    W0292,
     W0613,
     C0103,
     E0401,
@@ -21,7 +19,7 @@ disable=
     W0703,
     W0102,
     W0105,
-    W0511
+    W0511,
     R0913,
     R0914,
     R0801
