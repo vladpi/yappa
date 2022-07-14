@@ -1,5 +1,5 @@
 [MASTER]
-py-version >= 3.8
+py-version = 3.8
 disable=
     C0114,  # missing-module-docstring
     C0115,  # missing-class-docstring
