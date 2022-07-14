@@ -31,4 +31,4 @@ repos:
       entry: pylint
       language: system
       types: [python]
-      args: [-j=0, --max-line-length=80, --disable=W0613, --disable=W0611]
+      args: [-j=0, --max-line-length=80, --disable=W0613]
