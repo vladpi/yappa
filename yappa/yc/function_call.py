@@ -6,9 +6,9 @@ from yappa.settings import YANDEX_FUNCTIONS_URL
 
 def call_manage_function(yc, function_id, command, args):
     iam_token = yc.get_iam_token()
-    response = call_function(function_id, iam_token, "POST",
-                             {"command": command,
-                              "args": args})
+    response = call_function(
+        function_id, iam_token, "POST", {"command": command, "args": args}
+    )
     return response.content.decode()
 
 

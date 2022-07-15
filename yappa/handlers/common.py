@@ -12,15 +12,17 @@ except ImportError:
     from yaml import Loader
 
 logger = logging.getLogger(__name__)
-TOKEN_URL = ('http://169.254.169.254/computeMetadata/v1/'
-             'instance/service-accounts/default/token')
+TOKEN_URL = (
+    "http://169.254.169.254/computeMetadata/v1/"
+    "instance/service-accounts/default/token"
+)
 
 
 def set_access_token(iam_token=None):
     if not iam_token:
         iam_token = ""
         try:
-            resp = httpx.get(TOKEN_URL, headers={'Metadata-Flavor': 'Google'})
+            resp = httpx.get(TOKEN_URL, headers={"Metadata-Flavor": "Google"})
             if resp.status_code == 200:
                 iam_token = resp.json()["access_token"]
         except (httpx.ConnectError, httpx.ConnectTimeout) as e:
@@ -30,13 +32,12 @@ def set_access_token(iam_token=None):
 
 def load_yaml(file, safe=False):
     try:
-        with open(file, "r") as f:
+        with open(file, "r", encoding="utf-8") as f:
             return yaml.load(f.read(), Loader)
     except FileNotFoundError:
         if safe:
-            return dict()
-        else:
-            raise
+            return {}
+        raise
 
 
 def body_to_bytes(event):
@@ -78,12 +79,12 @@ def patch_response(response):
     """
     is_binary_ = is_binary(response)
     if is_binary_:
-        body = b64encode(response.content).decode('utf-8')
+        body = b64encode(response.content).decode("utf-8")
     else:
         body = response.content.decode()
     return {
-        'statusCode': response.status_code,
-        'headers': dict(response.headers),
-        'body': body,
-        'isBase64Encoded': is_binary_,
+        "statusCode": response.status_code,
+        "headers": dict(response.headers),
+        "body": body,
+        "isBase64Encoded": is_binary_,
     }
