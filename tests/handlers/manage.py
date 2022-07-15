@@ -12,7 +12,8 @@ from yappa.handlers.manage import manage
 def django_settings():
     os.environ["DJANGO_SETTINGS_MODULE"] = "django_settings"
     sys.path.append(
-        str(Path(Path(__file__).resolve().parent.parent, "test_apps")))
+        str(Path(Path(__file__).resolve().parent.parent, "test_apps"))
+    )
 
 
 def test_help():
@@ -24,7 +25,9 @@ def test_help():
 def test_arguments():
     response = manage({"body": json.dumps({"command": "check", "args": []})})
     assert response["body"] == (
-        'System check identified no issues (0 silenced).\n')
+        "System check identified no issues (0 silenced).\n"
+    )
     response = manage(
-        {"body": json.dumps({"command": "check", "args": ["--deploy"]})})
+        {"body": json.dumps({"command": "check", "args": ["--deploy"]})}
+    )
     assert response["body"].startswith("System check identified some issues")

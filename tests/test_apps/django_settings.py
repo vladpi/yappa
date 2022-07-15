@@ -13,10 +13,7 @@ def main(request):
 
 @api_view(["GET"])
 def json(request):
-    return Response({
-        "result": "json",
-        "sub_result": {"sub": "json"}
-    })
+    return Response({"result": "json", "sub_result": {"sub": "json"}})
 
 
 @api_view(["GET"])
@@ -35,20 +32,20 @@ def post(request):
 
 
 urlpatterns = [
-    path('', main),
-    path('json', json),
-    path('query_params', query_params),
-    path('path_param/<param>', path_param),
-    path('post', post)
+    path("", main),
+    path("json", json),
+    path("query_params", query_params),
+    path("path_param/<param>", path_param),
+    path("post", post),
 ]
 
 BASE_DIR = Path(__file__).resolve().parent
-ROOT_URLCONF = 'django_settings'
-SECRET_KEY = '^)qfu_0%x)ngcm!*7hs_d*myvfo0chk2kwk8yh'
+ROOT_URLCONF = "django_settings"
+SECRET_KEY = "^)qfu_0%x)ngcm!*7hs_d*myvfo0chk2kwk8yh"
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
 ]

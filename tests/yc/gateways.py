@@ -1,14 +1,12 @@
-from collections import Iterable
+# pylint: disable=redefined-outer-name, protected-access
+from collections.abc import Iterable
 
 import httpx
 import pytest
 import yaml
 from furl import furl
 
-from yappa.config_generation import (
-    create_default_gw_config,
-    inject_function_id,
-)
+from yappa.config_generation import create_default_gw_config, inject_function_id
 
 
 @pytest.fixture(scope="session")
@@ -22,8 +20,7 @@ def gateway_yaml(config, function, gateway_name):
     reads default gw config and adds function_id
     """
     default_gw_config = create_default_gw_config()
-    gw_config = inject_function_id(default_gw_config, function.id,
-                                   gateway_name)
+    gw_config = inject_function_id(default_gw_config, function.id, gateway_name)
     return yaml.dump(gw_config)
 
 
@@ -64,9 +61,7 @@ def test_gateway_call(gateway, function_version, faker):
 
     response = httpx.get((f / "json").url)
     assert response.status_code == 200, response.content
-    assert response.json() == {"result": "json",
-                               "sub_result": {"sub": "json"}
-                               }
+    assert response.json() == {"result": "json", "sub_result": {"sub": "json"}}
 
     param_value = f"{faker.pyint}"
     response = httpx.get((f / "path_param" / param_value).url)
@@ -76,5 +71,4 @@ def test_gateway_call(gateway, function_version, faker):
     sample_body = {"test_str": "request", "test_num": 10}
     response = httpx.post((f / "post").url, json=sample_body)
     assert response.status_code == 200, response.content
-    assert response.json() == {"request": sample_body}, \
-        response.json()
+    assert response.json() == {"request": sample_body}, response.json()

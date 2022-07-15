@@ -1,14 +1,12 @@
+# pylint: disable=redefined-outer-name
 import os
 from pathlib import Path
 
 import pytest
 
-from yappa.packaging.direct import (
-    prepare_package, )
-from yappa.settings import (
-    DEFAULT_PACKAGE_DIR,
-)
 from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
+from yappa.packaging.direct import prepare_package
+from yappa.settings import DEFAULT_PACKAGE_DIR
 
 IGNORED_FILES = (
     Path(".idea"),
@@ -31,10 +29,12 @@ def expected_paths(config):
 
 
 def test_files_copy(apps_dir, config, expected_paths, config_filename):
-    prepare_package(config["requirements_file"], config["excluded_paths"],
-                    config_filename=config_filename)
+    prepare_package(
+        config["requirements_file"],
+        config["excluded_paths"],
+        config_filename=config_filename,
+    )
     for path in expected_paths:
         assert os.path.exists(Path(DEFAULT_PACKAGE_DIR, path)), path
     for path in IGNORED_FILES:
-        assert not os.path.exists(
-            Path(DEFAULT_PACKAGE_DIR, path)), os.listdir()
+        assert not os.path.exists(Path(DEFAULT_PACKAGE_DIR, path)), os.listdir()

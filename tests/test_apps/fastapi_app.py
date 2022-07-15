@@ -2,22 +2,19 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from pydantic import BaseModel
-from starlette.responses import PlainTextResponse, FileResponse, Response
+from starlette.responses import FileResponse, PlainTextResponse, Response
 
 app = FastAPI()
 
 
-@app.get('/')
+@app.get("/")
 def main():
-    return PlainTextResponse('root url')
+    return PlainTextResponse("root url")
 
 
-@app.get('/json')
+@app.get("/json")
 def json():
-    return {
-        "result": "json",
-        "sub_result": {"sub": "json"}
-    }
+    return {"result": "json", "sub_result": {"sub": "json"}}
 
 
 @app.get("/path_param/{param}")
@@ -30,20 +27,20 @@ class Request(BaseModel):
     test_num: int
 
 
-@app.post('/post')
+@app.post("/post")
 def post(request: Request):
     return {"request": request}
 
 
-@app.get('/file')
+@app.get("/file")
 def file():
     path = "tmp_file.zip"
-    with open(path, "w+") as f:
+    with open(path, "w+", encoding="utf-8") as f:
         f.write(path)
     return FileResponse(path)
 
 
-@app.get('/jpeg')
+@app.get("/jpeg")
 def jpeg():
     path = Path(Path(__file__).resolve().parent, "image.jpeg")
     with open(path, "rb") as f:
