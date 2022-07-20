@@ -1,3 +1,4 @@
+# pylint: disable=redefined-outer-name
 import json
 import os
 from collections.abc import Iterable
@@ -38,7 +39,7 @@ def saved_key(key):
 
 
 def test_key_saving(saved_key, key):
-    with open(saved_key, "r") as f:
+    with open(saved_key, "r", encoding="utf-8") as f:
         saved_key = json.loads(f.read())
     assert key == saved_key
 

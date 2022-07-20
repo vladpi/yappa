@@ -3,17 +3,14 @@ from flask import Flask, request
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route("/")
 def main():
-    return 'root url'
+    return "root url"
 
 
-@app.route('/json')
+@app.route("/json")
 def json():
-    return {
-        "result": "json",
-        "sub_result": {"sub": "json"}
-    }
+    return {"result": "json", "sub_result": {"sub": "json"}}
 
 
 @app.route("/query_params")

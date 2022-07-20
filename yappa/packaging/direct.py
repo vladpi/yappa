@@ -13,8 +13,9 @@ from yappa.settings import (
     DEFAULT_IGNORED_FILES,
     DEFAULT_PACKAGE_DIR,
     DEFAULT_REQUIREMENTS_FILE,
-    HANDLERS_DIR, MAX_DIRECT_ARCHIVE_SIZE,
-    )
+    HANDLERS_DIR,
+    MAX_DIRECT_ARCHIVE_SIZE,
+)
 from yappa.utils import get_yc_entrypoint
 
 logger = logging.getLogger(__name__)
@@ -30,19 +31,20 @@ def clear_requirements(requirements_file):
     removes Yappa package from requirements
     """
     buffer = []
-    with open(requirements_file, "r") as f:
+    with open(requirements_file, "r", encoding="utf-8") as f:
         for line in f.readlines():
             if "yappa" not in line:
                 buffer.append(line)
-    with open(requirements_file, "w+") as f:
+    with open(requirements_file, "w+", encoding="utf-8") as f:
         f.write("".join(buffer))
 
 
-def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
-                    ignored_files=DEFAULT_IGNORED_FILES,
-                    config_filename=DEFAULT_CONFIG_FILENAME,
-                    tmp_dir=DEFAULT_PACKAGE_DIR,
-                    ):
+def prepare_package(
+    requirements_file=DEFAULT_REQUIREMENTS_FILE,
+    ignored_files=DEFAULT_IGNORED_FILES,
+    config_filename=DEFAULT_CONFIG_FILENAME,
+    tmp_dir=DEFAULT_PACKAGE_DIR,
+):
     """
     prepares package folder
     - copy project files
@@ -50,23 +52,36 @@ def prepare_package(requirements_file=DEFAULT_REQUIREMENTS_FILE,
     - copy requirements file and rename it to 'requirements.txt'
     """
     if requirements_file in ignored_files:
-        raise ClickException(f"Oops. {requirements_file} file should not be in"
-                             f" excluded paths (at {config_filename})")
+        raise ClickException(
+            f"Oops. {requirements_file} file should not be in"
+            f" excluded paths (at {config_filename})"
+        )
     validate_requirements_file(requirements_file)
 
-    logger.info('Copying project files to %s', tmp_dir)
+    logger.info("Copying project files to %s", tmp_dir)
     with suppress(FileExistsError):
         os.mkdir(tmp_dir)
-    copytree(os.getcwd(), tmp_dir,
-             ignore=ignore_patterns(*ignored_files, tmp_dir),
-             dirs_exist_ok=True)
-    copytree(Path(Path(__file__).resolve().parent.parent, HANDLERS_DIR),
-             Path(tmp_dir, "handlers"), dirs_exist_ok=True)
-    os.rename(Path(tmp_dir, config_filename),
-              Path(tmp_dir, DEFAULT_CONFIG_FILENAME))
 
-    os.rename(Path(tmp_dir, requirements_file),
-              Path(tmp_dir, "requirements.txt"))
+    copytree(
+        os.getcwd(),
+        tmp_dir,
+        ignore=ignore_patterns(*ignored_files, tmp_dir),
+        dirs_exist_ok=True,
+    )
+
+    copytree(
+        Path(Path(__file__).resolve().parent.parent, HANDLERS_DIR),
+        Path(tmp_dir, "handlers"),
+        dirs_exist_ok=True,
+    )
+
+    os.rename(
+        Path(tmp_dir, config_filename), Path(tmp_dir, DEFAULT_CONFIG_FILENAME)
+    )
+
+    os.rename(
+        Path(tmp_dir, requirements_file), Path(tmp_dir, "requirements.txt")
+    )
     clear_requirements(Path(tmp_dir, "requirements.txt"))
     return tmp_dir
 
@@ -75,7 +90,7 @@ SUFFIXES = {
     1e6: "MB",
     1e3: "KB",
     1: " bytes",
-    }
+}
 
 
 def to_readable_size(size):
@@ -86,11 +101,12 @@ def to_readable_size(size):
 
 def create_function_version(yc, config, config_filename):
     click.echo("Preparing package...")
-    package_dir = prepare_package(config["requirements_file"],
-                                  config["excluded_paths"],
-                                  config_filename,
-                                  )
-    archive_path = make_archive(package_dir, 'zip', package_dir)
+    package_dir = prepare_package(
+        config["requirements_file"],
+        config["excluded_paths"],
+        config_filename,
+    )
+    archive_path = make_archive(package_dir, "zip", package_dir)
     archive_size = os.path.getsize(archive_path)
     try:
         if archive_size > MAX_DIRECT_ARCHIVE_SIZE:
@@ -98,11 +114,14 @@ def create_function_version(yc, config, config_filename):
                 f"Sorry. Looks like archive size "
                 f"({to_readable_size(archive_size)}) is over the limit"
                 f" ({to_readable_size(MAX_DIRECT_ARCHIVE_SIZE)})."
-                " Try deploying through s3 ($yappa deploy s3)")
+                " Try deploying through s3 ($yappa deploy s3)"
+            )
 
-        click.echo("Creating new function version for "
-                   + click.style(config["project_slug"], bold=True)
-                   + f" ({to_readable_size(archive_size)})")
+        click.echo(
+            "Creating new function version for "
+            + click.style(config["project_slug"], bold=True)
+            + f" ({to_readable_size(archive_size)})"
+        )
         with open(archive_path, "rb") as f:
             content = f.read()
             yc.create_function_version(
@@ -110,36 +129,42 @@ def create_function_version(yc, config, config_filename):
                 runtime=config["runtime"],
                 description=config["description"],
                 content=content,
-                entrypoint=get_yc_entrypoint(config["application_type"],
-                                             config["entrypoint"]),
+                entrypoint=get_yc_entrypoint(
+                    config["application_type"], config["entrypoint"]
+                ),
                 memory=config["memory_limit"],
                 service_account_id=config["service_account_id"],
                 timeout=config["timeout"],
                 named_service_accounts=config["named_service_accounts"],
                 environment=config["environment"],
-                )
+            )
             click.echo("Created function version")
             if config["django_settings_module"]:
-                click.echo("Creating new function version for management"
-                           " commands")
+                click.echo(
+                    "Creating new function version for management commands"
+                )
                 yc.create_function_version(
                     config["manage_function_name"],
                     runtime=config["runtime"],
                     description=config["description"],
                     content=content,
-                    entrypoint=get_yc_entrypoint("manage",
-                                                 config["entrypoint"]),
+                    entrypoint=get_yc_entrypoint(
+                        "manage", config["entrypoint"]
+                    ),
                     memory=config["memory_limit"],
                     service_account_id=config["service_account_id"],
                     timeout=60 * 10,
                     named_service_accounts=config["named_service_accounts"],
                     environment=config["environment"],
-                    )
+                )
     finally:
         os.remove(archive_path)
         rmtree(package_dir)
     access_changed = yc.set_function_access(
-        function_name=config["project_slug"], is_public=config["is_public"])
+        function_name=config["project_slug"], is_public=config["is_public"]
+    )
     if access_changed:
-        click.echo(f"Changed function access. Now it is "
-                   f" {'not' if config['is_public'] else 'open to'} public")
+        click.echo(
+            f"Changed function access. Now it is "
+            f" {'not' if config['is_public'] else 'open to'} public"
+        )

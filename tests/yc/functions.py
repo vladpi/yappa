@@ -1,4 +1,5 @@
-from collections import Iterable
+# pylint: disable=protected-access
+from collections.abc import Iterable
 
 import httpx
 
@@ -20,18 +21,20 @@ def test_function_creation(yc):
 
 
 def test_function_access(yc, function):
-    assert yc._is_function_public(function.id) == True
+    assert yc._is_function_public(function.id) is True
     yc.set_function_access(function.id, is_public=False)
-    assert yc._is_function_public(function.id) == False
+    assert yc._is_function_public(function.id) is False
     yc.set_function_access(function.id, is_public=True)
 
 
 def test_function_version_creation(yc, function, function_version, config):
     version = yc.get_latest_version(function.id)
-    assert version.entrypoint == get_yc_entrypoint(config["application_type"],
-                                                   config["entrypoint"])
+    assert version.entrypoint == get_yc_entrypoint(
+        config["application_type"], config["entrypoint"]
+    )
     assert version.resources.memory == convert_size_to_bytes(
-        config["memory_limit"])
+        config["memory_limit"]
+    )
     assert version.execution_timeout.seconds == float(config["timeout"])
     if config["service_account_id"]:
         assert version.service_account_id == config["service_account_id"]

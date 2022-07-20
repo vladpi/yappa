@@ -11,23 +11,24 @@ logger = logging.getLogger(__name__)
 
 try:
     config = load_yaml(
-        Path(Path(__file__).resolve().parent.parent,
-             DEFAULT_CONFIG_FILENAME))
-    os.environ["DJANGO_SETTINGS_MODULE"] = config[
-                                               "django_settings_module"] or ""
+        Path(Path(__file__).resolve().parent.parent, DEFAULT_CONFIG_FILENAME)
+    )
+    os.environ["DJANGO_SETTINGS_MODULE"] = (
+        config["django_settings_module"] or ""
+    )
 except KeyError:
     logger.error("DJANGO_SETTINGS_MODULE not present in the config")
 except ValueError:
     logger.warning("Couldn't load app. Looks like broken Yappa config is used")
 
 FORBIDDEN_COMMANDS = (
-    'dbshell',
-    'makemigrations',
-    'runserver',
-    'shell',
-    'squashmigrations',
-    'startapp',
-    'startproject',
+    "dbshell",
+    "makemigrations",
+    "runserver",
+    "shell",
+    "squashmigrations",
+    "startapp",
+    "startproject",
 )
 
 NOINPUT_COMMANDS = (
@@ -47,8 +48,10 @@ def run_command(command, args):
         ) from exc
     with io.StringIO() as buf, redirect_stdout(buf), redirect_stderr(buf):
         try:
-            if not {"--noinput", "--no-input"}.intersection(args) \
-                    and command in NOINPUT_COMMANDS:
+            if (
+                not {"--noinput", "--no-input"}.intersection(args)
+                and command in NOINPUT_COMMANDS
+            ):
                 args = [*args, "--no-input"]
             execute_from_command_line(["__main__.py", command, *args])
             output = buf.getvalue()
@@ -63,9 +66,8 @@ def manage(event, context=None):
     else:
         set_access_token()
     body = json.loads(event["body"])
-    output_buffer = run_command(body["command"],
-                                body.get("args") or [])
+    output_buffer = run_command(body["command"], body.get("args") or [])
     return {
-        'statusCode': 200,
-        'body': output_buffer,
+        "statusCode": 200,
+        "body": output_buffer,
     }

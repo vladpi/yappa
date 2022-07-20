@@ -1,3 +1,4 @@
+# pylint: disable=redefined-outer-name
 import json
 import sys
 from copy import copy
@@ -7,22 +8,26 @@ from urllib.parse import urljoin
 import pytest
 
 from yappa.handlers.asgi import call_app
-from yappa.handlers.wsgi import load_app
 from yappa.handlers.common import patch_response
+from yappa.handlers.wsgi import load_app
 
 BASE_URL = "http://base-url.com"
 
 
-@pytest.fixture(params=[
-    ("fastapi_app.app", None),
-], ids=[
-    "fastAPI",
-], )
+@pytest.fixture(
+    params=[
+        ("fastapi_app.app", None),
+    ],
+    ids=[
+        "fastAPI",
+    ],
+)
 def app(request):
     # TODO сделать зависимой от config, а config - параметризованная фикстура
     # чтобы тесты handler, s3, yc_functions вызывались для каждого приложения
     sys.path.append(
-        str(Path(Path(__file__).resolve().parent.parent, "test_apps")))
+        str(Path(Path(__file__).resolve().parent.parent, "test_apps"))
+    )
     return load_app(*request.param)
 
 
@@ -36,9 +41,9 @@ async def test_sample_call(app, sample_event):
     response = await call_app(app, sample_event)
     response = patch_response(response)
     assert response["statusCode"] == 200
-    assert response["body"] == 'root url'
+    assert response["body"] == "root url"
     assert isinstance(response["headers"], dict)
-    assert not isinstance(response['body'], bytes)
+    assert not isinstance(response["body"], bytes)
     assert not response["isBase64Encoded"]
 
 
@@ -57,14 +62,14 @@ async def test_json_response(app, sample_event):
     response = patch_response(response)
     assert response["statusCode"] == 200
     assert response["body"].replace("\n", "") == json.dumps(
-        {"result": "json", "sub_result": {"sub": "json"}}).replace(" ", "")
+        {"result": "json", "sub_result": {"sub": "json"}}
+    ).replace(" ", "")
     assert not response["isBase64Encoded"]
 
 
 @pytest.mark.asyncio
 async def test_post(app, sample_event):
-    body = {"test_str": "ok!",
-            "test_num": 5}
+    body = {"test_str": "ok!", "test_num": 5}
     event = copy(sample_event)
     event.update(
         url=urljoin(BASE_URL, "post"),
@@ -82,9 +87,7 @@ async def test_post(app, sample_event):
 @pytest.mark.asyncio
 async def test_file(app, sample_event):
     event = copy(sample_event)
-    event.update(
-        url=urljoin(BASE_URL, "file")
-    )
+    event.update(url=urljoin(BASE_URL, "file"))
     response = await call_app(app, event)
     response = patch_response(response)
     assert response["statusCode"] == 200

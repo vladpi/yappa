@@ -1,3 +1,4 @@
+# pylint: disable=redefined-outer-name
 import os
 from pathlib import Path
 from shutil import copy2
@@ -21,27 +22,26 @@ COPIED_FILES = (
     Path(Path(__file__).resolve().parent, "test_apps", "django_wsgi.py"),
     Path(Path(__file__).resolve().parent, "test_apps", "django_settings.py"),
     Path(Path(__file__).resolve().parent, "test_apps", "flask_app.py"),
-    Path(Path(__file__).resolve().parent, "test_apps",
-         "apps_requirements.txt"),
-    )
+    Path(Path(__file__).resolve().parent, "test_apps", "apps_requirements.txt"),
+)
 PACKAGE_FILES = (
     Path("package", "utils.py"),
     Path("package", "subpackage", "subutils.py"),
     Path(".idea"),
     Path(".git", "config"),
     Path("venv", "flask.py"),
-    )
+)
 
 
 def create_empty_files(*paths):
     for path in paths:
         os.makedirs(path.parent, exist_ok=True)
-        open(path, "w").close()
+        open(path, "w", encoding="utf-8").close()  # pylint: disable=R1732
 
 
 @pytest.fixture(scope="session")
 def apps_dir(tmpdir_factory):
-    dir_ = tmpdir_factory.mktemp('package')
+    dir_ = tmpdir_factory.mktemp("package")
     os.chdir(dir_)
     assert not os.listdir()
     create_empty_files(*PACKAGE_FILES)
@@ -59,12 +59,14 @@ APPS_CONFIGS = (
     ("flask", "flask_app.app", None, "wsgi"),
     ("django", "django_wsgi.app", "django_settings", "wsgi"),
     ("fastapi", "fastapi_app.app", None, "asgi"),
-    )
+)
 
 
-@pytest.fixture(scope="session",
-                params=APPS_CONFIGS,
-                ids=[config[0] for config in APPS_CONFIGS])
+@pytest.fixture(
+    scope="session",
+    params=APPS_CONFIGS,
+    ids=[config[0] for config in APPS_CONFIGS],
+)
 def config(request, apps_dir, config_filename):
     config = create_default_config(config_filename)
     config.update(
@@ -79,9 +81,9 @@ def config(request, apps_dir, config_filename):
             ".idea",
             ".git",
             "venv",
-            ),
+        ),
         is_public=True,
-        )
+    )
     save_yaml(config, config_filename)
     return config
 
@@ -100,12 +102,13 @@ def function(config, yc):
 UPLOAD_STATEGIES = (
     "s3",
     "direct",
-    )
+)
 
 
 @pytest.fixture(scope="session", params=UPLOAD_STATEGIES, ids=UPLOAD_STATEGIES)
-def function_version(request, yc, function, config, config_filename,
-                     s3_credentials):
+def function_version(
+    request, yc, function, config, config_filename, s3_credentials
+):
     yield create_function_version(yc, config, request.param, config_filename)
     delete_bucket(config["bucket"], **s3_credentials)
 
@@ -119,9 +122,7 @@ def s3_credentials(yc):
 def sample_event():
     return {
         "httpMethod": "GET",
-        "headers": {
-            "HTTP_HOST": ""
-            },
+        "headers": {"HTTP_HOST": ""},
         "url": "http://sampleurl.ru/",
         "params": {},
         "multiValueParams": {},
@@ -130,11 +131,15 @@ def sample_event():
         "queryStringParameters": {},
         "multiValueQueryStringParameters": {},
         "requestContext": {
-            "identity": {"sourceIp": "95.170.134.34",
-                         "userAgent": "Mozilla/5.0"},
+            "identity": {
+                "sourceIp": "95.170.134.34",
+                "userAgent": "Mozilla/5.0",
+            },
             "httpMethod": "GET",
             "requestId": "0f61048c-2ba9",
             "requestTime": "18/Jun/2021:03:56:37 +0000",
-            "requestTimeEpoch": 1623988597},
+            "requestTimeEpoch": 1623988597,
+        },
         "body": "",
-        "isBase64Encoded": False}
+        "isBase64Encoded": False,
+    }

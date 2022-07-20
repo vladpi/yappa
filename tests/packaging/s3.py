@@ -1,3 +1,4 @@
+# pylint: disable=redefined-outer-name
 import os
 from pathlib import Path
 from uuid import uuid4
@@ -5,15 +6,14 @@ from uuid import uuid4
 import boto3
 import pytest
 
-from yappa.packaging.s3 import (
-    delete_bucket, ensure_bucket,
-    prepare_package, upload_to_bucket,
-)
-from yappa.settings import (
-    DEFAULT_PACKAGE_DIR,
-    YANDEX_S3_URL,
-)
 from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
+from yappa.packaging.s3 import (
+    delete_bucket,
+    ensure_bucket,
+    prepare_package,
+    upload_to_bucket,
+)
+from yappa.settings import DEFAULT_PACKAGE_DIR, YANDEX_S3_URL
 
 IGNORED_FILES = (
     Path("apps_requirements.txt"),
@@ -36,14 +36,16 @@ def expected_paths(config):
 
 
 def test_files_copy(apps_dir, config, expected_paths, config_filename):
-    prepare_package(config["requirements_file"], config["excluded_paths"],
-                    to_install_requirements=False,
-                    config_filename=config_filename)
+    prepare_package(
+        config["requirements_file"],
+        config["excluded_paths"],
+        to_install_requirements=False,
+        config_filename=config_filename,
+    )
     for path in expected_paths:
         assert os.path.exists(Path(DEFAULT_PACKAGE_DIR, path)), path
     for path in IGNORED_FILES:
-        assert not os.path.exists(
-            Path(DEFAULT_PACKAGE_DIR, path)), os.listdir()
+        assert not os.path.exists(Path(DEFAULT_PACKAGE_DIR, path)), os.listdir()
 
 
 @pytest.fixture
@@ -53,7 +55,7 @@ def bucket_name():
 
 def get_bucket_names(aws_access_key_id, aws_secret_access_key):
     buckets = boto3.resource(
-        's3',
+        "s3",
         aws_access_key_id=aws_access_key_id,
         aws_secret_access_key=aws_secret_access_key,
         endpoint_url=YANDEX_S3_URL,
@@ -76,12 +78,15 @@ def test_bucket_creation(bucket_name, s3_credentials):
     assert bucket_name not in get_bucket_names(**s3_credentials)
 
 
-def test_s3_upload(apps_dir, bucket_name, s3_credentials, config,
-                   config_filename):
-    dir = prepare_package(to_install_requirements=False,
-                          config_filename=config_filename,
-                          requirements_file=config["requirements_file"])
-    object_key = upload_to_bucket(dir, bucket_name, **s3_credentials)
+def test_s3_upload(
+    apps_dir, bucket_name, s3_credentials, config, config_filename
+):
+    directory = prepare_package(
+        to_install_requirements=False,
+        config_filename=config_filename,
+        requirements_file=config["requirements_file"],
+    )
+    object_key = upload_to_bucket(directory, bucket_name, **s3_credentials)
     assert bucket_name in get_bucket_names(**s3_credentials)
     bucket = ensure_bucket(bucket_name, **s3_credentials)
     keys = [o.key for o in bucket.objects.all()]
