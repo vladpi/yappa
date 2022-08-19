@@ -8,7 +8,8 @@ import click
 from click import ClickException
 
 from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
-from yappa.packaging.common import validate_requirements_file, ENCODING
+from yappa.packaging.common import validate_requirements_file, ENCODING, \
+    IS_WINDOWS
 from yappa.settings import (
     DEFAULT_IGNORED_FILES,
     DEFAULT_PACKAGE_DIR,
@@ -30,6 +31,8 @@ def clear_requirements(requirements_file):
     """
     removes Yappa package from requirements
     """
+    if IS_WINDOWS:
+        return
     buffer = []
     with open(requirements_file, "r", encoding=ENCODING) as f:
         for line in f.readlines():
