@@ -8,7 +8,7 @@ import click
 from click import ClickException
 
 from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
-from yappa.packaging.common import validate_requirements_file
+from yappa.packaging.common import validate_requirements_file, ENCODING
 from yappa.settings import (
     DEFAULT_IGNORED_FILES,
     DEFAULT_PACKAGE_DIR,
@@ -31,11 +31,11 @@ def clear_requirements(requirements_file):
     removes Yappa package from requirements
     """
     buffer = []
-    with open(requirements_file, "r", encoding="utf-8") as f:
+    with open(requirements_file, "r", encoding=ENCODING) as f:
         for line in f.readlines():
             if "yappa" not in line:
                 buffer.append(line)
-    with open(requirements_file, "w+", encoding="utf-8") as f:
+    with open(requirements_file, "w+", encoding=ENCODING) as f:
         f.write("".join(buffer))
 
 

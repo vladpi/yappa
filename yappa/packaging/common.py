@@ -3,13 +3,12 @@ import platform
 from click import ClickException
 
 REQUIRED_PACKAGES = ("httpx", "PyYAML")
+ENCODING = "cp1252" if any(platform.win32_ver()) else "utf-8"
 
 
 def validate_requirements_file(requirements_filename):
-    if any(platform.win32_ver()):
-        return
     try:
-        with open(requirements_filename, encoding="utf-8") as f:
+        with open(requirements_filename, encoding=ENCODING) as f:
             requirements = f.read()
     except FileNotFoundError:
         raise ClickException(
