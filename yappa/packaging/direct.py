@@ -9,7 +9,7 @@ from click import ClickException
 
 from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
 from yappa.packaging.common import validate_requirements_file, ENCODING, \
-    IS_WINDOWS
+    IS_WINDOWS, env_vars_to_string
 from yappa.settings import (
     DEFAULT_IGNORED_FILES,
     DEFAULT_PACKAGE_DIR,
@@ -102,6 +102,7 @@ def to_readable_size(size):
             return f"{size / s:.3f}{suffix}"
 
 
+
 def create_function_version(yc, config, config_filename):
     click.echo("Preparing package...")
     package_dir = prepare_package(
@@ -139,7 +140,7 @@ def create_function_version(yc, config, config_filename):
                 service_account_id=config["service_account_id"],
                 timeout=config["timeout"],
                 named_service_accounts=config["named_service_accounts"],
-                environment=config["environment"],
+                environment=env_vars_to_string(config["environment"]),
             )
             click.echo("Created function version")
             if config["django_settings_module"]:
@@ -158,7 +159,7 @@ def create_function_version(yc, config, config_filename):
                     service_account_id=config["service_account_id"],
                     timeout=60 * 10,
                     named_service_accounts=config["named_service_accounts"],
-                    environment=config["environment"],
+                    environment=env_vars_to_string(config["environment"]),
                 )
     finally:
         os.remove(archive_path)

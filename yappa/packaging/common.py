@@ -25,3 +25,7 @@ def validate_requirements_file(requirements_filename):
                 "Please update requirements running "
                 "'$pip freeze > requirements.txt'"
             )
+
+
+def env_vars_to_string(env_vars):
+    return {k: str(v) for k, v in env_vars.items()}
