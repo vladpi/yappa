@@ -22,8 +22,7 @@ def load_app(import_path, django_settings_module=None):
     os.environ["DJANGO_SETTINGS_MODULE"] = django_settings_module or ""
     *submodules, app_name = import_path.split(".")
     module = import_module(".".join(submodules))
-    application = getattr(module, app_name)
-    return application
+    return getattr(module, app_name)
 
 
 def call_app(application, event):
@@ -45,8 +44,7 @@ def call_app(application, event):
             params=event["queryStringParameters"],
             content=event["body"],
         )
-        response = client.send(request)
-        return response
+        return client.send(request)
 
 
 try:

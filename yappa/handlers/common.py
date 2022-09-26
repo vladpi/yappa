@@ -62,10 +62,7 @@ ENCODED_CONTENT_TYPES = (
 
 def is_binary(response):
     content_type = response.headers["content-type"]
-    for re_ in ENCODED_CONTENT_TYPES:
-        if re_.match(content_type):
-            return True
-    return False
+    return any(re_.match(content_type) for re_ in ENCODED_CONTENT_TYPES)
 
 
 def patch_response(response):

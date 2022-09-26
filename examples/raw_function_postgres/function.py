@@ -12,5 +12,4 @@ def handler(event, context):
         sslmode="require")
     cursor = connection.cursor()
     cursor.execute("SELECT 42;")
-    record = cursor.fetchall()
-    return record
+    return cursor.fetchall()

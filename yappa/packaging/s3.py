@@ -156,10 +156,9 @@ def create_function_version(yc, config, config_filename):
         environment=env_vars_to_string(config["environment"]),
     )
     click.echo("Created function version")
-    access_changed = yc.set_function_access(
+    if access_changed := yc.set_function_access(
         function_name=config["project_slug"], is_public=config["is_public"]
-    )
-    if access_changed:
+    ):
         click.echo(
             f"Changed function access. Now it is "
             f" {'not' if config['is_public'] else 'open to'} public"

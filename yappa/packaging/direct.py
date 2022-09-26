@@ -35,9 +35,7 @@ def clear_requirements(requirements_file):
         return
     buffer = []
     with open(requirements_file, "r", encoding=ENCODING) as f:
-        for line in f.readlines():
-            if "yappa" not in line:
-                buffer.append(line)
+        buffer.extend(line for line in f if "yappa" not in line)
     with open(requirements_file, "w+", encoding=ENCODING) as f:
         f.write("".join(buffer))
 
@@ -164,10 +162,9 @@ def create_function_version(yc, config, config_filename):
     finally:
         os.remove(archive_path)
         rmtree(package_dir)
-    access_changed = yc.set_function_access(
+    if access_changed := yc.set_function_access(
         function_name=config["project_slug"], is_public=config["is_public"]
-    )
-    if access_changed:
+    ):
         click.echo(
             f"Changed function access. Now it is "
             f" {'not' if config['is_public'] else 'open to'} public"
