@@ -9,7 +9,7 @@ from click import ClickException
 
 from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
 from yappa.packaging.common import validate_requirements_file, ENCODING, \
-    IS_WINDOWS
+    IS_WINDOWS, env_vars_to_string
 from yappa.settings import (
     DEFAULT_IGNORED_FILES,
     DEFAULT_PACKAGE_DIR,
@@ -35,9 +35,7 @@ def clear_requirements(requirements_file):
         return
     buffer = []
     with open(requirements_file, "r", encoding=ENCODING) as f:
-        for line in f.readlines():
-            if "yappa" not in line:
-                buffer.append(line)
+        buffer.extend(line for line in f if "yappa" not in line)
     with open(requirements_file, "w+", encoding=ENCODING) as f:
         f.write("".join(buffer))
 
@@ -102,6 +100,7 @@ def to_readable_size(size):
             return f"{size / s:.3f}{suffix}"
 
 
+
 def create_function_version(yc, config, config_filename):
     click.echo("Preparing package...")
     package_dir = prepare_package(
@@ -139,7 +138,7 @@ def create_function_version(yc, config, config_filename):
                 service_account_id=config["service_account_id"],
                 timeout=config["timeout"],
                 named_service_accounts=config["named_service_accounts"],
-                environment=config["environment"],
+                environment=env_vars_to_string(config["environment"]),
             )
             click.echo("Created function version")
             if config["django_settings_module"]:
@@ -158,15 +157,14 @@ def create_function_version(yc, config, config_filename):
                     service_account_id=config["service_account_id"],
                     timeout=60 * 10,
                     named_service_accounts=config["named_service_accounts"],
-                    environment=config["environment"],
+                    environment=env_vars_to_string(config["environment"]),
                 )
     finally:
         os.remove(archive_path)
         rmtree(package_dir)
-    access_changed = yc.set_function_access(
+    if access_changed := yc.set_function_access(
         function_name=config["project_slug"], is_public=config["is_public"]
-    )
-    if access_changed:
+    ):
         click.echo(
             f"Changed function access. Now it is "
             f" {'not' if config['is_public'] else 'open to'} public"

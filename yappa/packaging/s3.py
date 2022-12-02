@@ -10,7 +10,8 @@ import boto3
 import click
 
 from yappa.handlers.common import DEFAULT_CONFIG_FILENAME
-from yappa.packaging.common import validate_requirements_file
+from yappa.packaging.common import validate_requirements_file, \
+    env_vars_to_string
 from yappa.settings import (
     DEFAULT_IGNORED_FILES,
     DEFAULT_PACKAGE_DIR,
@@ -152,13 +153,12 @@ def create_function_version(yc, config, config_filename):
         service_account_id=config["service_account_id"],
         timeout=config["timeout"],
         named_service_accounts=config["named_service_accounts"],
-        environment=config["environment"],
+        environment=env_vars_to_string(config["environment"]),
     )
     click.echo("Created function version")
-    access_changed = yc.set_function_access(
+    if access_changed := yc.set_function_access(
         function_name=config["project_slug"], is_public=config["is_public"]
-    )
-    if access_changed:
+    ):
         click.echo(
             f"Changed function access. Now it is "
             f" {'not' if config['is_public'] else 'open to'} public"
@@ -176,5 +176,5 @@ def create_function_version(yc, config, config_filename):
             service_account_id=config["service_account_id"],
             timeout=300,
             named_service_accounts=config["named_service_accounts"],
-            environment=config["environment"],
+            environment=env_vars_to_string(config["environment"]),
         )

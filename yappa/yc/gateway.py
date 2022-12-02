@@ -82,6 +82,5 @@ class YcGatewayMixin:
         self, gateway_name, description, openapi_spec
     ) -> ApiGateway:
         logger.warning("Update gateway is not yet implemented")
-        gateway = self.get_gateway(gateway_name)
         # TODO implement update
-        return gateway
+        return self.get_gateway(gateway_name)

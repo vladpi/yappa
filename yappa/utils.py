@@ -14,7 +14,7 @@ SIZE_SUFFIXES = {
 def convert_size_to_bytes(size_str):
     for suffix, value in SIZE_SUFFIXES.items():
         if size_str.lower().endswith(suffix):
-            size = int(size_str[0 : -len(suffix)]) * value
+            size = int(size_str[:-len(suffix)]) * value
             if not MIN_MEMORY <= size <= MAX_MEMORY:
                 raise ValueError(
                     "Sorry. Due to YandexCloud limits, function "

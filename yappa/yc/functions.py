@@ -205,10 +205,9 @@ class YcFunctionsMixin:
         return operation_result.response
 
     def get_latest_version(self, function_id) -> Version:
-        version = self.sdk.client(FunctionServiceStub).GetVersionByTag(
+        return self.sdk.client(FunctionServiceStub).GetVersionByTag(
             GetFunctionVersionByTagRequest(
                 function_id=function_id,
                 tag="$latest",
             )
         )
-        return version

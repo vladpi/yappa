@@ -54,10 +54,10 @@ class YC(YcAccessMixin, YcFunctionsMixin, YcGatewayMixin):
             )
         if skip_folder:
             return cls(**credentials)
-        folder_id = config.get("folder_id") or os.environ.get("YC_FOLDER")
-        if not folder_id:
+        if folder_id := config.get("folder_id") or os.environ.get("YC_FOLDER"):
+            return cls(folder_id=folder_id, **credentials)
+        else:
             raise ClickException(
                 "Sorry. Couldn't load folder_id from config "
                 "file or YC_FOLDER environment variable"
             )
-        return cls(folder_id=folder_id, **credentials)
