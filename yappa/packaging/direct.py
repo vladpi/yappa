@@ -139,6 +139,7 @@ def create_function_version(yc, config, config_filename):
                 timeout=config["timeout"],
                 named_service_accounts=config["named_service_accounts"],
                 environment=env_vars_to_string(config["environment"]),
+                secrets=config.get("secrets"),
             )
             click.echo("Created function version")
             if config["django_settings_module"]:
@@ -158,6 +159,7 @@ def create_function_version(yc, config, config_filename):
                     timeout=60 * 10,
                     named_service_accounts=config["named_service_accounts"],
                     environment=env_vars_to_string(config["environment"]),
+                    secrets=config.get("secrets"),
                 )
     finally:
         os.remove(archive_path)

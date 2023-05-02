@@ -157,6 +157,7 @@ class YcFunctionsMixin:
         named_service_accounts=None,
         environment=None,
         content=None,
+        secrets=None,
     ) -> Version:
         function = self.get_function(function_name)
         if content and bucket_name and object_name:
@@ -176,6 +177,7 @@ class YcFunctionsMixin:
                     content=content,
                     named_service_accounts=named_service_accounts,
                     environment=environment,
+                    secrets=secrets,
                 )
             )
         elif bucket_name:
@@ -193,6 +195,7 @@ class YcFunctionsMixin:
                     ),
                     named_service_accounts=named_service_accounts,
                     environment=environment,
+                    secrets=secrets,
                 )
             )
         else:
