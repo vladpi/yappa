@@ -91,9 +91,7 @@ def create_gateway(yc, config, function_id):
 
 def update_gateway(yc, config):
     gateway = yc.get_gateway(config["project_slug"])
-    click.echo(
-        "Updating api-gateway " + click.style(f"{gateway.name}", bold=True)
-    )
+    click.echo(f'Updating api-gateway {click.style(f"{gateway.name}", bold=True)}')
     yc.update_gateway(
         gateway.name, config["description"], load_yaml(config["gw_config"])
     )

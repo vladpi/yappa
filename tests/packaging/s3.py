@@ -50,7 +50,7 @@ def test_files_copy(apps_dir, config, expected_paths, config_filename):
 
 @pytest.fixture
 def bucket_name():
-    return "testbucket-" + str(uuid4())[:8]
+    return f"testbucket-{str(uuid4())[:8]}"
 
 
 def get_bucket_names(aws_access_key_id, aws_secret_access_key):

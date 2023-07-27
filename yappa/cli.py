@@ -97,9 +97,7 @@ def setup(config_file, token):
     config["folder_id"] = folders[folder_name]
     config["service_account_names"]["creator"] = account.name
     save_yaml(config, config_file)
-    click.echo(
-        "Saved Yappa config file at " + click.style(config_file, bold=True)
-    )
+    click.echo(f"Saved Yappa config file at {click.style(config_file, bold=True)}")
 
 
 @cli.command(short_help="generate config files, create function & api-gateway")
@@ -128,9 +126,7 @@ def deploy(upload_strategy, config_file):
     config, is_updated = get_missing_details(config)
     if is_updated:
         save_yaml(config, config_file)
-        click.echo(
-            "saved Yappa config file at " + click.style(config_file, bold=True)
-        )
+        click.echo(f"saved Yappa config file at {click.style(config_file, bold=True)}")
     yc = YC.setup(config=config)
     function = ensure_function(
         yc, config["project_slug"], config["description"], True
