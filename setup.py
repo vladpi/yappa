@@ -16,7 +16,7 @@ setup(
     install_requires=[
         "boto3>=1.10",
         "click>=8.0",
-        "httpx>=0.18",
+        "httpx==0.18",
         "yandexcloud>=0.102.1",
         "boltons>=21.0",
         "idna<3,>=2.5",

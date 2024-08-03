@@ -61,6 +61,9 @@ ENCODED_CONTENT_TYPES = (
 
 
 def is_binary(response):
+    if not response.headers.get("content-type"):
+        return False
+
     content_type = response.headers["content-type"]
     return any(re_.match(content_type) for re_ in ENCODED_CONTENT_TYPES)
 
